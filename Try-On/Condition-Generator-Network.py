@@ -86,7 +86,7 @@ class Encoder(nn.Module):
         return feature_map
 
 
-class Params():
+class FusionBlockParams():
     def __init__(self):
         pass
     
@@ -168,17 +168,12 @@ class FusionBlock(nn.Module):
         T2 = self.res_block(torch.cat([T2, pose_encoder_i, warped_T1], 1))
         return T1, T2, flow
 
-
-
-
-
+# this function is used in the warping 
 def make_grid(N, iH, iW):
     grid_x = torch.linspace(-1.0, 1.0, iW).view(1, 1, iW, 1).expand(N, iH, -1, -1)
     grid_y = torch.linspace(-1.0, 1.0, iH).view(1, iH, 1, 1).expand(N, -1, iW, -1)
     grid = torch.cat([grid_x, grid_y], 3).cuda()
     return grid
-
-
 
 
 # Now we need to define the actual condition generator which 
@@ -188,9 +183,75 @@ def make_grid(N, iH, iW):
 # which in turn will help the network to generate the correct clothes for the pose and avoid occlusion 
 class ConditionGenerator(nn.Module):
     # defining the constructor
-    def __init__(self, pose_channels, cloth_channels, ):
+    def __init__(self, pose_channels, cloth_channels, output_channels):
         super(ConditionGenerator, self).__init__()
         # defining the pose encoder
         self.pose_encoder = Encoder(in_channels = pose_channels, scale = SamplingType.down)
         # defining the cloth encoder
         self.cloth_encoder = Encoder(in_channels = cloth_channels, scale = SamplingType.down)
+        # flow pre conv
+        self.flow_pre_conv = nn.Conv2d(768, 2, kernel_size = 3, stride = 1, padding = 1, bias = True)
+        # now we define two res block for T2 TO pass through before fusion block 1
+        self.T2_res_block1 = ResNetBlock(in_channels = 384, out_channels = 768, scale = SamplingType.same) 
+        self.T2_res_block2 = ResNetBlock(in_channels = 768, out_channels = 384, scale = SamplingType.up)
+        # defining the fusion blocks
+        params = FusionBlockParams()
+        self.fusion_block1 = FusionBlock(index = 0, params = params)
+        self.fusion_block2 = FusionBlock(index = 1, params = params)
+        self.fusion_block3 = FusionBlock(index = 2, params = params)
+        self.fusion_block4 = FusionBlock(index = 3, params = params)
+        # define the last layer 
+        self.out_layer == ResNetBlock(in_channels = 96 + pose_channels + cloth_channels, out_channels = output_channels, scale = SamplingType.same)
+
+    def forward(self, clothes, pose):
+        # first we define 2 lists for the pose and clothes encoders
+        clothes_encoder_list = self.cloth_encoder(clothes)
+        pose_encoder_list = self.pose_encoder(pose)
+        flow_list = []
+
+        # now we define thep pre processing of the flow 
+        flow = self.flow_pre_conv(torch.cat([clothes_encoder_list[4], pose_encoder_list[4]], 1)).permute(0, 2, 3, 1)
+        flow_list.append(flow)
+        # now we define the pre processing of the T2
+        T2 = self.T2_res_block1(pose_encoder_list[4])
+        T2 = self.T2_res_block2(T2)
+        # T1 does not need any pre processing
+        T1 = clothes_encoder_list[4]
+        # now we define the first fusion block
+        T1, T2, flow = self.fusion_block1(T1, T2, pose_encoder_list[3], clothes_encoder_list[3], flow)
+        flow_list.append(flow)
+        # now we define the second fusion block
+        T1, T2, flow = self.fusion_block2(T1, T2, pose_encoder_list[2], clothes_encoder_list[2], flow)
+        flow_list.append(flow)
+        # now we define the third fusion block
+        T1, T2, flow = self.fusion_block3(T1, T2, pose_encoder_list[1], clothes_encoder_list[1], flow)
+        flow_list.append(flow)
+        # now we define the fourth fusion block
+        T1, T2, flow = self.fusion_block4(T1, T2, pose_encoder_list[0], clothes_encoder_list[0], flow)
+        flow_list.append(flow)
+
+        # we now do the final warping 
+        # we first define the grid
+        grid = make_grid(T1.shape[0], T1.shape[2], T1.shape[3])
+        # up sample the flow
+        flow = F.interpolate(flow.permute(0, 3, 1, 2), scale_factor = 2, mode = 'bilinear').permute(0, 2, 3, 1)
+        # we then normalize the horizontal and vertical flow components to be in the range of [-1, 1]
+        # shallow copy of the flow
+        hor = 2 * flow[:, :, :, 0:1] / (T1.shape[3] / 2 - 1)
+        ver = 2 * flow[:, :, :, 1:2] / (T1.shape[2] / 2 - 1)
+        # we then concatenate the horizontal and vertical flow components
+        flow_norm = torch.cat([hor, ver], 3)
+        # we then sample the T1 using the grid and calc the warped T2
+        last_warped_T1 = F.grid_sample(clothes, grid + flow_norm, padding_mode='border')
+
+        # now we define the output
+        T2 = self.out_layer(torch.cat([T2, pose, last_warped_T1], 1))
+
+        # finally we get the warped cloth and warped cloth mask
+        warped_c = last_warped_T1[:, :-1, :, :]
+        warped_c_mask = last_warped_T1[:, -1:, :, :]
+
+        return T2, warped_c, warped_c_mask, flow_list
+
+
+
