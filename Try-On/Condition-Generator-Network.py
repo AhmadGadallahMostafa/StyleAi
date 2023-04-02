@@ -3,6 +3,7 @@ import torch.nn as nn
 import numpy as np
 import torch.nn.functional as F
 import enum
+import functools
 import os
 
 
@@ -253,5 +254,81 @@ class ConditionGenerator(nn.Module):
 
         return T2, warped_c, warped_c_mask, flow_list
 
+
+
+# we will now define the discriminator that will be used to train the generator
+# this discriminator will be used to train the generator to generate realistic results
+# dropout is used to avoid overfitting
+class Discriminator(nn.Module):
+    def __init__(self, input_channels, output_channels):
+        super(Discriminator, self).__init__()
+        # normalzaition 
+        self.norm_layer = functools.partial(nn.InstanceNorm2d, affine = False)
+        #first layer 
+        self.conv1 = nn.Conv2d(input_channels, 64, kernel_size = 4, stride = 2, padding = 2, bias = True)
+        self.leaky_relu1 = nn.LeakyReLU(0.2, inplace = True)
+        #second layers
+        self.conv2 = nn.Conv2d(64, 128, kernel_size = 4, stride = 2, padding = 2, bias = True)
+        self.n2 = self.norm_layer(128)
+        self.leaky_relu2 = nn.LeakyReLU(0.2, inplace = True)
+        self.dropout2 = nn.Dropout(0.5)
+        #third layer
+        self.conv3 = nn.Conv2d(128, 256, kernel_size = 4, stride = 2, padding = 2, bias = True)
+        self.n3 = self.norm_layer(256)
+        self.leaky_relu3 = nn.LeakyReLU(0.2, inplace = True)
+        self.dropout3 = nn.Dropout(0.5)
+        #fourth layer
+        self.conv4 = nn.Conv2d(256, 512, kernel_size = 4, stride = 1, padding = 2, bias = True)
+        self.n4 = self.norm_layer(512)
+        self.leaky_relu4 = nn.LeakyReLU(0.2, inplace = True)
+        # last layer
+        self.conv5 = nn.Conv2d(512, 1, kernel_size = 4, stride = 1, padding = 2, bias = True)
+
+    def forward(self, x):
+        # first layer
+        x = self.conv1(x)
+        x = self.leaky_relu1(x)
+        # second layer
+        x = self.conv2(x)
+        x = self.n2(x)
+        x = self.leaky_relu2(x)
+        x = self.dropout2(x)
+        # third layer
+        x = self.conv3(x)
+        x = self.n3(x)
+        x = self.leaky_relu3(x)
+        x = self.dropout3(x)
+        # fourth layer
+        x = self.conv4(x)
+        x = self.n4(x)
+        x = self.leaky_relu4(x)
+        # last layer
+        x = self.conv5(x)
+        return x
+    
+# we now will write an encapsuation discriminator that will be contain multiple discriminators
+# this will be used to train the generator to generate realistic results
+class EncapsulatedDiscriminator(nn.Module):
+    def __init__(self, input_channels, output_channels):
+        super(EncapsulatedDiscriminator, self).__init__()
+        # we will now define the discriminators
+        self.discriminator1 = Discriminator(input_channels, output_channels)
+        self.discriminator2 = Discriminator(input_channels, output_channels)
+        self.downsample = nn.AvgPool2d(3, stride = 2, padding = [1, 1], count_include_pad = False)
+
+        
+    def forward(self, x):
+        # we will now define the forward pass
+        # first we will down sample the input
+        x = self.downsample(x)
+        # now we will get the output from the first discriminator
+        out1 = self.discriminator1(x)
+        # now we will down sample the input again
+        x = self.downsample(x)
+        # now we will get the output from the second discriminator
+        out2 = self.discriminator2(x)
+        # now we will return the output
+        return out1, out2
+    
 
 
