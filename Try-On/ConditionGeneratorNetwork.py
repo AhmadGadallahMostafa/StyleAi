@@ -111,7 +111,7 @@ class FusionBlockParams():
     
     #seg_decoder
     def get_resnet_block(self, index):
-        input_channels = [1152, 1152, 786, 576]
+        input_channels = [1152, 1152, 768, 576]
         output_channels = [384, 192, 96, 96]
         return input_channels[index], output_channels[index]    
 
@@ -121,7 +121,7 @@ class FusionBlockParams():
 # we now define the fusion block which will be used inside the condition generator
 # after the two encoders
 class FusionBlock(nn.Module):
-    def __init_(self, index, params):
+    def __init__(self, index, params):
         super(FusionBlock, self).__init__()
         self.index = index
         self.params = params
@@ -133,7 +133,7 @@ class FusionBlock(nn.Module):
         # bottleneck layer
         in_channels, out_channels = self.params.get_conv_pose(self.index)
         self.conv_pose = nn.Conv2d(in_channels, out_channels, kernel_size = 3, stride = 1, padding = 1, bias = True)
-        self.relu = nn.ReLU(inplace = True) # this is applied after conv_pose 
+        self.relu = nn.ReLU(inplace = False) # this is applied after conv_pose 
 
         # # conv_flow
         in_channels, out_channels = self.params.get_conv_warped_T2(self.index)
@@ -173,7 +173,7 @@ class FusionBlock(nn.Module):
 def make_grid(N, iH, iW):
     grid_x = torch.linspace(-1.0, 1.0, iW).view(1, 1, iW, 1).expand(N, iH, -1, -1)
     grid_y = torch.linspace(-1.0, 1.0, iH).view(1, iH, 1, 1).expand(N, -1, iW, -1)
-    grid = torch.cat([grid_x, grid_y], 3).cuda()
+    grid = torch.cat([grid_x, grid_y], 3)
     return grid
 
 
@@ -202,7 +202,7 @@ class ConditionGenerator(nn.Module):
         self.fusion_block3 = FusionBlock(index = 2, params = params)
         self.fusion_block4 = FusionBlock(index = 3, params = params)
         # define the last layer 
-        self.out_layer == ResNetBlock(in_channels = 96 + pose_channels + cloth_channels, out_channels = output_channels, scale = SamplingType.same)
+        self.out_layer = ResNetBlock(in_channels = 96 + pose_channels + cloth_channels, out_channels = output_channels, scale = SamplingType.same)
 
     def forward(self, clothes, pose):
         # first we define 2 lists for the pose and clothes encoders
@@ -233,13 +233,13 @@ class ConditionGenerator(nn.Module):
 
         # we now do the final warping 
         # we first define the grid
-        grid = make_grid(T1.shape[0], T1.shape[2], T1.shape[3])
+        grid = make_grid(clothes.shape[0], clothes.shape[2], clothes.shape[3])
         # up sample the flow
         flow = F.interpolate(flow.permute(0, 3, 1, 2), scale_factor = 2, mode = 'bilinear').permute(0, 2, 3, 1)
         # we then normalize the horizontal and vertical flow components to be in the range of [-1, 1]
         # shallow copy of the flow
-        hor = 2 * flow[:, :, :, 0:1] / (T1.shape[3] / 2 - 1)
-        ver = 2 * flow[:, :, :, 1:2] / (T1.shape[2] / 2 - 1)
+        hor = 2 * flow[:, :, :, 0:1] / (clothes.shape[3] / 2 - 1)
+        ver = 2 * flow[:, :, :, 1:2] / (clothes.shape[2] / 2 - 1)
         # we then concatenate the horizontal and vertical flow components
         flow_norm = torch.cat([hor, ver], 3)
         # we then sample the T1 using the grid and calc the warped T2
@@ -260,7 +260,7 @@ class ConditionGenerator(nn.Module):
 # this discriminator will be used to train the generator to generate realistic results
 # dropout is used to avoid overfitting
 class Discriminator(nn.Module):
-    def __init__(self, input_channels, output_channels):
+    def __init__(self, input_channels):
         super(Discriminator, self).__init__()
         # normalzaition 
         self.norm_layer = functools.partial(nn.InstanceNorm2d, affine = False)
@@ -309,11 +309,11 @@ class Discriminator(nn.Module):
 # we now will write an encapsuation discriminator that will be contain multiple discriminators
 # this will be used to train the generator to generate realistic results
 class EncapsulatedDiscriminator(nn.Module):
-    def __init__(self, input_channels, output_channels):
+    def __init__(self, input_channels):
         super(EncapsulatedDiscriminator, self).__init__()
         # we will now define the discriminators
-        self.discriminator1 = Discriminator(input_channels, output_channels)
-        self.discriminator2 = Discriminator(input_channels, output_channels)
+        self.discriminator1 = Discriminator(input_channels)
+        self.discriminator2 = Discriminator(input_channels)
         self.downsample = nn.AvgPool2d(3, stride = 2, padding = [1, 1], count_include_pad = False)
 
         
