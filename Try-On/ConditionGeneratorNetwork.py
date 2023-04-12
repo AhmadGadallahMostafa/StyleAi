@@ -173,7 +173,7 @@ class FusionBlock(nn.Module):
 def make_grid(N, iH, iW):
     grid_x = torch.linspace(-1.0, 1.0, iW).view(1, 1, iW, 1).expand(N, iH, -1, -1)
     grid_y = torch.linspace(-1.0, 1.0, iH).view(1, iH, 1, 1).expand(N, -1, iW, -1)
-    grid = torch.cat([grid_x, grid_y], 3)
+    grid = torch.cat([grid_x, grid_y], 3).cuda()
     return grid
 
 

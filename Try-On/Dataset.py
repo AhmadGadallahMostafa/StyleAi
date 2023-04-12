@@ -145,14 +145,14 @@ class TryOnDataset(Dataset):
             'cloth': clothes_image,
             'cloth_mask': clothes_mask,
             # input 2 which is the densepose image and the new parse agnostic map
-            'densepose': densepose_image,
+            'dense_pose': densepose_image,
             'parse_agnostic': new_parse_agnostic_map,
             'pose': pose_points_image, 
             # image generotr input
             'agnostic': agnostic_image,
             # losses 
             # cross entropy loss for the parse one hot
-            'parse_onehot': parse_onehot,
+            'parse_one_hot': parse_onehot,
             # GAN LOSS 
             'parse' : new_parse_map,
             # L1 loss 
@@ -166,7 +166,7 @@ class TryOnDataset(Dataset):
     
     # override len function
     def __len__(self):
-        return len(self.image_names)
+        return len(self.image_paired)
     
 
 

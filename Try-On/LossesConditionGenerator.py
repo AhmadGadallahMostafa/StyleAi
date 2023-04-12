@@ -3,6 +3,10 @@ import torch
 import torch.nn as nn
 import torchvision.models as models
 
+# clear the cache
+torch.cuda.empty_cache()
+
+
 
 # In this file we define various loss functions that will be used the condition generator 
 # Also we will define the loss function for the generator and discriminator
@@ -15,6 +19,11 @@ class Vgg19(nn.Module):
     def __init__(self, requires_grad=False):
         super(Vgg19, self).__init__()
         vgg_pretrained_features = models.vgg19(pretrained=True).features
+        self.slice1 = nn.Sequential()
+        self.slice2 = nn.Sequential()
+        self.slice3 = nn.Sequential()
+        self.slice4 = nn.Sequential()
+        self.slice5 = nn.Sequential()
         
         slices = [self.slice1, self.slice2, self.slice3, self.slice4, self.slice5]
         ranges = [(0,2), (2,7), (7,12), (12,21), (21,30)]
@@ -39,7 +48,7 @@ class LossVGG(nn.Module):
     def __init__(self):
         super(LossVGG, self).__init__()
         # initialize the vgg network
-        self.vgg = Vgg19(requires_grad=False)
+        self.vgg = Vgg19(requires_grad=False).cuda()
         # we will use the L1 loss to calculate the loss between the generated image and the real image
         self.criterion = nn.L1Loss()
         # we will use the weights to calculate the loss between the generated image and the real image
@@ -79,7 +88,7 @@ class GANLoss(nn.Module):
                 loss += self.loss_fn(pred, target_tensor)
             return loss
         else:
-            target_tensor = self.get_target_tensor(input[-1], target_is_real)
+            target_tensor = self.get_target_tensor(input[-1], target_is_real).cuda()
             return self.loss_fn(input[-1], target_tensor)
         
 
