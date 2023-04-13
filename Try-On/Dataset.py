@@ -27,7 +27,7 @@ class TryOnDataset(Dataset):
         self.transform = transform
         if self.mode == 'train':
             self.root = osp.join(self.root, 'train')
-        else:
+        elif self.mode == 'test' or self.mode == 'val':
             self.root = osp.join(self.root, 'test')
         # now we will read the image names from the data_list
         self.image_paired = []
