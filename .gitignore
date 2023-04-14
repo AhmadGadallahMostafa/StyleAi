@@ -72,9 +72,17 @@ target/
 
 # remove the data file in the try-on folder 
 Try-on/data
+output_condition_generator
 
 # remove any file with .pth extension
 *.pth
 
 # remove any runs folder 
 runs/
+
+# dont push any image 
+*.jpg
+*.png
+*.jpeg
+
+
