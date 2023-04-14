@@ -74,10 +74,8 @@ def train_condition(data_loader_test, condition_generator, discriminator, num_ep
     condition_generator.cuda()
     discriminator.cuda()
     # we define the optimizers for the models
-    optimizer_condition = torch.optim.Adam(
-        condition_generator.parameters(), lr=0.0002, betas=(0.5, 0.999))
-    optimizer_discriminator = torch.optim.Adam(
-        discriminator.parameters(), lr=0.0002, betas=(0.5, 0.999))
+    optimizer_condition = torch.optim.Adam(condition_generator.parameters(), lr=0.0002, betas=(0.5, 0.999))
+    optimizer_discriminator = torch.optim.Adam(discriminator.parameters(), lr=0.0002, betas=(0.5, 0.999))
     # we define the loss functions
     criterion_gan = GANLoss()
     criterion_vgg = LossVGG()
@@ -94,8 +92,7 @@ def train_condition(data_loader_test, condition_generator, discriminator, num_ep
             # Clothes Input
             cloth = batch['cloth'].cuda()
             cloth_mask = batch['cloth_mask']
-            cloth_mask = torch.FloatTensor(
-                (cloth_mask.numpy() > 0.5).astype(np.float32)).cuda()
+            cloth_mask = torch.FloatTensor((cloth_mask.numpy() > 0.5).astype(np.float32)).cuda()
             # Pose Input
             dense_pose = batch['dense_pose'].cuda()
             parse_agnostic = batch['parse_agnostic'].cuda()
@@ -116,25 +113,17 @@ def train_condition(data_loader_test, condition_generator, discriminator, num_ep
             fake_map = fake_map * tmp       # element wise multiplication
             # handling occlusion of cloth with body parts
             tmp = torch.softmax(fake_map, dim=1)
-            cloth_mask_with_body_removed = warped_cloth_mask - \
-                ((torch.cat([tmp[:, 0:3, :, :], tmp[:, 5:, :, :]], dim=1)).sum(
-                    dim=1, keepdim=True)) * warped_cloth_mask
-            cloth_with_body_removed = warped_cloth * cloth_mask_with_body_removed + \
-                torch.ones_like(warped_cloth) * \
-                                (1 - cloth_mask_with_body_removed)
+            cloth_mask_with_body_removed = warped_cloth_mask -((torch.cat([tmp[:, 1:3, :, :], tmp[:, 5:, :, :]], dim=1)).sum(dim=1, keepdim=True)) * warped_cloth_mask
+            cloth_with_body_removed = warped_cloth * cloth_mask_with_body_removed + torch.ones_like(warped_cloth) * (1 - cloth_mask_with_body_removed)
 
             # get the one hot encoding of warped cloth mask
-            warped_cloth_mask_one_hot = torch.FloatTensor(
-                (warped_cloth_mask.detach().cpu().numpy() > 0.5).astype(np.float32)).cuda()
+            warped_cloth_mask_one_hot = torch.FloatTensor((warped_cloth_mask.detach().cpu().numpy() > 0.5).astype(np.float32)).cuda()
             # now we will make the any pixel in the upper body of the fake map to be 1
-            fake_cloth_mask = (torch.argmax(
-                fake_map, dim=1, keepdim=True) == 3).long()
+            fake_cloth_mask = (torch.argmax(fake_map.detach(), dim=1, keepdim=True) == 3).long()
             # now we find the missaligned pixels
-            missaligned_pixels = (
-                fake_cloth_mask != warped_cloth_mask_one_hot).float()
+            missaligned_pixels = (fake_cloth_mask != warped_cloth_mask_one_hot).float()
             # L1 loss
-            l1_loss = criterion_l1(
-                cloth_mask_with_body_removed, parse_cloth_mask)
+            l1_loss = criterion_l1(cloth_mask_with_body_removed, parse_cloth_mask)
             # VGG loss
             vgg_loss = criterion_vgg(cloth_with_body_removed, parse_cloth)
 
@@ -153,52 +142,40 @@ def train_condition(data_loader_test, condition_generator, discriminator, num_ep
             for flow in flow_list[:-1]:
                 FN, FH, FW, _ = flow.size()
                 grid = make_grid(CN, CH, CW)
-                flow = F.interpolate(flow.permute(0, 3, 1, 2), size=(
-                    CH, CW), mode='bilinear').permute(0, 2, 3, 1)
+                flow = F.interpolate(flow.permute(0, 3, 1, 2), size=(CH, CW), mode='bilinear').permute(0, 2, 3, 1)
                 hor = 2 * flow[:, :, :, 0:1] / (FW / 2 - 1)
                 ver = 2 * flow[:, :, :, 1:2] / (FH / 2 - 1)
                 # we then concatenate the horizontal and vertical flow components
                 flow_norm = torch.cat([hor, ver], 3)
-                warped_cloth = F.grid_sample(
-                    cloth, grid + flow_norm, padding_mode='border')
-                warped_cloth_mask = F.grid_sample(
-                    cloth_mask, grid + flow_norm, padding_mode='border')
+                warped_cloth = F.grid_sample(cloth, grid + flow_norm, padding_mode='border')
+                warped_cloth_mask = F.grid_sample(cloth_mask, grid + flow_norm, padding_mode='border')
                 # overalap remove
                 tmp = torch.softmax(fake_map, dim=1)
-                warped_cloth_mask = warped_cloth_mask - \
-                    ((torch.cat([tmp[:, 0:3, :, :], tmp[:, 5:, :, :]], dim=1)).sum(
-                        dim=1, keepdim=True)) * warped_cloth_mask
+                warped_cloth_mask = warped_cloth_mask - ((torch.cat([tmp[:, 0:3, :, :], tmp[:, 5:, :, :]], dim=1)).sum(dim=1, keepdim=True)) * warped_cloth_mask
                 # l1 loss
-                l1_loss += criterion_l1(warped_cloth_mask,
-                                        parse_cloth_mask) / weights[j]
+                l1_loss += criterion_l1(warped_cloth_mask, parse_cloth_mask) / weights[j]
                 # vgg loss
-                vgg_loss += criterion_vgg(warped_cloth,
-                                          parse_cloth) / weights[j]
+                vgg_loss += criterion_vgg(warped_cloth, parse_cloth) / weights[j]
                 j += 1
 
             # now we calculate the cross entropy loss
-            cross_entropy_loss = cross_entropy_2d(
-                fake_map, parse_one_hot.transpose(0, 1)[0].long())
+            cross_entropy_loss = cross_entropy_2d(fake_map, parse_one_hot.transpose(0, 1)[0].long())
 
             # gan loss
             # we first get the fake image
             fake_map_softmax = torch.softmax(fake_map, dim=1)
             # we now call the discriminator
-            discriminator_input = torch.cat((cloth.detach(), cloth_mask.detach(
-            ), parse_agnostic.detach(), dense_pose.detach(), fake_map_softmax), dim=1)
+            discriminator_input = torch.cat((cloth.detach(), cloth_mask.detach(), parse_agnostic.detach(), dense_pose.detach(), fake_map_softmax), dim=1)
             pred_image = discriminator(discriminator_input)
             gan_loss = criterion_gan(pred_image, True)
             # we now calculate the gan loss
-            fake_image_pred = discriminator(torch.cat((cloth.detach(), cloth_mask.detach(
-            ), parse_agnostic.detach(), dense_pose.detach(), fake_map_softmax.detach()), dim=1))
-            real_image_pred = discriminator(torch.cat((cloth.detach(), cloth_mask.detach(
-            ), parse_agnostic.detach(), dense_pose.detach(), parse), dim=1))
+            fake_image_pred = discriminator(torch.cat((cloth.detach(), cloth_mask.detach(), parse_agnostic.detach(), dense_pose.detach(), fake_map_softmax.detach()), dim=1))
+            real_image_pred = discriminator(torch.cat((cloth.detach(), cloth_mask.detach(), parse_agnostic.detach(), dense_pose.detach(), parse), dim=1))
             loss_fake = criterion_gan(fake_image_pred, False)
             loss_real = criterion_gan(real_image_pred, True)
 
             # now we calculate the total loss
-            generator_loss = 10 * l1_loss + vgg_loss + 2 * \
-                tv_loss + 10 * cross_entropy_loss + gan_loss
+            generator_loss = 10 * l1_loss + vgg_loss + 2 * tv_loss + 10 * cross_entropy_loss + gan_loss
             discriminator_loss = (loss_fake + loss_real)
 
             # step

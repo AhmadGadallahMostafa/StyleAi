@@ -80,7 +80,7 @@ for i in range(len(dataset)):
 
     # occulusion 
     tmp = torch.softmax(fake_map, dim=1)
-    cloth_mask_with_body_removed = warped_cloth_mask - ((torch.cat([tmp[:, 0:3, :, :], tmp[:, 5:, :, :]], dim=1)).sum(dim=1, keepdim=True)) * warped_cloth_mask
+    cloth_mask_with_body_removed = warped_cloth_mask - ((torch.cat([tmp[:, 1:3, :, :], tmp[:, 5:, :, :]], dim=1)).sum(dim=1, keepdim=True)) * warped_cloth_mask
     cloth_with_body_removed = warped_cloth * cloth_mask_with_body_removed + torch.ones_like(warped_cloth) * (1 - cloth_mask_with_body_removed)
 
 
