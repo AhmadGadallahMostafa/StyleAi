@@ -151,7 +151,7 @@ def train_condition(data_loader_test, condition_generator, discriminator, num_ep
                 warped_cloth_mask = F.grid_sample(cloth_mask, grid + flow_norm, padding_mode='border')
                 # overalap remove
                 tmp = torch.softmax(fake_map, dim=1)
-                warped_cloth_mask = warped_cloth_mask - ((torch.cat([tmp[:, 0:3, :, :], tmp[:, 5:, :, :]], dim=1)).sum(dim=1, keepdim=True)) * warped_cloth_mask
+                warped_cloth_mask = warped_cloth_mask - ((torch.cat([tmp[:,1:3, :, :], tmp[:, 5:, :, :]], dim=1)).sum(dim=1, keepdim=True)) * warped_cloth_mask
                 # l1 loss
                 l1_loss += criterion_l1(warped_cloth_mask, parse_cloth_mask) / weights[j]
                 # vgg loss
