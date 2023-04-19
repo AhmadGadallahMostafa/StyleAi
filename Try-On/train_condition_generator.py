@@ -67,7 +67,7 @@ def get_options():
 # in this function we will define the training process
 
 
-def train_condition(data_loader_test, condition_generator, discriminator, num_epochs, data_loader_val, writer, batch_size):
+def train_condition(data_loader_train, condition_generator, discriminator, num_epochs, data_loader_val, writer, batch_size):
     # we first set te models to train mode and send them to the GPU
     condition_generator.train()
     discriminator.train()
@@ -87,7 +87,7 @@ def train_condition(data_loader_test, condition_generator, discriminator, num_ep
     for step in tqdm(range(0, 300000)):
             iter_start_time = time.time()
             # we get the batch
-            batch = data_loader_test.next_batch()
+            batch = data_loader_train.next_batch()
             # we get the inputs of our models from the batch
             # Clothes Input
             cloth = batch['cloth'].cuda()
@@ -105,7 +105,6 @@ def train_condition(data_loader_test, condition_generator, discriminator, num_ep
             fake_map, warped_cloth, warped_cloth_mask, flow_list = condition_generator(
                 torch.cat((cloth, cloth_mask), dim=1), torch.cat((parse_agnostic, dense_pose), dim=1))
             # now we calculate the losses
-            # first we get the one hot encoding of warped_cloth_mask
             # we create a tensor with ones
             tmp = torch.ones_like(fake_map.detach())
             # we set the 4th channel to be the warped_cloth_mask
@@ -263,7 +262,7 @@ def main():
         test_dataset = TryOnDataset(root=opt.dataset, mode='val', data_list=opt.test_list, transform=transform)
         val_dataset = Subset(test_dataset, range(0, 2000))
         # data_loader for training
-        data_loader_test = DataLoader(train_dataset, shuffle=True, batch_size=opt.batch_size)    
+        data_loader_train = DataLoader(train_dataset, shuffle=True, batch_size=opt.batch_size)    
         # data_loader for validation
         data_loader_val = DataLoader(val_dataset, shuffle=True, batch_size=opt.batch_size)    
         # create the condtion generator model
@@ -285,7 +284,7 @@ def main():
             discriminator.load_state_dict(torch.load('discriminator.pth'))
         
 
-        train_condition(data_loader_test, condition_generator, discriminator, opt.epochs, data_loader_val, writer, opt.batch_size)
+        train_condition(data_loader_train, condition_generator, discriminator, opt.epochs, data_loader_val, writer, opt.batch_size)
 
 
 if __name__ == '__main__':
