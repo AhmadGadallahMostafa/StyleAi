@@ -155,11 +155,65 @@ class ImageGeneratorNetwork(nn.Module):
         x = self.tanh(x)
         return x
 
+class DiscriminatorNetwork(nn.Module):
+    def __init__(self, input_channels):
+        super(DiscriminatorNetwork, self).__init__()
+        # first layer of the discriminator
+        self.conv1 = nn.Conv2d(input_channels, 64, kernel_size = 4, stride = 2, padding = 2)
+        self.leaky_relu1 = nn.LeakyReLU(0.2)
+        # second layer of the discriminator
+        # spectral normalization is used to stabilize the training process and make the only learnable paramter the lipschitz constant
+        self.conv2 = spectral_norm(nn.Conv2d(64, 128, kernel_size = 4, stride = 2, padding = 2, bias = False))
+        self.n2 = nn.InstanceNorm2d(128)
+        self.leaky_relu2 = nn.LeakyReLU(0.2)
+        # third layer of the discriminator
+        self.conv3 = spectral_norm(nn.Conv2d(128, 256, kernel_size = 4, stride = 2, padding = 2, bias = False))
+        self.n3 = nn.InstanceNorm2d(256)
+        self.leaky_relu3 = nn.LeakyReLU(0.2)
+        # fourth layer of the discriminator
+        self.conv4 = nn.Conv2d(256, 1, kernel_size = 4, stride = 1, padding = 2)
 
+        
+
+    def forward(self, x):
+        # first layer of the discriminator
+        x = self.leaky_relu1(self.conv1(x))
+        # second layer of the discriminator
+        x = self.leaky_relu2(self.n2(self.conv2(x)))
+        # third layer of the discriminator
+        x = self.leaky_relu3(self.n3(self.conv3(x)))
+        # fourth layer of the discriminator
+        x = self.conv4(x)
+        return x
+
+
+# we now will write an encapsuation discriminator that will be contain multiple discriminators
+# this will be used to train the generator to generate realistic results
+class EncapsulatedDiscriminator(nn.Module):
+    def __init__(self, input_channels):
+        super(EncapsulatedDiscriminator, self).__init__()
+        # we will now define the discriminators
+        self.discriminator1 = DiscriminatorNetwork(input_channels)
+        self.discriminator2 = DiscriminatorNetwork(input_channels)
+        self.downsample = nn.AvgPool2d(3, stride = 2, padding = [1, 1], count_include_pad = False)
+
+        
+    def forward(self, x):
+        # we will now define the forward pass
+        # now we will get the output from the first discriminator
+        out1 = self.discriminator1(x)
+        # now we will down sample the input again
+        x = self.downsample(x)
+        # now we will get the output from the second discriminator
+        out2 = self.discriminator2(x)
+        # now we will return the output
+        return out1, out2
 
 def main():
     image_generator_network = ImageGeneratorNetwork(9)
+    d = EncapsulatedDiscriminator(10)
     print('Number of parameters in the ImageGeneratorNetwork network: ', sum(p.numel() for p in image_generator_network.parameters() if p.requires_grad))
+    print('Number of parameters in the EncapsulatedDiscriminator network: ', sum(p.numel() for p in d.parameters() if p.requires_grad))
 
 
 if __name__ == '__main__':
