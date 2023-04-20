@@ -1,0 +1,11 @@
+Topwear
+Bottomwear
+Watches
+Shoes
+Bags
+Jewellery
+Eyewear
+Scarves
+Dress
+Ties
+Gloves
