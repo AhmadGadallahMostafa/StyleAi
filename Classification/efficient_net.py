@@ -113,29 +113,18 @@ class OurEfficientNet(nn.Module):
         super(OurEfficientNet, self).__init__()
         width_factor, depth_factor, dropout_rate = self.calculate_factors(version)
         last_channels = ceil(1280 * width_factor)
-        #self.backbone = pretrained_model = EfficientNet.from_pretrained('efficientnet-{version}')
-        if pretrained == True:
-            self.backbone = pretrained_model = EfficientNet.from_pretrained('efficientnet-'+version)
-        else:
-            self.backbone = EfficientNet.from_name(f"efficientnet-{version}")
         self.pool = nn.AdaptiveAvgPool2d(1)
         self.features = self.create_features(width_factor, depth_factor, last_channels)
         self.classifier = nn.Sequential(
             nn.Dropout(dropout_rate),
-            #nn.Linear(self.backbone._fc.in_features, num_classes),
             nn.Linear(last_channels, num_classes),
             #nn.Sigmoid(),
         )
 
-    def calculate_factors(self, version, alpha=1.2, beta=1.1):
-        phi, res, drop_rate = phi_values[version]
-        depth_factor = alpha ** phi
-        width_factor = beta ** phi
-        return width_factor, depth_factor, drop_rate
-
     def create_features(self, width_factor, depth_factor, last_channels):
         #channels = int(32 * width_factor)
         channels =  4*ceil(int(32*width_factor) / 4)
+        number_of_channels_from_backbone = 1280
         features = [CNNBlock(3, channels, 3, stride=2, padding=1)]
         in_channels = channels
 
@@ -158,10 +147,14 @@ class OurEfficientNet(nn.Module):
         features.append(CNNBlock(in_channels, last_channels, kernel_size=1, stride=1, padding=0))
         return nn.Sequential(*features)
 
+    def calculate_factors(self, version, alpha=1.2, beta=1.1):
+        phi, res, drop_rate = phi_values[version]
+        depth_factor = alpha ** phi
+        width_factor = beta ** phi
+        return width_factor, depth_factor, drop_rate
+
     def forward(self, x):
-        #x = self.backbone.extract_features(x)
-        for layer in self.features:
-            x = layer(x)
+        x = self.features(x)
         x = self.pool(x)
         x = x.view(x.size(0), -1)
         return self.classifier(x)
@@ -174,18 +167,27 @@ tfms = transforms.Compose([
     transforms.ToTensor(),
     transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
 ])
-img = tfms(Image.open('dog.jpg')).unsqueeze(0)
+
+img = tfms(Image.open('./Classification/dog.jpg')).unsqueeze(0)
 # get labels from labels.txt
 labels_map = []
-with open('labels.txt', 'r') as f:
+with open('./Classification/labels.txt', 'r') as f:
     #remove comma and newline
     labels_map = [line.strip().split(',')[0] for line in f.readlines()]
 
 # load model
 device = "cuda" if torch.cuda.is_available() else "cpu"
 custom_model = OurEfficientNet(version='b5', num_classes=1000, pretrained=True).to(device)
-#actual_model = EfficientNet.from_pretrained('efficientnet-b5').to(device)
-#actual_model.eval()
+actual_model = EfficientNet.from_pretrained('efficientnet-b5').to(device)
+
+# loop through all layers and copy weights in order
+# for i = 1 in actual_model and custom_model
+# replace v with v
+custom_dict = custom_model.state_dict()
+ac_dict = actual_model.state_dict()
+for (k, v), (k2, v2) in zip(custom_dict.items(), ac_dict.items()):
+    custom_dict[k] = v2
+custom_model.load_state_dict(custom_dict)
 custom_model.eval()
 with torch.no_grad():
     outputs = custom_model(img)
