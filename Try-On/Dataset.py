@@ -15,14 +15,14 @@ from PIL import Image, ImageDraw
 
 
 class TryOnDataset(Dataset):
-    def __init__(self, root, mode, data_list, transform=None):
+    def __init__(self, root, mode, data_list, transform=None, height=256, width=192):
         super(TryOnDataset, self).__init__()
         self.root = root
         self.mode = mode
         self.data_list = data_list
         self.transform = transform
-        self.height = 256
-        self.width = 192
+        self.height = height
+        self.width = width
         self.semantic_channels = 13
         self.transform = transform
         if self.mode == 'train':
