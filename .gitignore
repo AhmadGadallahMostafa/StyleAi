@@ -87,4 +87,7 @@ logs/
 *.png
 *.jpeg
 
+# remove .pkl files
+*.pkl
+
 
