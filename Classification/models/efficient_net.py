@@ -115,10 +115,31 @@ class OurEfficientNet(nn.Module):
         last_channels = ceil(1280 * width_factor)
         self.pool = nn.AdaptiveAvgPool2d(1)
         self.features = self.create_features(width_factor, depth_factor, last_channels)
-        self.classifier = nn.Sequential(
+
+        self.classifier0 = nn.Sequential( # for gender
             nn.Dropout(dropout_rate),
-            nn.Linear(last_channels, num_classes),
-            #nn.Sigmoid(),
+            nn.Linear(last_channels, 5),
+            nn.Softmax(dim=1)
+        )
+        self.classifier1 = nn.Sequential( # for subCategory
+            nn.Dropout(dropout_rate),
+            nn.Linear(last_channels, 11),
+            nn.Softmax(dim=1)
+        )
+        self.classifier2 = nn.Sequential( # for articleType
+            nn.Dropout(dropout_rate),
+            nn.Linear(last_channels, 46),
+            nn.Softmax(dim=1)
+        )
+        self.classifier3 = nn.Sequential( # for baseColour
+            nn.Dropout(dropout_rate),
+            nn.Linear(last_channels, 46),
+            nn.Softmax(dim=1)
+        )
+        self.classifier4 = nn.Sequential( # for usage
+            nn.Dropout(dropout_rate),
+            nn.Linear(last_channels, 7),
+            nn.Softmax(dim=1)
         )
 
     def create_features(self, width_factor, depth_factor, last_channels):
@@ -157,7 +178,12 @@ class OurEfficientNet(nn.Module):
         x = self.features(x)
         x = self.pool(x)
         x = x.view(x.size(0), -1)
-        return self.classifier(x)
+        x0 = self.classifier0(x)
+        x1 = self.classifier1(x)
+        x2 = self.classifier2(x)
+        x3 = self.classifier3(x)
+        x4 = self.classifier4(x)
+        return x0, x1, x2, x3, x4
 
 
 
@@ -168,31 +194,30 @@ tfms = transforms.Compose([
     transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
 ])
 
-img = tfms(Image.open('./Classification/dog.jpg')).unsqueeze(0)
+img = tfms(Image.open('Classification\models\dog.jpg')).unsqueeze(0)
 # get labels from labels.txt
 labels_map = []
-with open('./Classification/labels.txt', 'r') as f:
+with open('Classification\models\labels.txt', 'r') as f:
     #remove comma and newline
     labels_map = [line.strip().split(',')[0] for line in f.readlines()]
 
 # load model
 device = "cuda" if torch.cuda.is_available() else "cpu"
 custom_model = OurEfficientNet(version='b5', num_classes=1000, pretrained=True).to(device)
-actual_model = EfficientNet.from_pretrained('efficientnet-b5').to(device)
 
-# loop through all layers and copy weights in order
-# for i = 1 in actual_model and custom_model
-# replace v with v
-custom_dict = custom_model.state_dict()
-ac_dict = actual_model.state_dict()
-for (k, v), (k2, v2) in zip(custom_dict.items(), ac_dict.items()):
-    custom_dict[k] = v2
-custom_model.load_state_dict(custom_dict)
-custom_model.eval()
-with torch.no_grad():
-    outputs = custom_model(img)
+# # loop through all layers and copy weights in order
+# # for i = 1 in actual_model and custom_model
+# # replace v with v
+# custom_dict = custom_model.state_dict()
+# ac_dict = actual_model.state_dict()
+# for (k, v), (k2, v2) in zip(custom_dict.items(), ac_dict.items()):
+#     custom_dict[k] = v2
+# custom_model.load_state_dict(custom_dict)
+# custom_model.eval()
+# with torch.no_grad():
+#     outputs = custom_model(img)
 
-print('-----')
-for idx in torch.topk(outputs, k=5).indices.squeeze(0).tolist():
-    prob = torch.softmax(outputs, dim=1)[0, idx].item()
-    print('{label:<75} ({p:.2f}%)'.format(label=labels_map[idx], p=prob*100))
+# print('-----')
+# for idx in torch.topk(outputs, k=5).indices.squeeze(0).tolist():
+#     prob = torch.softmax(outputs, dim=1)[0, idx].item()
+#     print('{label:<75} ({p:.2f}%)'.format(label=labels_map[idx], p=prob*100))
