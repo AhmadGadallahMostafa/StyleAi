@@ -9,6 +9,7 @@ code/datasets/mnist/train-images-idx3-ubyte
 code/datasets/mnist/train-labels-idx1-ubyte
 Classification/DeepFashion2
 Classification/DatasetPrep/fashion-dataset
+Classification/DatasetPrep/DeepFashion
 .ipynb_checkpoints
 .DS_Store
 code/datasets/movie/aclImdb_v1.tar.gz
