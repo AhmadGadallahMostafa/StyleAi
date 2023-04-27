@@ -12,12 +12,12 @@ from carvekit.trimap.generator import TrimapGenerator
 import cv2
 import numpy as np 
 from PIL import ImageOps
+from carvekit.api.high import HiInterface
+import torch
 
 
 
     
-
-
 class PreProcessing:
 
     def get_densepose(self):
@@ -49,20 +49,21 @@ class PreProcessing:
         interface = Interface(pre_pipe=preprocessing,
                             post_pipe=postprocessing,
                             seg_pipe=seg_net)
-        # we need to loop over the file Try-On\InputClothesImages and apply the mask on each image
-        # we will save the output in Try-On\PreprocessedImages\ClothMask
+        
+
         for filename in os.listdir("Try-On/InputClothesImages"):
             if filename.endswith(".jpg") or filename.endswith(".png"):
                 image = PIL.Image.open("Try-On/InputClothesImages/" + filename)
                 # remove the extension from the filename
                 filename = filename.split(".")[0]
+                # this just removes the background from the image
                 image = interface([image])[0]
-                image = np.array(image)
-                # theshold the image to get the mask
-                image[image < 0.1] = 0
-                image[image >= 0.1] = 255
-                image = PIL.Image.fromarray(image.astype(np.uint8))
-                image.save("Try-On/PreprocessedImages/ClothMask/" + filename + ".jpg")
+                # thresholding 
+                channels = image.split()
+                alpha = channels[-1].convert('L')
+                threshold = 5
+                mask = alpha.point(lambda p: p > threshold and 255)
+                mask.save("Try-On/PreprocessedImages/ClothMask/" + filename + ".png")
             else:
                 continue
 
