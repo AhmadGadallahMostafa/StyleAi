@@ -7,13 +7,55 @@ import os
 import time
 from ConditionGeneratorNetwork import ConditionGenerator
 from Dataset import TryOnDataset, DataLoader
-from train_image_generator import get_options
 import torchvision.transforms as transforms
 import numpy as np
 import torch.nn.functional as F
 from ConditionGeneratorNetwork import make_grid
 import torchgeometry as tgm
 from matplotlib import pyplot as plt
+from PIL import Image
+
+def get_options():
+    parser = argparse.ArgumentParser(
+        description='Image Generator Training')
+    # the path to the dataset
+    parser.add_argument('--dataset', type=str, default='Try-On\data', help='path to dataset')
+    # the path to the train_pairs.txt file
+    parser.add_argument('--train_list', type=str, default='train_pairs.txt', help='path to train list')
+    # the path to the test_pairs.txt file
+    parser.add_argument('--test_list', type=str, default='test_pairs.txt', help='path to test list')
+    # batch size
+    parser.add_argument('--batch_size', type=int, default=1, help='batch size')
+
+    return parser.parse_args()
+
+def ndim_tensor2im(image_tensor, imtype=np.uint8, batch=0):
+    image_numpy = image_tensor[batch].cpu().float().numpy()
+    result = np.argmax(image_numpy, axis=0)
+    return result.astype(imtype)
+
+def visualize_segmap(input, multi_channel=True, tensor_out=True, batch=0) :
+    palette = [
+        0, 0, 0, 128, 0, 0, 254, 0, 0, 0, 85, 0, 169, 0, 51,
+        254, 85, 0, 0, 0, 85, 0, 119, 220, 85, 85, 0, 0, 85, 85,
+        85, 51, 0, 52, 86, 128, 0, 128, 0, 0, 0, 254, 51, 169, 220,
+        0, 254, 254, 85, 254, 169, 169, 254, 85, 254, 254, 0, 254, 169, 0
+    ]
+    input = input.detach()
+    if multi_channel :
+        input = ndim_tensor2im(input,batch=batch)
+    else :
+        input = input[batch][0].cpu()
+        input = np.asarray(input)
+        input = input.astype(np.uint8)
+    input = Image.fromarray(input, 'P')
+    input.putpalette(palette)
+
+    if tensor_out :
+        trans = transforms.ToTensor()
+        return trans(input.convert('RGB'))
+
+    return input
 
 def main():
     opt = get_options()
@@ -31,23 +73,28 @@ def main():
     
     # Create a Dataset object and a DataLoader object
     transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
-    dataset = TryOnDataset(root=opt.dataset, mode='test', data_list=opt.test_list, transform=transform, height=1024, width=768)
+    dataset = TryOnDataset(root=opt.dataset, mode='test', data_list=opt.test_list, transform=transform , height=1024, width=768)
     dt = DataLoader(dataset, shuffle=True, batch_size=1)
 
     gauss = tgm.image.GaussianBlur((15, 15), (3, 3)).cuda()
-    for input in dt.data_loader:
+    j = 0
+    for j in range(0, 2000):
         with torch.no_grad():
             # Clothes Input for condition generator
-            cloth = input['cloth'].cuda()
-            cloth_mask = input['cloth_mask']
+            batch = dt.next_batch()
+            cloth = batch['cloth'].cuda()
+            cloth_mask = batch['cloth_mask']
             cloth_mask = torch.FloatTensor((cloth_mask.numpy() > 0.5).astype(np.float32)).cuda()
+            
+            batch = dt.next_batch()
             # Pose Input for condition generator
-            dense_pose = input['dense_pose'].cuda()
-            parse_agnostic = input['parse_agnostic'].cuda()
+            dense_pose = batch['dense_pose'].cuda()
+            parse_agnostic = batch['parse_agnostic'].cuda()
+            original_parse = batch['parse'].cuda()
             # we load the agnositic image 
-            agnostic_image = input['agnostic'].cuda()
+            agnostic_image = batch['agnostic'].cuda()
             # we load the original image
-            real_image = input['image'].cuda()
+            real_image = batch['image'].cuda()
             
             # First we generate the fake map and the warped cloth using the condition generator
             # We need to resize the cloth, cloth_mask, dense_pose and parse_agnostic to the same size used in the training
@@ -103,7 +150,7 @@ def main():
             hor = 2 * flow[:, :, :, 0:1] / (FW / 2 - 1)
             ver = 2 * flow[:, :, :, 1:2] / (FH / 2 - 1)
             # we then concatenate the horizontal and vertical flow components
-            flow_norm = torch.cat([hor, ver], 3)
+            #flow_norm = torch.cat([hor, ver], 3)
             flow_norm = torch.cat([flow[:, :, :, 0:1] / ((96 - 1.0) / 2.0), flow[:, :, :, 1:2] / ((128 - 1.0) / 2.0)], 3)
             # we then add the grid to the flow
             grid = grid + flow_norm
@@ -131,10 +178,27 @@ def main():
             fake_image = ig(torch.cat((agnostic_image, dense_pose, cloth_with_body_removed), dim = 1), new_parse_map)
 
             # show the fake image
-            fake_image_np = fake_image[0].cpu().detach().numpy().transpose(1, 2, 0)
-            plt.imshow(fake_image_np)
-            plt.show()
-            print("wedw")
+            # original_image_np = real_image[0].cpu().detach().numpy().transpose(1, 2, 0)
+            # plt.imshow(original_image_np)
+            # plt.show()
+
+            # show clothes 
+            # cloth_np = cloth[0].cpu().detach().numpy().transpose(1, 2, 0)
+            # plt.imshow(cloth_np)
+            # plt.show()
+
+            # show the fake image
+            #fake_image_np = fake_image[0].cpu().detach().numpy().transpose(1, 2, 0)
+            #plt.imshow(fake_image_np)
+            #plt.show()
+
+            grid = make_image_grid([real_image[0].cpu(), cloth[0].cpu(), fake_image[0].cpu()], nrow=3)
+            save_image(grid, os.path.join('output_image_generator/', str(j) + '.png'))
+
+            grid = make_image_grid([cloth[0].cpu(), cloth_with_body_removed[0].cpu(), visualize_segmap(fake_map_gaussian).detach().cpu(), visualize_segmap(original_parse).detach().cpu()], nrow=2)
+            save_image(grid, os.path.join('output_condition_generator/', str(j) + '.png'))
+            j += 1
+            print("Finished iteration: ", j)
 
 
 
