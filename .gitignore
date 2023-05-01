@@ -87,3 +87,5 @@ logs/
 *.jpeg
 
 
+# ignore openpose folder in Try-on
+Try-on/openpose
