@@ -89,3 +89,6 @@ logs/
 
 # ignore openpose folder in Try-on
 Try-on/openpose
+
+# ignore all json file
+*.json
