@@ -73,6 +73,7 @@ class PreProcessing:
 
     def get_openpose(self):
         # switch directory to openpose
+        old_dir = os.getcwd()
         os.chdir("Try-On/openPose")
         exe_path = "bin/OpenPoseDemo.exe"
         input_path =  "../../" + self.input_path_image
@@ -80,13 +81,30 @@ class PreProcessing:
         output_json_path =  "../../" + "Try-On\PreprocessedImages\OpenPosejson"
         command = exe_path + " --image_dir " + input_path + " --disable_blending --write_json " + output_json_path + " --display 0 -write_images " + output_path + " --num_gpu 1 --hand --num_gpu_start 0"
         subprocess.run([exe_path, "--image_dir", input_path, "--disable_blending", "--write_json", output_json_path, "--display", "0", "--write_images", output_path, "--num_gpu", "1", "--hand", "--num_gpu_start", "0"])
+        # switch directory back to Try-On
+        os.chdir(old_dir)
 
+    def get_parse(self):
+        parser_path = "Try-On/HumanParse/simple_extractor.py"
+        input_path = self.input_path_image
+        output_path = "Try-On/PreprocessedImages/Parse"
+        command = "python " + parser_path + " --dataset lip --model-restore Try-On/HumanParse/checkpoints/final.pth --input-dir " + input_path + " --output-dir " + output_path
+        os.system(command)
+
+    def get_parse_without_upper_body(self):
+        parse_agnostic_path = "Try-On/ParseAgnostic/parse_agnostic.py"
+        input_path = "Try-On/PreprocessedImages/Parse/"
+        json_path = "Try-On/PreprocessedImages/OpenPosejson"
+        output_path = "Try-On/PreprocessedImages/ParseWithoutUpper"
+        command = "python " + parse_agnostic_path + " --image_path " + input_path + " --json_path " + json_path + " --output_path " + output_path
+        os.system(command)
 
     def run(self):
         self.get_densepose()
         self.get_mask()
         self.get_openpose()
-        
+        self.get_parse()
+        self.get_parse_without_upper_body()
 
 def main():
     preProcessing = PreProcessing()
