@@ -1,23 +1,14 @@
+import torch.nn.functional as F
 import torch 
 import torch.nn as nn
-import numpy as np
-import torch.nn.functional as F
-import enum
-import functools
-import os
+import torchvision.models as models
 from torch.nn.utils import spectral_norm
 
-
-# in this file we define the network architecture of the image generator 
-# This network takes 4 inputs 
-# 1. the fake segmentation map generated bt the condition generator
-# 2. Densepose map 
-# 3. Parse Agnostic image
-# 4. warped cloth image
-# This network will consists of  series of SPADE rensent blocks 
+# clear the cache
+torch.cuda.empty_cache()
 
 
-# first we define the SPADE normalization layer
+
 class SPADENormalization(nn.Module):
     def __init__(self, noise_channels, segmentation_map_channels):
         super(SPADENormalization, self).__init__()
@@ -66,11 +57,13 @@ class SPADEResnetBlock(nn.Module):
     def forward(self, x, segmentation_map):
         # first we define the shortcut connection
         shortcut = x
+        # make the segmentation map the same size as the input
+        segmentation_map = F.interpolate(segmentation_map, size = x.shape[2:], mode = 'nearest')
         if hasattr(self, 'conv_shortcut'):
             shortcut = self.norm_shortcut(x, segmentation_map)
             shortcut = self.conv_shortcut(shortcut)
         # first convolution layer
-        conv1 = self.norm1(shortcut, segmentation_map)
+        conv1 = self.norm1(x, segmentation_map)
         conv1 = self.LRelu(conv1)
         conv1 = self.conv1(conv1)
         #####
@@ -78,35 +71,38 @@ class SPADEResnetBlock(nn.Module):
         conv2 = self.LRelu(conv2)
         conv2 = self.conv2(conv2)
         # add the input to the output of the second convolution layer
-        output = x + conv2
+        output = shortcut + conv2
         return output
 
 
-# next we define the image generator network
-class ImageGeneratorNetwork(nn.Module):
+# we wil define the a reduced version of the image generator network
+# we will use the same architecture as the image generator network but we will reduce the number of layers
+# we will also reduce the number of channels in the layers
+# we will also reduce the number of residual blocks
+class RImageGeneratorNetwork(nn.Module):
     def __init__(self, input_channels):
-        super(ImageGeneratorNetwork, self).__init__()
+        super(RImageGeneratorNetwork, self).__init__()
         # we define the resnet blocks that form our network 
         self.up_sample = nn.Upsample(scale_factor = 2, mode = 'nearest')
-        self.SpadeResnetBlock1 = SPADEResnetBlock(1024, 1024)
-        self.SpadeResnetBlock2 = SPADEResnetBlock(1024 + 16, 1024)
-        self.SpadeResnetBlock3 = SPADEResnetBlock(1024 + 16, 1024)
-        self.SpadeResnetBlock4 = SPADEResnetBlock(1024 + 16, 512)
-        self.SpadeResnetBlock5 = SPADEResnetBlock(512 + 16, 256)
-        self.SpadeResnetBlock6 = SPADEResnetBlock(256 + 16, 128)
-        self.SpadeResnetBlock7 = SPADEResnetBlock(128 + 16, 64)
-        self.SpadeResnetBlock8 = SPADEResnetBlock(64 + 16, 32)
+        self.SpadeResnetBlock1 = SPADEResnetBlock(128, 128)
+        self.SpadeResnetBlock2 = SPADEResnetBlock(128 + 16, 128)
+        #self.SpadeResnetBlock3 = SPADEResnetBlock(128 + 16, 128)
+        self.SpadeResnetBlock4 = SPADEResnetBlock(128 + 16, 64)
+        self.SpadeResnetBlock5 = SPADEResnetBlock(64 + 16, 32)
+        self.SpadeResnetBlock6 = SPADEResnetBlock(32 + 16, 16)
+        self.SpadeResnetBlock7 = SPADEResnetBlock(16 + 16, 16)
+        #self.SpadeResnetBlock8 = SPADEResnetBlock(16 + 16, 16)
         # we define the convolution layers that form our network    
-        self.conv1 = nn.Conv2d(input_channels, 1024, kernel_size = 3, padding = 1)
+        self.conv1 = nn.Conv2d(input_channels, 128, kernel_size = 3, padding = 1)
         self.conv2 = nn.Conv2d(input_channels, 16, kernel_size = 3, padding = 1)
-        self.conv3 = nn.Conv2d(input_channels, 16, kernel_size = 3, padding = 1)
+        #self.conv3 = nn.Conv2d(input_channels, 16, kernel_size = 3, padding = 1)
         self.conv4 = nn.Conv2d(input_channels, 16, kernel_size = 3, padding = 1)
         self.conv5 = nn.Conv2d(input_channels, 16, kernel_size = 3, padding = 1)
         self.conv6 = nn.Conv2d(input_channels, 16, kernel_size = 3, padding = 1)
         self.conv7 = nn.Conv2d(input_channels, 16, kernel_size = 3, padding = 1)
-        self.conv8 = nn.Conv2d(input_channels, 16, kernel_size = 3, padding = 1)
+        #self.conv8 = nn.Conv2d(input_channels, 16, kernel_size = 3, padding = 1)
         # last convolution layer to generate the output image wwith 3 channels
-        self.conv9 = nn.Conv2d(32 , 3, kernel_size = 3, padding = 1)
+        self.conv9 = nn.Conv2d(16 , 3, kernel_size = 3, padding = 1)
         # last activation layer to generate the output image
         self.LRelu = nn.LeakyReLU(0.2)
         self.tanh = nn.Tanh()
@@ -125,8 +121,8 @@ class ImageGeneratorNetwork(nn.Module):
         x = self.SpadeResnetBlock2(torch.cat((self.conv2(feature_pyramid[1]), x), 1), segmentation_map) 
         # second upsampling layer
         x = self.up_sample(x)
-        # third convolution layer
-        x = self.SpadeResnetBlock3(torch.cat((self.conv3(feature_pyramid[2]), x), 1), segmentation_map)
+        # # third convolution layer
+        # x = self.SpadeResnetBlock3(torch.cat((self.conv3(feature_pyramid[2]), x), 1), segmentation_map)
         # third upsampling layer
         x = self.up_sample(x)
         # fourth convolution layer
@@ -145,88 +141,20 @@ class ImageGeneratorNetwork(nn.Module):
         x = self.SpadeResnetBlock7(torch.cat((self.conv7(feature_pyramid[6]), x), 1), segmentation_map)
         # seventh upsampling layer
         x = self.up_sample(x)
-        # eighth convolution layer
-        x = self.SpadeResnetBlock8(torch.cat((self.conv8(feature_pyramid[7]), x), 1), segmentation_map)
+        # # eighth convolution layer
+        # x = self.SpadeResnetBlock8(torch.cat((self.conv8(feature_pyramid[7]), x), 1), segmentation_map)
         # last convolution layer
         x = self.LRelu(x)
         x = self.conv9(x)
         # last activation layer
         x = self.tanh(x)
         return x
-
-class DiscriminatorNetwork(nn.Module):
-    def __init__(self, input_channels):
-        super(DiscriminatorNetwork, self).__init__()
-        # first layer of the discriminator
-        self.conv1 = nn.Conv2d(input_channels, 64, kernel_size = 4, stride = 2, padding = 2)
-        self.leaky_relu1 = nn.LeakyReLU(0.2)
-        # second layer of the discriminator
-        # spectral normalization is used to stabilize the training process and make the only learnable paramter the lipschitz constant
-        self.conv2 = spectral_norm(nn.Conv2d(64, 128, kernel_size = 4, stride = 2, padding = 2, bias = False))
-        self.n2 = nn.InstanceNorm2d(128)
-        self.leaky_relu2 = nn.LeakyReLU(0.2)
-        # third layer of the discriminator
-        self.conv3 = spectral_norm(nn.Conv2d(128, 256, kernel_size = 4, stride = 2, padding = 2, bias = False))
-        self.n3 = nn.InstanceNorm2d(256)
-        self.leaky_relu3 = nn.LeakyReLU(0.2)
-        # fourth layer of the discriminator
-        self.conv4 = nn.Conv2d(256, 1, kernel_size = 4, stride = 1, padding = 2)
-
-        
-
-    def forward(self, x):
-        # first layer of the discriminator
-        x = self.leaky_relu1(self.conv1(x))
-        # second layer of the discriminator
-        x = self.leaky_relu2(self.n2(self.conv2(x)))
-        # third layer of the discriminator
-        x = self.leaky_relu3(self.n3(self.conv3(x)))
-        # fourth layer of the discriminator
-        x = self.conv4(x)
-        return x
-
-
-# we now will write an encapsuation discriminator that will be contain multiple discriminators
-# this will be used to train the generator to generate realistic results
-class EncapsulatedDiscriminator(nn.Module):
-    def __init__(self, input_channels):
-        super(EncapsulatedDiscriminator, self).__init__()
-        # we will now define the discriminators
-        self.discriminator1 = DiscriminatorNetwork(input_channels)
-        self.discriminator2 = DiscriminatorNetwork(input_channels)
-        self.downsample = nn.AvgPool2d(3, stride = 2, padding = [1, 1], count_include_pad = False)
-
-        
-    def forward(self, x):
-        # we will now define the forward pass
-        # now we will get the output from the first discriminator
-        out1 = self.discriminator1(x)
-        # now we will down sample the input again
-        x = self.downsample(x)
-        # now we will get the output from the second discriminator
-        out2 = self.discriminator2(x)
-        # now we will return the output
-        return out1, out2
+    
 
 def main():
-    image_generator_network = ImageGeneratorNetwork(9)
-    d = EncapsulatedDiscriminator(10)
+    image_generator_network = RImageGeneratorNetwork(9)
     print('Number of parameters in the ImageGeneratorNetwork network: ', sum(p.numel() for p in image_generator_network.parameters() if p.requires_grad))
-    print('Number of parameters in the EncapsulatedDiscriminator network: ', sum(p.numel() for p in d.parameters() if p.requires_grad))
 
 
 if __name__ == '__main__':
     main()
-
-
-
-
-
-
-
-
-
-        
-    
-
-

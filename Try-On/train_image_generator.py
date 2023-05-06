@@ -21,7 +21,7 @@ from matplotlib import pyplot as plt
 # import gassiuaan blur 
 from scipy.ndimage.filters import gaussian_filter
 import torchgeometry as tgm
-
+from ImageGeneratorReduced import RImageGeneratorNetwork
 
 
 
@@ -80,7 +80,7 @@ def get_options():
     parser.add_argument('--test_list', type=str,
                         default='test_pairs.txt', help='path to test list')
     # batch size
-    parser.add_argument('--batch_size', type=int, default=1, help='batch size')
+    parser.add_argument('--batch_size', type=int, default=2, help='batch size')
 
     return parser.parse_args()
 
@@ -89,8 +89,8 @@ def train_generator(data_loader_train, condition_generator, image_generator, dis
     # setting the image generator and the discriminator to train mode
     image_generator.train()
     discriminator.train()
-    # setting the condition generator to eval mode
     condition_generator.eval()
+    # setting the condition generator to eval mode
     # send the models to the GPU
     image_generator.cuda()
     discriminator.cuda()
@@ -108,10 +108,12 @@ def train_generator(data_loader_train, condition_generator, image_generator, dis
 
     # we start the training loop
     for step in tqdm(range(0, 200000)):
+        condition_generator.cuda()
         start_time = time.time()
         # load batch from the data loader 
         batch = data_loader_train.next_batch() 
         # we get the inputs of our models from the batch
+
         # Clothes Input for condition generator
         cloth = batch['cloth'].cuda()
         cloth_mask = batch['cloth_mask']
@@ -135,7 +137,6 @@ def train_generator(data_loader_train, condition_generator, image_generator, dis
 
             fake_map, warped_cloth, warped_cloth_mask, flow_list = condition_generator(torch.cat((cloth_resized, cloth_mask_resized), dim=1), torch.cat((parse_agnostic_resized, dense_pose_resized), dim=1))
 
-
             tmp = torch.ones_like(fake_map.detach())
             tmp[:, 3:4, :, :] = warped_cloth_mask
             fake_map = fake_map * tmp
@@ -147,10 +148,8 @@ def train_generator(data_loader_train, condition_generator, image_generator, dis
             flow = flow_list[-1]
             FW, FH = flow.size(2), flow.size(1)
             flow = F.interpolate(flow.permute(0, 3, 1, 2), size=(H, W), mode='bilinear', align_corners=True).permute(0, 2, 3, 1)
-            hor = 2 * flow[:, :, :, 0:1] / (FW / 2 - 1)
-            ver = 2 * flow[:, :, :, 1:2] / (FH / 2 - 1)
             # we then concatenate the horizontal and vertical flow components
-            flow_norm = torch.cat([hor, ver], 3)
+            flow_norm = torch.cat([flow[:, :, :, 0:1] / ((96 - 1.0) / 2.0), flow[:, :, :, 1:2] / ((128 - 1.0) / 2.0)], 3)
             # we then add the grid to the flow
             grid = grid + flow_norm
             # we then warp the cloth
@@ -160,8 +159,8 @@ def train_generator(data_loader_train, condition_generator, image_generator, dis
 
             # Show the warped cloth
             warped_cloth_np = warped_cloth[0].cpu().detach().numpy().transpose(1, 2, 0)
-            plt.imshow(warped_cloth_np)
-            plt.show()
+            # plt.imshow(warped_cloth_np)
+            # plt.show()
 
 
             # now we will upsample the resolution of fake map to 1024 x 768
@@ -173,8 +172,8 @@ def train_generator(data_loader_train, condition_generator, image_generator, dis
 
             # save the image
             fake_map_np = fake_map[0].cpu().detach().numpy().transpose(1, 2, 0)
-            plt.imshow(fake_map_np)
-            plt.show()
+            # plt.imshow(fake_map_np)
+            # plt.show()
 
 
             # occulusion removal    
@@ -184,8 +183,8 @@ def train_generator(data_loader_train, condition_generator, image_generator, dis
 
             # show cloth with body removed
             cloth_with_body_removed_np = cloth_with_body_removed[0].cpu().detach().numpy().transpose(1, 2, 0)
-            plt.imshow(cloth_with_body_removed_np)
-            plt.show()
+            # plt.imshow(cloth_with_body_removed_np)
+            # plt.show()
 
             # we need to reduce the channels of the fake map from 13 to 7 so we can feed it to the image generator
             # parse map
@@ -213,6 +212,12 @@ def train_generator(data_loader_train, condition_generator, image_generator, dis
 
         # now wwe need to call the forward function of the image generator to get the output
         fake_image = image_generator(torch.cat((agnostic_image, dense_pose, warped_cloth), dim = 1), new_parse_map)
+
+        # show the fake image
+        fake_image_np = fake_image[0].cpu().detach().numpy().transpose(1, 2, 0)
+        # plt.imshow(fake_image_np)
+        # plt.show()
+
         # now we will call the discriminator to get the output
         pred_fake_1, pred_fake_2 = discriminator(torch.cat((fake_image, new_parse_map), dim=1))
         pred_real_1, pred_real_2 = discriminator(torch.cat((real_image, new_parse_map), dim=1))
@@ -223,20 +228,30 @@ def train_generator(data_loader_train, condition_generator, image_generator, dis
         # fearture matching loss
         loss_feature_matching = criterion_L1(pred_real_1, pred_fake_1) + criterion_L1(pred_real_2, pred_fake_2)
         loss_feature_matching = loss_feature_matching * 5
-        # vgg loss
-        loss_vgg = criterion_VGG(fake_image, real_image) * 10
+        # vgg loss but we reduce resolution to fit in memory
+        fake_image_reduced = F.interpolate(fake_image, size=(256, 192), mode='bilinear', align_corners=True)
+        real_image_reduced = F.interpolate(real_image, size=(256, 192), mode='bilinear', align_corners=True)
+        loss_vgg = criterion_VGG(fake_image_reduced, real_image_reduced) * 10
         # take mean of all the losses
         total_loss_gen = (loss_gan + loss_feature_matching + loss_vgg) / 3
+        
+        optimizer_image_generator.zero_grad()
+        total_loss_gen.backward()
+        optimizer_image_generator.step()
+
+        with torch.no_grad():
+            fake_image = image_generator(torch.cat((agnostic_image, dense_pose, warped_cloth), dim = 1), new_parse_map).detach()
+            fake_image.requires_grad_(True)
+
+        # now we will call the discriminator to get the output
+        pred_fake_1, pred_fake_2 = discriminator(torch.cat((fake_image, new_parse_map), dim=1))
+        pred_real_1, pred_real_2 = discriminator(torch.cat((real_image, new_parse_map), dim=1))
+
 
         # now will calculate the losses for the discriminator
         loss_fake = criterion_GAN(pred_fake_1, False)
         loss_real = criterion_GAN(pred_real_1, True)
         total_loss_disc = (loss_fake + loss_real) / 2
-
-
-        optimizer_image_generator.zero_grad()
-        total_loss_gen.backward(retain_graph=True)
-        optimizer_image_generator.step()
 
         optimizer_discriminator.zero_grad()
         total_loss_disc.backward()
@@ -273,7 +288,7 @@ def main():
         # create the condtion generator model taht will feed the input to the image generator
         condition_generator = ConditionGenerator(pose_channels= 16, cloth_channels = 4, output_channels = 13)
         # Image generator model
-        image_generator = ImageGeneratorNetwork(input_channels = 9)
+        image_generator = RImageGeneratorNetwork(input_channels = 9)
         # discriminator model
         discriminator = EncapsulatedDiscriminator(input_channels = 10)
         # we start the training process
