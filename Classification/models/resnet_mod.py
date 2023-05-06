@@ -24,11 +24,14 @@ class MultiHeadResNet(nn.Module):
             print('Freezing intermediate layer parameters...')
         
         # change the final layers according to the number of categories
-        self.l0 = nn.Linear(2048, 5) # for gender
-        self.l1 = nn.Linear(2048, 11) # for subCategory
-        self.l2 = nn.Linear(2048, 46) # for articleType
-        self.l3 = nn.Linear(2048, 46) # for baseColour
-        self.l4 = nn.Linear(2048, 7) # for usage
+        # self.l0 = nn.Linear(2048, 5) # for gender
+        # self.l1 = nn.Linear(2048, 11) # for subCategory
+        # self.l2 = nn.Linear(2048, 46) # for articleType
+        # self.l3 = nn.Linear(2048, 46) # for baseColour
+        # self.l4 = nn.Linear(2048, 7) # for usage
+
+        # for 19 categories
+        self.l0 = nn.Linear(2048, 19)
 
     def forward(self, x):
         # get the batch size only, ignore (c, h, w)
@@ -36,12 +39,15 @@ class MultiHeadResNet(nn.Module):
         # get model output before the final layer
         x = self.model(x)
         x = F.adaptive_avg_pool2d(x, 1).reshape(batch, -1)
+        # l0 = self.l0(x)
+        # l1 = self.l1(x)
+        # l2 = self.l2(x)
+        # l3 = self.l3(x)
+        # l4 = self.l4(x)
+
+        # for 19 categories
         l0 = self.l0(x)
-        l1 = self.l1(x)
-        l2 = self.l2(x)
-        l3 = self.l3(x)
-        l4 = self.l4(x)
-        return l0, l1, l2, l3, l4
+        return l0
 
 # model = MultiHeadResNet(pre_trained = True, requires_grad = False)
 # model.to(torch.device("cuda:0" if torch.cuda.is_available() else "cpu"))
