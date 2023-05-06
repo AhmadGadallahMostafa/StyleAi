@@ -95,7 +95,7 @@ def main():
         'Upper-clothes': 'Upper-clothes',
         'Coat': 'Coat',
         'Socks': 'Socks',
-        'Pants': ['Pants', 'Skirt', 'Jumpsuits'],
+        'Pants': ['Pants', 'Skirt', 'Jumpsuits', 'Dress'],
         'Scarf': 'Scarf',
         'Face': 'Face',
         'Left-arm': 'Left-arm',
