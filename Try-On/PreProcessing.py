@@ -91,7 +91,7 @@ class PreProcessing:
         command = "python " + parser_path + " --dataset lip --model-restore Try-On/HumanParse/checkpoints/final.pth --input-dir " + input_path + " --output-dir " + output_path
         os.system(command)
 
-    def get_parse_without_upper_body(self):
+    def get_parse_agnostic(self):
         parse_agnostic_path = "Try-On/ParseAgnostic/parse_agnostic.py"
         input_path = "Try-On/PreprocessedImages/Parse/"
         json_path = "Try-On/PreprocessedImages/OpenPosejson"
@@ -99,12 +99,29 @@ class PreProcessing:
         command = "python " + parse_agnostic_path + " --image_path " + input_path + " --json_path " + json_path + " --output_path " + output_path
         os.system(command)
 
+    def get_agnostic(self):
+        agnostic_path = "Try-On/HumanAgnostic/HumanAgnostic.py"
+        input_path = self.input_path_image
+        output_path = "Try-On/PreprocessedImages/Agnostic"
+        json_path = "Try-On/PreprocessedImages/OpenPosejson"
+        parse_path = "Try-On/PreprocessedImages/Convertedparse"
+        command = "python " + agnostic_path + " --image_path " + input_path + " --output_path " + output_path + " --json_path " + json_path + " --parse_path " + parse_path
+        os.system(command)
+
+    def convert_parse(self):
+        convert_parse_path = "Try-On/ConvertParse.py"
+        parse_path = "Try-On/PreprocessedImages/Parse"
+        command = "python " + convert_parse_path + " --parse_path " + parse_path
+        os.system(command)
+
     def run(self):
         self.get_densepose()
         self.get_mask()
         self.get_openpose()
         self.get_parse()
-        self.get_parse_without_upper_body()
+        self.convert_parse()
+        self.get_parse_agnostic()
+        self.get_agnostic()
 
 def main():
     preProcessing = PreProcessing()
