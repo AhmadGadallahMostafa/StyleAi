@@ -22,7 +22,9 @@ from matplotlib import pyplot as plt
 from scipy.ndimage.filters import gaussian_filter
 import torchgeometry as tgm
 from ImageGeneratorReduced import RImageGeneratorNetwork
-
+# iport save image
+from torchvision.utils import save_image
+from torchvision.utils import make_grid as make_image_grid
 
 
 def ndim_tensor2im(image_tensor, imtype=np.uint8, batch=0):
@@ -84,7 +86,7 @@ def get_options():
 
     return parser.parse_args()
 
-
+ 
 def train_generator(data_loader_train, condition_generator, image_generator, discriminator, epochs, data_loader_val, writer, batch_size):
     # setting the image generator and the discriminator to train mode
     image_generator.train()
@@ -210,13 +212,44 @@ def train_generator(data_loader_train, condition_generator, image_generator, dis
 
             new_parse_map = new_parse_map.detach()
 
+        # show agnostic image
+        # agnostic_image_np = agnostic_image[0].cpu().detach().numpy().transpose(1, 2, 0)
+        # plt.imshow(agnostic_image_np)
+        # plt.show()
+
+        # # show dense pose
+        # dense_pose_np = dense_pose[0].cpu().detach().numpy().transpose(1, 2, 0)
+        # plt.imshow(dense_pose_np)
+        # plt.show()
+
+        # # show warped cloth
+        # warped_cloth_np = warped_cloth[0].cpu().detach().numpy().transpose(1, 2, 0)
+        # plt.imshow(warped_cloth_np)
+        # plt.show() 
+
+
         # now wwe need to call the forward function of the image generator to get the output
         fake_image = image_generator(torch.cat((agnostic_image, dense_pose, warped_cloth), dim = 1), new_parse_map)
 
         # show the fake image
-        fake_image_np = fake_image[0].cpu().detach().numpy().transpose(1, 2, 0)
+        # fake_image_np = fake_image[0].cpu().detach().numpy().transpose(1, 2, 0)
         # plt.imshow(fake_image_np)
         # plt.show()
+        
+        # write the image to tensorboard
+        writer.add_image('fake_image1', fake_image[0])
+        writer.add_image('real_image1', real_image[0])
+
+        writer.add_image('fake_image2', fake_image[1])
+        writer.add_image('real_image2', real_image[1])
+
+        # write to disk 
+        if step % 1000 == 0:
+            grid_save_1 = make_image_grid([real_image[0].cpu(), cloth[0].cpu(), fake_image[0].cpu()], nrow=3)
+            grid_save_2 = make_image_grid([real_image[1].cpu(), cloth[1].cpu(), fake_image[1].cpu()], nrow=3)
+            save_image(grid_save_1, f'./Try-On\image_gen_output/{step}_1.png')
+            save_image(grid_save_2, f'./Try-On\image_gen_output/{step}_2.png')
+
 
         # now we will call the discriminator to get the output
         pred_fake_1, pred_fake_2 = discriminator(torch.cat((fake_image, new_parse_map), dim=1))
@@ -253,22 +286,27 @@ def train_generator(data_loader_train, condition_generator, image_generator, dis
         loss_real = criterion_GAN(pred_real_1, True)
         total_loss_disc = (loss_fake + loss_real) / 2
 
+
+
         optimizer_discriminator.zero_grad()
         total_loss_disc.backward()
         optimizer_discriminator.step()
 
-        if (step + 1) % 100 == 0:
+        if (step + 1) % 50 == 0:
             t = time.time() - start_time
-            print("step: %d, time: %d, loss_G: %f, loss_D: %f" % (step + 1, t, total_loss_gen.item(), total_loss_disc.item()))
+            # print all the losses then total losses in one print gan loss, feature matching loss, vgg loss, total loss
+            print("step: %d, time: %d, gan loss: %f, feature matching loss: %f, vgg loss: %f, total loss: %f" % (step, t, loss_gan.item(), loss_feature_matching.item(), loss_vgg.item(), total_loss_gen.item()))
+            print("step: %d, time: %d, loss fake: %f, loss real: %f, total loss: %f" % (step, t, loss_fake.item(), loss_real.item(), total_loss_disc.item()))
+
 
         if (step + 1) % 100 == 0:
-            writer.add_scalar('loss_G', total_loss_gen.item(), step)
+            writer.add_scalar('total_loss_gen', total_loss_gen.item(), step)
             writer.add_scalar('loss_D', total_loss_disc.item(), step)
 
         if (step + 1) % 1000 == 0:
             # save the model
             print("saving the model")
-            torch.save(condition_generator.state_dict(),'image_generator.pth')
+            torch.save(image_generator.state_dict(),'image_generator.pth')
             torch.save(discriminator.state_dict(), 'discriminator_image_generator.pth')        
 
 
@@ -296,9 +334,12 @@ def main():
         # Tensorboard writer
         writer = SummaryWriter(log_dir="logs")
         # read the model if it exists
-        if os.path.exists('condition_generator.pth'):
-            print('loading the condition generator model')
-            condition_generator.load_state_dict(torch.load('condition_generator.pth'))
+        if os.path.exists('image_generator.pth'):
+            print('loading the image generator model')
+            image_generator.load_state_dict(torch.load('image_generator.pth'))
+        if os.path.exists('discriminator_image_generator.pth'):
+            print('loading the discriminator model')
+            discriminator.load_state_dict(torch.load('discriminator_image_generator.pth'))
         
 
         train_generator(data_loader_train, condition_generator, image_generator, discriminator, opt.epochs, data_loader_val, writer, opt.batch_size)
