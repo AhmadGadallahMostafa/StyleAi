@@ -74,12 +74,6 @@ def validate(model, dataloader, loss_fn, dataset, device):
         counter += 1
         
         # extract the features and labels
-        # image = data['image'].to(device)
-        # gender = data['gender'].to(device)
-        # sub = data['sub'].to(device)
-        # article = data['article'].to(device)
-        # color = data['color'].to(device)
-        # usage = data['usage'].to(device)
 
         image = data['image'].to(device)
         category = data['category'].to(device)

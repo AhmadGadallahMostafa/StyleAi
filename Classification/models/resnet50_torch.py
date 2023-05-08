@@ -103,8 +103,8 @@ class ResNet50(nn.Module):
             layers.append(block(self.in_channels, intermediate_channels)) # 256 -> 64, 64*4 (256) again
         return nn.Sequential(*layers)
     
-# # ResNet50
-# model = ResNet50(ResNetBlock50, 3, 1000, include_top = True)
+# ResNet50
+# model = ResNet50(ResNetBlock50, 3, 1000, include_top = False)
 # model.to(torch.device("cuda:0" if torch.cuda.is_available() else "cpu"))
 # # compare with torchvision.models.resnet50
 # resnet50_torch = models.resnet50(weights = ResNet50_Weights.IMAGENET1K_V2)
