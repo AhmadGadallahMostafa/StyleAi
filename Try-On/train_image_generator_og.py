@@ -7,7 +7,7 @@ from Dataset import TryOnDataset, DataLoader
 from ImageGeneratorNetworkOG import ImageGeneratorNetwork, EncapsulatedDiscriminator
 from PIL import Image
 from ConditionGeneratorNetwork import ConditionGenerator
-from LossesConditionGenerator import GANLoss, LossVGG
+from LossesConditionGenerator import GANLoss, LossVGG, SPADEGenLoss, SPADEDiscLoss
 # imprt tensorboard
 # from torch.utils.tensorboard import SummaryWriter
 import time
@@ -26,7 +26,6 @@ import torchgeometry as tgm
 from torchvision.utils import save_image
 from torchvision.utils import make_grid as make_image_grid
 
-from sync_batchnorm import DataParallelWithCallback
 
 def ndim_tensor2im(image_tensor, imtype=np.uint8, batch=0):
     image_numpy = image_tensor[batch].cpu().float().numpy()
@@ -102,19 +101,15 @@ def train_generator(data_loader_train, condition_generator, image_generator, dis
     optimizer_image_generator = torch.optim.Adam(image_generator.parameters(), lr=0.0001, betas=(0.5, 0.999))
     optimizer_discriminator = torch.optim.Adam(discriminator.parameters(), lr=0.0004, betas=(0.5, 0.999))
     # we can also use the learning rate scheduler to decrease the learning rate as the training process goes on
-    scheduler_image_generator = torch.optim.lr_scheduler.StepLR(optimizer_image_generator, step_size=1000, gamma=0.1)
-    scheduler_discriminator = torch.optim.lr_scheduler.StepLR(optimizer_discriminator, step_size=1000, gamma=0.1)
+    #scheduler_image_generator = torch.optim.lr_scheduler.StepLR(optimizer_image_generator, step_size=1000, gamma=0.1)
+    #scheduler_discriminator = torch.optim.lr_scheduler.StepLR(optimizer_discriminator, step_size=1000, gamma=0.1)
     # we define the loss functions
-    criterion_GAN = GANLoss()
+    criterion_GAN_Disc = SPADEDiscLoss()
+    criterion_GAN_Gen = SPADEGenLoss()
     criterion_VGG = LossVGG()
     criterion_L1 = nn.L1Loss()
-
-    condition_generator = DataParallelWithCallback(condition_generator, device_ids=[0])
-    image_generator = DataParallelWithCallback(image_generator, device_ids=[0])
-    discriminator = DataParallelWithCallback(discriminator, device_ids=[0])
-    criterion_GAN = DataParallelWithCallback(criterion_GAN, device_ids=[0])
-    criterion_VGG = DataParallelWithCallback(criterion_VGG, device_ids=[0])
-    criterion_L1 = DataParallelWithCallback(criterion_L1, device_ids=[0])
+    
+    
 
     # we start the training loop
     for step in tqdm(range(17039 + 10500 + 20899, 200000)):
@@ -261,15 +256,15 @@ def train_generator(data_loader_train, condition_generator, image_generator, dis
         real_image_reduced = F.interpolate(real_image, size=(512, 384), mode='nearest')
         
         # now we will call the discriminator to get the output
-        pred_fake_1, pred_fake_2 = discriminator(torch.cat((fake_image, new_parse_map_reduced), dim=1))
-        pred_real_1, pred_real_2 = discriminator(torch.cat((real_image_reduced, new_parse_map_reduced), dim=1))
+        pred_fake_1, pred_fake_2 = discriminator(torch.cat((new_parse_map_reduced, fake_image), dim=1))
+        pred_real_1, pred_real_2 = discriminator(torch.cat((new_parse_map_reduced, real_image_reduced), dim=1))
 
         # here we wil lstart the losses calculations for the image generator
         # we now calculate the gan loss
-        loss_gan = criterion_GAN(pred_fake_1, True)
+        loss_gan = (criterion_GAN_Gen(pred_fake_1) + criterion_GAN_Gen(pred_fake_2)) / 2
         # fearture matching loss
-        loss_feature_matching = criterion_L1(pred_real_1, pred_fake_1) + criterion_L1(pred_real_2, pred_fake_2)
-        loss_feature_matching = loss_feature_matching * 5
+        loss_feature_matching = (criterion_L1(pred_real_1, pred_fake_1) + criterion_L1(pred_real_2, pred_fake_2)) / 2
+        loss_feature_matching = loss_feature_matching * 10
         # vgg loss but we reduce resolution to fit in memory
         loss_vgg = criterion_VGG(fake_image, real_image_reduced) * 10
         # take mean of all the losses
@@ -289,9 +284,7 @@ def train_generator(data_loader_train, condition_generator, image_generator, dis
 
 
         # now will calculate the losses for the discriminator
-        loss_fake = criterion_GAN(pred_fake_1, False)
-        loss_real = criterion_GAN(pred_real_1, True)
-        total_loss_disc = (loss_fake + loss_real) / 2
+        total_loss_disc = (criterion_GAN_Disc(pred_real_1, pred_fake_1) + criterion_GAN_Disc(pred_real_2, pred_fake_2)) / 2
 
         optimizer_discriminator.zero_grad()
         total_loss_disc.backward()
@@ -309,7 +302,7 @@ def train_generator(data_loader_train, condition_generator, image_generator, dis
             t = time.time() - start_time
             # print all the losses then total losses in one print gan loss, feature matching loss, vgg loss, total loss
             print("step: %d, time: %d, gan loss: %f, feature matching loss: %f, vgg loss: %f, total loss: %f" % (step, t, loss_gan.item(), loss_feature_matching.item(), loss_vgg.item(), total_loss_gen.item()))
-            print("step: %d, time: %d, loss fake: %f, loss real: %f, total loss: %f" % (step, t, loss_fake.item(), loss_real.item(), total_loss_disc.item()))
+            print("step: %d, time: %d, total loss discriminator: %f" % (step, t, total_loss_disc.item()))
 
 
         # if (step + 1) % 100 == 0:

@@ -92,3 +92,13 @@ class GANLoss(nn.Module):
             return self.loss_fn(input[-1], target_tensor)
         
 
+class disc_loss(nn.Module):
+    def forward(self, real, fake):
+        # `real` is the output from the discriminator when real images are passed
+        # `fake` is the output from the discriminator when fake images are passed
+        return F.relu(1 - real).mean() + F.relu(1 + fake).mean()
+        
+class gen_loss(nn.Module):
+    def forward(self, fake):
+        # `fake` is the output from the discriminator when fake images are passed
+        return -1 * fake.mean()
