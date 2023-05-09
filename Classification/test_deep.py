@@ -2,7 +2,7 @@ import pandas as pd
 import torch
 import torch.optim as optim
 
-from utils.dataset import train_valid_split, FashionDataset
+from utils.dataset import FashionDataset
 from torch.utils.data import DataLoader
 from models.resnet_mod import MultiHeadResNet
 from tqdm import tqdm
@@ -17,7 +17,7 @@ test = pd.read_csv('Classification\DatasetPrep\DeepFashion\\test_cleaned.csv')
 test_dataset = FashionDataset(test, is_train = False)
 
 # create data loader
-test_loader = DataLoader(test_dataset, batch_size=1, shuffle=False)
+test_loader = DataLoader(test_dataset, batch_size=16, shuffle=False)
 
 # test trained model and calculate accuracy top-1 and top-5
 def test(model, dataloader, dataset, device):
@@ -59,7 +59,7 @@ def test(model, dataloader, dataset, device):
 model = MultiHeadResNet(pre_trained=False, requires_grad=True).to(device)
 
 # load model weights
-checkpoint = torch.load('Classification\outputs\models\model_resnet_after_unfreeze_2.pth')
+checkpoint = torch.load('Classification\outputs\models\model_resnet_ckpt_9.pth')
 model.load_state_dict(checkpoint['model_state_dict'])
 model.to(device)
 
