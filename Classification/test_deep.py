@@ -59,7 +59,7 @@ def test(model, dataloader, dataset, device):
 model = MultiHeadResNet(pre_trained=False, requires_grad=True).to(device)
 
 # load model weights
-checkpoint = torch.load('Classification\outputs\models\model_resnet_ckpt_9.pth')
+checkpoint = torch.load('Classification\outputs\models\latest_deep_fashion_b4G.pth')
 model.load_state_dict(checkpoint['model_state_dict'])
 model.to(device)
 
