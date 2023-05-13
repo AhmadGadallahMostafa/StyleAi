@@ -14,6 +14,16 @@ from utils.utils import clean_data
 IMG_PATH = 'Classification\DatasetPrep\DeepFashion'
 LABEL_PATH = 'Classification\inputs\labels'
 
+def train_valid_split(df):
+    # shuffle the dataframe with a random seed
+    df = df.sample(frac=1, random_state=42).reset_index(drop=True)
+    # 90% for training and 10% for validation
+    num_train_samples = math.floor(len(df) * 0.90)
+    num_val_samples = math.floor(len(df) * 0.10)
+    train_df = df[:num_train_samples].reset_index(drop=True)
+    val_df = df[-num_val_samples:].reset_index(drop=True)
+    return train_df, val_df
+
 class FashionDataset(Dataset):
     def __init__(self, df, is_train=True):
         self.df = df
