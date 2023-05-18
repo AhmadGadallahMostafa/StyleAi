@@ -8,6 +8,9 @@ code/datasets/mnist/t10k-labels-idx1-ubyte
 code/datasets/mnist/train-images-idx3-ubyte
 code/datasets/mnist/train-labels-idx1-ubyte
 Classification/DeepFashion2
+Classification/DatasetPrep/fashion-dataset
+Classification/DatasetPrep/DeepFashion
+Segmentation/dataset
 .ipynb_checkpoints
 .DS_Store
 code/datasets/movie/aclImdb_v1.tar.gz
@@ -85,6 +88,9 @@ logs/
 *.jpg
 *.png
 *.jpeg
+
+# remove .pkl files
+*.pkl
 
 
 # ignore openpose folder in Try-on
