@@ -107,9 +107,7 @@ class ImageGeneratorNetwork(nn.Module):
         self.conv6 = nn.Conv2d(input_channels, 16, kernel_size = 3, padding = 1)
         self.conv7 = nn.Conv2d(input_channels, 16, kernel_size = 3, padding = 1)
         self.conv8 = nn.Conv2d(input_channels, 16, kernel_size = 3, padding = 1)
-        for i in range(1, 8):
-            self.add_module('conv_{}'.format(i), nn.Conv2d(input_channels, 16, kernel_size=3, padding=1))
-        self.conv_array = [self.conv1, self.conv2, self.conv3, self.conv4, self.conv5, self.conv6, self.conv7, self.conv8]
+        #self.conv_array = [self.conv1, self.conv2, self.conv3, self.conv4, self.conv5, self.conv6, self.conv7, self.conv8]
         # last convolution layer to generate the output image wwith 3 channels
         self.conv9 = nn.Conv2d(32 , 3, kernel_size = 3, padding = 1)
         # last activation layer to generate the output image
@@ -122,37 +120,37 @@ class ImageGeneratorNetwork(nn.Module):
         for i in range(8):
             features = F.interpolate(x, size = (4 * 2**i, 3 * 2**i), mode = 'nearest')
             feature_pyramid.append(features)
-        feature_pyramid = [self.conv_array[i](feature_pyramid[i]) for i in range(8)]
+        
         # first convolution layer
-        x = self.SpadeResnetBlock1(feature_pyramid[0], segmentation_map)
+        x = self.SpadeResnetBlock1(self.conv1(feature_pyramid[0]), segmentation_map)
         # first upsampling layer
         x = self.up_sample(x)
         # second convolution layer
-        x = self.SpadeResnetBlock2(torch.cat((x, feature_pyramid[1]), 1), segmentation_map) 
+        x = self.SpadeResnetBlock2(torch.cat((x, self.conv2(feature_pyramid[1])), 1), segmentation_map) 
         # second upsampling layer
         x = self.up_sample(x)
         # third convolution layer
-        x = self.SpadeResnetBlock3(torch.cat((x, feature_pyramid[2]), 1), segmentation_map)
+        x = self.SpadeResnetBlock3(torch.cat((x, self.conv3(feature_pyramid[2])), 1), segmentation_map)
         # third upsampling layer
         x = self.up_sample(x)
         # fourth convolution layer
-        x = self.SpadeResnetBlock4(torch.cat((x, feature_pyramid[3]), 1), segmentation_map)
+        x = self.SpadeResnetBlock4(torch.cat((x, self.conv4(feature_pyramid[3])), 1), segmentation_map)
         # fourth upsampling layer
         x = self.up_sample(x)
         # fifth convolution layer
-        x = self.SpadeResnetBlock5(torch.cat((x, feature_pyramid[4]), 1), segmentation_map)
+        x = self.SpadeResnetBlock5(torch.cat((x, self.conv5(feature_pyramid[4])), 1), segmentation_map)
         # fifth upsampling layer
         x = self.up_sample(x)
         # sixth convolution layer
-        x = self.SpadeResnetBlock6(torch.cat((x, feature_pyramid[5]), 1), segmentation_map)
+        x = self.SpadeResnetBlock6(torch.cat((x, self.conv6(feature_pyramid[5])), 1), segmentation_map)
         # sixth upsampling layer
         x = self.up_sample(x)
         # seventh convolution layer
-        x = self.SpadeResnetBlock7(torch.cat((x, feature_pyramid[6]), 1), segmentation_map)
+        x = self.SpadeResnetBlock7(torch.cat((x, self.conv7(feature_pyramid[6])), 1), segmentation_map)
         # seventh upsampling layer
         x = self.up_sample(x)
         # eighth convolution layer
-        x = self.SpadeResnetBlock8(torch.cat((x, feature_pyramid[7]), 1), segmentation_map)
+        x = self.SpadeResnetBlock8(torch.cat((x, self.conv8(feature_pyramid[7])), 1), segmentation_map)
         # last convolution layer
         x = self.LRelu(x)
         x = self.conv9(x)

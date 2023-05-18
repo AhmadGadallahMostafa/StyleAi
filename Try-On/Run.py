@@ -11,7 +11,7 @@ import torchvision.transforms as transforms
 import numpy as np
 import torch.nn.functional as F
 from ConditionGeneratorNetwork import make_grid
-from ImageGeneratorReduced import RImageGeneratorNetwork
+from ImageGeneratorNetworkOG import ImageGeneratorNetwork
 import torchgeometry as tgm
 from matplotlib import pyplot as plt
 from PIL import Image
@@ -62,6 +62,12 @@ def visualize_segmap(input, multi_channel=True, tensor_out=True, batch=0) :
 
 def main():
     opt = get_options()
+    # Preprocess the images
+    input_path_image = "Try-On/InputImages"
+    input_path_cloth = "Try-On/InputClothesImages"
+    preProcessing = PreProcessing()
+    preProcessing.run()
+
     # Creat condition generator and load weights
     cg = ConditionGenerator(16, 4, 13)
     cg.load_state_dict(torch.load('condition_generator.pth'), strict=False)
@@ -70,8 +76,8 @@ def main():
     print("Condition Generator loaded")
     
     # Create image generator and load weights
-    ig = torch.load("generator.pt").cuda()
-    ig.eval()
+    ig = ImageGeneratorNetwork(9).cuda()
+    ig.load_state_dict(torch.load('image_generator_og.pth'))
     # ig = RImageGeneratorNetwork(9).cuda()
     # ig.load_state_dict(torch.load('image_generator.pth'), strict=False)
     # ig.cuda()
@@ -81,13 +87,8 @@ def main():
     
     # Create a Dataset object and a DataLoader object
     transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
-    dataset = TryOnDataset(root=opt.dataset, mode='test', data_list=opt.test_list, transform=transform , height=1024, width=768)
-    dt = DataLoader(dataset, shuffle=True, batch_size=1)
-
-    input_path_image = "Try-On/InputImages"
-    input_path_cloth = "Try-On/InputClothesImages"
-    preProcessing = PreProcessing()
-    preProcessing.run()
+    #dataset = TryOnDataset(root=opt.dataset, mode='test', data_list=opt.test_list, transform=transform , height=1024, width=768)
+    #dt = DataLoader(dataset, shuffle=True, batch_size=1)
 
     # preprocessed images
     agnostic_path = "Try-On/PreProcessedImages/Agnostic"
@@ -290,8 +291,9 @@ def main():
                 # plt.imshow(fake_image_np)
                 # plt.show()
                 temp = im_name.replace('.jpg', '') + cloth_name.replace('.jpg', '')
-                
-                grid = make_image_grid([real_image[0].cpu(), cloth[0].cpu(), fake_image[0].cpu()], nrow=3)
+                real_image = F.interpolate(real_image, size=(512, 384), mode='bilinear', align_corners=True)
+                cloth_temp = F.interpolate(cloth, size=(512, 384), mode='bilinear', align_corners=True)
+                grid = make_image_grid([real_image[0].cpu(), cloth_temp[0].cpu(), fake_image[0].cpu()], nrow=3)
                 save_image(grid, os.path.join('output_image_generator/', temp + '.png'))
 
                 grid = make_image_grid([cloth[0].cpu(), cloth_with_body_removed[0].cpu(), visualize_segmap(fake_map_gaussian).detach().cpu(), visualize_segmap(original_parse).detach().cpu()], nrow=2)
