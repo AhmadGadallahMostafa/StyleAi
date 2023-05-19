@@ -22,19 +22,6 @@ class PreProcessing:
     def __init__(self, input_path_image = "Try-On/InputImages", input_path_cloth = "Try-On/InputClothesImages"):
         self.input_path_image = input_path_image
         self.input_path_cloth = input_path_cloth
-
-
-    def get_densepose(self):
-        # DensePose parameters
-        apply_net_path_densepose = "Try-On/DensePose/apply_net.py"
-        config_path_densepose = "Try-On/DensePose/configs/densepose_rcnn_R_50_FPN_s1x.yaml"
-        images_path_densepose = self.input_path_image
-        model_path_densepose = "https://dl.fbaipublicfiles.com/densepose/densepose_rcnn_R_50_FPN_s1x/165712039/model_final_162be9.pkl"
-        # This will save the images with the same name as the input image at PreproceessedImages folder in densepose folder 
-        command = "python " + apply_net_path_densepose + " show " + config_path_densepose + " " + model_path_densepose + " " + images_path_densepose + " dp_segm -v"
-        os.system(command)  
-
-    def get_mask(self):
         seg_net = TracerUniversalB7(device='cuda',
               batch_size=1)
 
@@ -50,18 +37,47 @@ class PreProcessing:
                                     trimap_generator=trimap,
                                     device='cuda')
 
-        interface = Interface(pre_pipe=preprocessing,
+        self.interface = Interface(pre_pipe=preprocessing,
                             post_pipe=postprocessing,
                             seg_pipe=seg_net)
-        
 
+
+    def get_densepose(self):
+        # DensePose parameters
+        apply_net_path_densepose = "Try-On/DensePose/apply_net.py"
+        config_path_densepose = "Try-On/DensePose/configs/densepose_rcnn_R_50_FPN_s1x.yaml"
+        images_path_densepose = self.input_path_image
+        model_path_densepose = "https://dl.fbaipublicfiles.com/densepose/densepose_rcnn_R_50_FPN_s1x/165712039/model_final_162be9.pkl"
+        # This will save the images with the same name as the input image at PreproceessedImages folder in densepose folder 
+        command = "python " + apply_net_path_densepose + " show " + config_path_densepose + " " + model_path_densepose + " " + images_path_densepose + " dp_segm -v"
+        os.system(command)  
+
+    def supress_background(self):
+        # this function will supress the background of the person image and make it white
+        for filename in os.listdir(self.input_path_image):
+            image = PIL.Image.open(self.input_path_image + '/' + filename)
+            # this just removes the background from the image
+            image = self.interface([image])[0]
+            # add white background
+            background = PIL.Image.new("RGB", image.size, (255, 255, 255))
+            background.paste(image, mask=image)
+            # Delete the old image
+            os.remove(self.input_path_image + '/' + filename)
+            # save the new image
+            background.save(self.input_path_image + '/' + filename)
+
+            
+
+
+
+    def get_mask(self):
         for filename in os.listdir("Try-On/InputClothesImages"):
             if filename.endswith(".jpg") or filename.endswith(".png"):
                 image = PIL.Image.open(self.input_path_cloth + '/' + filename)
                 # remove the extension from the filename
                 filename = filename.split(".")[0]
                 # this just removes the background from the image
-                image = interface([image])[0]
+                image = self.interface([image])[0]
                 # thresholding 
                 channels = image.split()
                 alpha = channels[-1].convert('L')
@@ -115,13 +131,14 @@ class PreProcessing:
         os.system(command)
 
     def run(self):
-        self.get_densepose()
-        self.get_mask()
-        self.get_openpose()
-        self.get_parse()
-        self.convert_parse()
-        self.get_parse_agnostic()
-        self.get_agnostic()
+        self.supress_background()
+        # self.get_densepose()
+        # self.get_mask()
+        # self.get_openpose()
+        # self.get_parse()
+        # self.convert_parse()
+        # self.get_parse_agnostic()
+        # self.get_agnostic()
 
 def main():
     preProcessing = PreProcessing()
