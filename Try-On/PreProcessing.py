@@ -66,10 +66,6 @@ class PreProcessing:
             # save the new image
             background.save(self.input_path_image + '/' + filename)
 
-            
-
-
-
     def get_mask(self):
         for filename in os.listdir("Try-On/InputClothesImages"):
             if filename.endswith(".jpg") or filename.endswith(".png"):
@@ -96,7 +92,7 @@ class PreProcessing:
         output_path = "../../" + "Try-On\PreprocessedImages\OpenPose"
         output_json_path =  "../../" + "Try-On\PreprocessedImages\OpenPosejson"
         command = exe_path + " --image_dir " + input_path + " --disable_blending --write_json " + output_json_path + " --display 0 -write_images " + output_path + " --num_gpu 1 --hand --num_gpu_start 0"
-        subprocess.run([exe_path, "--image_dir", input_path, "--disable_blending", "--write_json", output_json_path, "--display", "0", "--write_images", output_path, "--num_gpu", "1", "--hand", "--num_gpu_start", "0"])
+        subprocess.run(command)
         # switch directory back to Try-On
         os.chdir(old_dir)
 
@@ -130,15 +126,81 @@ class PreProcessing:
         command = "python " + convert_parse_path + " --parse_path " + parse_path
         os.system(command)
 
+    def resize_image(self):
+        for filename in os.listdir(self.input_path_image):
+            if filename.endswith(".jpg"):
+                image = PIL.Image.open(self.input_path_image + '/' + filename)
+                # resize the image to 768 * 1024
+                image = image.resize((768, 1024))
+                # save the image
+                image.save(self.input_path_image + '/' + filename)
+            else:
+                continue
+        
+        for filename in os.listdir(self.input_path_cloth):
+            if filename.endswith(".jpg"):
+                image = PIL.Image.open(self.input_path_cloth + '/' + filename)
+                # resize the image to 768 * 1024
+                image = image.resize((768, 1024))
+                # save the image
+                image.save(self.input_path_cloth + '/' + filename)
+            else:
+                continue
+
+    def change_to_jpg(self):
+        # this function will change all the images(png, jpeg, webp, etc) to jpg
+        for filename in os.listdir(self.input_path_image):
+            if filename.endswith(".jpeg") or filename.endswith(".png") or filename.endswith(".webp"):
+                image = PIL.Image.open(self.input_path_image + '/' + filename)
+                # remove the extension from the filename
+                image = image.convert('RGB')
+                filename, file_extension = os.path.splitext(filename)
+                # save the image
+                image.save(self.input_path_image + '/' + filename + ".jpg")
+                # delete the old image
+                os.remove(self.input_path_image + '/' + filename + file_extension)
+
+        for filename in os.listdir(self.input_path_cloth):
+            if filename.endswith(".jpeg") or filename.endswith(".png") or filename.endswith(".webp"):
+                image = PIL.Image.open(self.input_path_cloth + '/' + filename)
+                # remove the extension from the filename
+                image = image.convert('RGB')
+                filename, file_extension = os.path.splitext(filename)
+                # save the image
+                image.save(self.input_path_cloth + '/' + filename + ".jpg")
+                # delete the old image
+                os.remove(self.input_path_cloth + '/' + filename + file_extension)
+
+    def delete_preprocessed_images(self):
+        # this function will delete all the images in PreprocessedImages folder
+        for directory in os.listdir("Try-On/PreprocessedImages"):
+            for filename in os.listdir("Try-On/PreprocessedImages/" + directory):
+                os.remove("Try-On/PreprocessedImages/" + directory + "/" + filename)
+
     def run(self):
+        print("Preprocessing started")
+        print("Deleting old preprocessed images")
+        self.delete_preprocessed_images()
+        print("Changing images to jpg")
+        self.change_to_jpg()
+        print("Supressing background")
         self.supress_background()
-        # self.get_densepose()
-        # self.get_mask()
-        # self.get_openpose()
-        # self.get_parse()
-        # self.convert_parse()
-        # self.get_parse_agnostic()
-        # self.get_agnostic()
+        print("Resizing images")
+        self.resize_image()
+        print("Getting densepose")
+        self.get_densepose()
+        print("Getting cloth mask")
+        self.get_mask()
+        print("Getting openpose")
+        self.get_openpose()
+        print("Getting parse")
+        self.get_parse()
+        print("Converting parse")
+        self.convert_parse()
+        print("Getting parse without upper body")
+        self.get_parse_agnostic()
+        print("Getting agnostic")
+        self.get_agnostic()
 
 def main():
     preProcessing = PreProcessing()

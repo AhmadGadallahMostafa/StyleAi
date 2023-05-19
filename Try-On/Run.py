@@ -78,10 +78,8 @@ def main():
     # Create image generator and load weights
     ig = ImageGeneratorNetwork(9).cuda()
     ig.load_state_dict(torch.load('image_generator_og.pth'))
-    # ig = RImageGeneratorNetwork(9).cuda()
-    # ig.load_state_dict(torch.load('image_generator.pth'), strict=False)
-    # ig.cuda()
-    # ig.eval()
+    ig.cuda()
+    ig.eval()
     
     print("Image Generator loaded")
     
@@ -275,7 +273,6 @@ def main():
 
                 # now wwe need to call the forward function of the image generator to get the output
                 fake_image = ig(torch.cat((agnostic_image, dense_pose, cloth_with_body_removed), dim = 1), new_parse_map)
-
                 # show the fake image
                 original_image_np = real_image[0].cpu().detach().numpy().transpose(1, 2, 0)
                 # plt.imshow(original_image_np)
@@ -293,9 +290,8 @@ def main():
                 temp = im_name.replace('.jpg', '') + cloth_name.replace('.jpg', '')
                 real_image = F.interpolate(real_image, size=(512, 384), mode='bilinear', align_corners=True)
                 cloth_temp = F.interpolate(cloth, size=(512, 384), mode='bilinear', align_corners=True)
-                grid = make_image_grid([real_image[0].cpu(), cloth_temp[0].cpu(), fake_image[0].cpu()], nrow=3)
+                grid = make_image_grid([real_image[0].cpu() / 2 + 0.5, cloth_temp[0].cpu() / 2 + 0.5, fake_image[0].cpu() / 2 + 0.5], nrow=3)
                 save_image(grid, os.path.join('output_image_generator/', temp + '.png'))
-
                 grid = make_image_grid([cloth[0].cpu(), cloth_with_body_removed[0].cpu(), visualize_segmap(fake_map_gaussian).detach().cpu(), visualize_segmap(original_parse).detach().cpu()], nrow=2)
                 save_image(grid, os.path.join('output_condition_generator/', temp + '.png'))
 
