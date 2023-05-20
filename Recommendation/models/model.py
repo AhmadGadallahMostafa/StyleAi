@@ -1,6 +1,5 @@
 # Compatability Model
 import itertools
-from collections import OrderedDict
 
 import torch
 from torch import nn
@@ -9,8 +8,7 @@ from torchsummary import summary
 from torch.nn.utils import rnn as rnn_utils
 import numpy as np
 # import resnet50
-from resnet50_rep import ResNet50, ResNetBlock50
-from torchsummary import summary
+from models.resnet50_rep import ResNet50, ResNetBlock50
 
 def normalize(x, dim=-1):
     return F.normalize(x, dim=dim)
@@ -118,8 +116,8 @@ class CompatabilityModel(nn.Module):
         visual_embedd = normalize(self.image_embedding(rep), dim=1)
 
         # VSE Loss
-        semantic_embedd = torch.masked_select(semantic_embedd, torch.ge(mask.sum(dim=1), 2))
-        visual_embedd = torch.masked_select(visual_embedd, torch.ge(mask.sum(dim=1), 2))
+        semantic_embedd = torch.masked_select(semantic_embedd, torch.ge(mask.sum(dim=1), 2).unsqueeze(dim=1))
+        visual_embedd = torch.masked_select(visual_embedd, torch.ge(mask.sum(dim=1), 2).unsqueeze(dim=1))
         reshape_dim = [-1, 1000]
         semantic_embedd = semantic_embedd.reshape(reshape_dim)
         visual_embedd = visual_embedd.reshape(reshape_dim)
@@ -208,7 +206,7 @@ class CompatabilityModel(nn.Module):
             return out, features, masks, rep
         else:
             return out, features, masks
-
+        
 # model = CompatabilityModel(embedding_dim=1000, need_rep=True, vocabulary_size=2757,
 #                     vse=False, pe=False, mlp_layers=2, conv_features="1234").to(torch.device("cuda:0" if torch.cuda.is_available() else "cpu"))
 # model.load_state_dict(torch.load("Recommendation\models\model_train_relation_vse_type_cond_scales.pth"))
