@@ -1,17 +1,17 @@
 from torch.utils.data import DataLoader
 
-from data.polyvore_dataset import CategoryDataset, collate_fn
+from data.dataset import CatDataset, collate_fn
 
 def get_dataset(opt):
-    train_dataset = CategoryDataset(root_dir=opt.IMAGE_PATH, data_dir=opt.DATA_PATH, 
+    train_dataset = CatDataset(root=opt.IMAGE_PATH, data_dir=opt.DATA_PATH, 
                                     transform=opt.transform, use_mean_img=opt.mean_img, 
-                                    data_file=opt.json_train)
-    val_dataset = CategoryDataset(root_dir=opt.IMAGE_PATH, data_dir=opt.DATA_PATH,
+                                    data=opt.json_train)
+    val_dataset = CatDataset(root=opt.IMAGE_PATH, data_dir=opt.DATA_PATH,
                                     transform=opt.transform, use_mean_img=opt.mean_img,
-                                    data_file=opt.json_valid)
-    test_dataset = CategoryDataset(root_dir=opt.IMAGE_PATH, data_dir=opt.DATA_PATH,
+                                    data=opt.json_valid)
+    test_dataset = CatDataset(root=opt.IMAGE_PATH, data_dir=opt.DATA_PATH,
                                     transform=opt.transform, use_mean_img=opt.mean_img,
-                                    data_file=opt.json_test)
+                                    data=opt.json_test)
     
     return train_dataset, val_dataset, test_dataset
 
