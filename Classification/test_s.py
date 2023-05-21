@@ -4,7 +4,7 @@ import torchvision.transforms as transforms
 import numpy as np
 import joblib
 import argparse
-from models.resnet_mod import MultiHeadResNet
+from models.resnet_mod_deep import MultiHeadResNet
 
 LABELS_PATH = 'Classification\inputs\labels'
 

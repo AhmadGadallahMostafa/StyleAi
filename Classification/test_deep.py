@@ -4,7 +4,7 @@ import torch.optim as optim
 
 from utils.dataset import FashionDataset
 from torch.utils.data import DataLoader
-from models.resnet_mod import MultiHeadResNet
+from models.resnet_mod_deep import MultiHeadResNet
 from tqdm import tqdm
 # import cross_entropy_loss
 from torch.nn import CrossEntropyLoss
