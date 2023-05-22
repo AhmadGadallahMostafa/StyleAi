@@ -3,7 +3,7 @@ import torch
 import torch.optim as optim
 import torch.nn.functional as F
 
-from utils.dataset import FashionDataset
+from utils.dataset import FashionDataset_Deep
 from torch.utils.data import DataLoader
 from models.resnet_mod_deep import MultiHeadResNet
 from tqdm import tqdm
@@ -30,8 +30,8 @@ optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 # load data
 train = pd.read_csv('Classification\DatasetPrep\DeepFashion\\train_cleaned.csv')
 valid = pd.read_csv('Classification\DatasetPrep\DeepFashion\\val_cleaned.csv')
-train_dataset = FashionDataset(train, is_train = True)
-valid_dataset = FashionDataset(valid, is_train = False)
+train_dataset = FashionDataset_Deep(train, is_train = True)
+valid_dataset = FashionDataset_Deep(valid, is_train = False)
 
 # create data loader
 train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
