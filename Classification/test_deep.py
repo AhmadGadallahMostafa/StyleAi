@@ -2,7 +2,7 @@ import pandas as pd
 import torch
 import torch.optim as optim
 
-from utils.dataset import FashionDataset
+from utils.dataset import FashionDataset_Deep
 from torch.utils.data import DataLoader
 from models.resnet_mod_deep import MultiHeadResNet
 from tqdm import tqdm
@@ -14,7 +14,7 @@ device = torch.device("cuda")
 
 # load data
 test = pd.read_csv('Classification\DatasetPrep\DeepFashion\\test_cleaned.csv')
-test_dataset = FashionDataset(test, is_train = False)
+test_dataset = FashionDataset_Deep(test, is_train = False)
 
 # create data loader
 test_loader = DataLoader(test_dataset, batch_size=16, shuffle=False)
