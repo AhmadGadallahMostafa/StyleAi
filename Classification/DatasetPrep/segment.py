@@ -14,19 +14,40 @@ import torch
 import torch.nn.functional as F
 import torchvision.transforms as transforms
 
-from data.base_dataset import Normalize_image
 from utils.saving_utils import load_checkpoint_mgpu
 
 from networks import U2NET
+
+class Normalize(object):
+    def __init__(self, mean, std):
+        assert isinstance(mean, (int, float, tuple, list))
+        assert isinstance(std, (int, float, tuple, list))
+        self.mean = mean
+        self.std = std
+
+        self.normalize_scale_1 = transforms.Normalize(mean, std)
+        self.normalize_scale_3 = transforms.Normalize([mean] * 3, [std] * 3)
+        self.normalize_scale_18 = transforms.Normalize([mean] * 18, [std] * 18)
+        
+    def __call__(self, tensor):
+        if tensor.shape[0] == 1:
+            return self.normalize_scale_1(tensor)
+        elif tensor.shape[0] == 3:
+            return self.normalize_scale_3(tensor)
+        elif tensor.shape[0] == 18:
+            return self.normalize_scale_18(tensor)
+        else:
+            raise ValueError("Tensor shape not supported: {}".format(tensor.shape))
+
 device = "cuda"
 
 images_dir = "Classification/DatasetPrep/DeepFashion/"
 result_dir = "Classification/DatasetPrep/DeepFashion/seg_images"
-checkpoint_path = os.path.join("", "Classification/DatasetPrep/trained_checkpoint/cloth_segm_u2net_latest.pth")
+checkpoint_path = os.path.join("", "Classification/DatasetPrep/trained_checkpoint/ckpt_best.pth")
 
 transforms_list = []
 transforms_list += [transforms.ToTensor()]
-transforms_list += [Normalize_image(0.5, 0.5)]
+transforms_list += [Normalize(0.5, 0.5)]
 transform_rgb = transforms.Compose(transforms_list)
 
 net = U2NET(in_channels=3, out_channels=4)

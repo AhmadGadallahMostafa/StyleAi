@@ -2,14 +2,11 @@
 
 import os
 from torch.utils.data import Dataset
-from utils.utils import clean_data
 import torch
 import joblib
 import math
 import cv2
 import torchvision.transforms as transforms
-
-from utils.utils import clean_data
 
 IMG_PATH = 'Classification\DatasetPrep\DeepFashion'
 LABEL_PATH_TOP = 'Classification\inputs\labels/shoes'
