@@ -2,17 +2,18 @@
 
 import os
 from torch.utils.data import Dataset
-from utils.utils import clean_data
 import torch
 import joblib
 import math
 import cv2
 import torchvision.transforms as transforms
 
-from utils.utils import clean_data
-
 IMG_PATH = 'Classification\DatasetPrep\DeepFashion'
+LABEL_PATH_TOP = 'Classification\inputs\labels/shoes'
 LABEL_PATH = 'Classification\inputs\labels'
+
+
+IMG_PATH_PRODUCT = 'Classification\DatasetPrep\\fashion-dataset\seg_images'
 
 def train_valid_split(df):
     # shuffle the dataframe with a random seed
@@ -24,7 +25,7 @@ def train_valid_split(df):
     val_df = df[-num_val_samples:].reset_index(drop=True)
     return train_df, val_df
 
-class FashionDataset(Dataset):
+class FashionDataset_Deep(Dataset):
     def __init__(self, df, is_train=True):
         self.df = df
 
@@ -72,4 +73,65 @@ class FashionDataset(Dataset):
         return {
             'image': image,
             'category': label_category
+        }
+    
+class FashionDataset_Product(Dataset):
+    def __init__(self, df, is_train=True):
+        self.df = df
+        self.num_list_gender = joblib.load(LABEL_PATH_TOP + '/gender.pkl')
+        self.num_list_color = joblib.load(LABEL_PATH_TOP + '/baseColour.pkl')
+        self.num_list_article = joblib.load(LABEL_PATH_TOP + '/articleType.pkl')
+        self.num_list_usage = joblib.load(LABEL_PATH_TOP + '/usage.pkl')
+        self.is_train = is_train
+        # the training transforms and augmentations
+        if self.is_train:
+            self.transform = transforms.Compose([
+                transforms.ToPILImage(),
+                transforms.Resize((224, 224)),
+                transforms.RandomHorizontalFlip(p=0.5),
+                transforms.RandomVerticalFlip(p=0.5),
+                transforms.ToTensor(), 
+                transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                     std=[0.229, 0.224, 0.225])
+            ])
+        # the validation transforms
+        if not self.is_train:
+            self.transform = transforms.Compose([
+                transforms.ToPILImage(),
+                transforms.Resize((224, 224)),
+                transforms.ToTensor(),
+                transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                     std=[0.229, 0.224, 0.225])
+            ])
+    def __len__(self):
+        return len(self.df)
+    def __getitem__(self, index):
+        image = cv2.imread(IMG_PATH_PRODUCT + f"/{self.df['id'][index]}.jpg")
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        image = self.transform(image)
+        cat_gender = self.df['gender'][index]
+        label_gender = self.num_list_gender[cat_gender]
+
+        cat_article = self.df['articleType'][index]
+        label_article = self.num_list_article[cat_article]
+        
+        cat_color = self.df['baseColour'][index]
+        label_color = self.num_list_color[cat_color]
+
+        cat_usage = self.df['usage'][index]
+        label_usage = self.num_list_usage[cat_usage]
+        
+        # image to float32 tensor
+        image = torch.tensor(image, dtype=torch.float32)
+        # labels to long tensors
+        label_gender = torch.tensor(label_gender, dtype=torch.long)
+        label_article = torch.tensor(label_article, dtype=torch.long)
+        label_color = torch.tensor(label_color, dtype=torch.long)
+        label_usage = torch.tensor(label_usage, dtype=torch.long)
+        return {
+            'image': image,
+            'article': label_article,
+            'color': label_color,
+            'gender': label_gender,
+            'usage': label_usage
         }

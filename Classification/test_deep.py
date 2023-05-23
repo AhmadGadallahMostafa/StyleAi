@@ -1,68 +1,75 @@
-import pandas as pd
 import torch
-import torch.optim as optim
-
-from utils.dataset import FashionDataset
-from torch.utils.data import DataLoader
+import cv2
+import torchvision.transforms as transforms
+import numpy as np
+import joblib
+import argparse
 from models.resnet_mod_deep import MultiHeadResNet
-from tqdm import tqdm
-# import cross_entropy_loss
-from torch.nn import CrossEntropyLoss
-from utils.utils import save_loss_plot, save_model
 
-device = torch.device("cuda")
+LABELS_PATH = 'Classification\inputs\labels'
 
-# load data
-test = pd.read_csv('Classification\DatasetPrep\DeepFashion\\test_cleaned.csv')
-test_dataset = FashionDataset(test, is_train = False)
-
-# create data loader
-test_loader = DataLoader(test_dataset, batch_size=16, shuffle=False)
-
-# test trained model and calculate accuracy top-1 and top-5
-def test(model, dataloader, dataset, device):
-    model.eval()
-    counter = 0
-    test_running_loss = 0.0
-    correct_1 = 0
-    correct_5 = 0
-    with torch.no_grad():
-        for i, data in tqdm(enumerate(dataloader), total=int(len(dataset)/dataloader.batch_size)):
-            counter += 1
-            
-            # extract the features and labels
-            image = data['image'].to(device)
-            category = data['category'].to(device)
-            
-            outputs = model(image)
-            targets = (category)
-            # calculate the loss using cross entropy
-            loss = CrossEntropyLoss()(outputs, targets)
-            test_running_loss += loss.item()
-            
-            # calculate the accuracy
-            _, pred = torch.max(outputs.data, 1)
-            _, top5_pred = torch.topk(outputs.data, 5, dim=1)
-            correct_1 += (pred == targets).sum().item()
-            for i in range(len(targets)):
-                if targets[i] in top5_pred[i]:
-                    correct_5 += 1
-
-    # calculate loss and accuracy
-    test_loss = test_running_loss / counter
-    test_accuracy_1 = correct_1 / len(dataset)
-    test_accuracy_5 = correct_5 / len(dataset)
-    return test_loss, test_accuracy_1, test_accuracy_5
-
-
-# load model
-model = MultiHeadResNet(pre_trained=False, requires_grad=True).to(device)
-
-# load model weights
+parser = argparse.ArgumentParser()
+parser.add_argument('-i', '--input', required=True, help='path to input image')
+args = vars(parser.parse_args())
+# define the computation device
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+model = MultiHeadResNet(pre_trained=False, requires_grad=False)
+# model = OurEfficientNet(version='b5', num_classes=1000, pretrained=True)
 checkpoint = torch.load('Classification\outputs\models\latest_deep_fashion_b4G.pth')
 model.load_state_dict(checkpoint['model_state_dict'])
 model.to(device)
+model.eval()
+transform = transforms.Compose([
+    transforms.ToPILImage(),
+    transforms.Resize((224, 224)),
+    transforms.ToTensor(),
+    transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                         std=[0.229, 0.224, 0.225])
+])
 
-# test model
-test_loss, test_accuracy_1, test_accuracy_5 = test(model, test_loader, test_dataset, device)
-print(f'Test Loss: {test_loss:.4f}, Test Acc Top-1: {test_accuracy_1:.4f}, Test Acc Top-5: {test_accuracy_5:.4f}')
+# read an image
+image = cv2.imread(args['input'])
+# keep a copy of the original image for OpenCV functions
+orig_image = image.copy()
+image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+# apply image transforms
+image = transform(image)
+# add batch dimension
+image = image.unsqueeze(0).to(device)
+# forward pass the image through the model
+outputs = model(image)
+
+# extract the five output in order (gender, sub, article, color, usage)
+category = outputs
+# get the index positions of the highest label score
+category_out_label = np.argmax(category.detach().cpu())
+# get also top 5 predictions descendingly
+category_top5 = np.argsort(category.detach().cpu().numpy()[0])[::-1][:5]
+# load the label encoder
+category_label_list = joblib.load(f'{LABELS_PATH}\category.pkl')
+
+# get the label text by mapping the predicted label index to the actual label text
+category_keys = list(category_label_list.keys())
+
+# get the label text by mapping the predicted label index to the actual label text
+category_values = list(category_label_list.values())
+
+final_labels = []
+# append by mapping the index position to the label
+final_labels.append(category_keys[category_out_label])
+# print the top 5 predictions using dictionary mapping
+print('Top 5 predictions: ')
+for i in category_top5:
+    print(category_keys[i])
+
+# write the label texts on the image
+cv2.putText(
+    orig_image, final_labels[0], (10, 25), cv2.FONT_HERSHEY_SIMPLEX, 
+    0.8, (0, 255, 0), 2, cv2.LINE_AA 
+)
+
+# visualize and save the image
+cv2.imshow('Predicted labels', orig_image)
+cv2.waitKey(0)
+save_name = args['input'].split('/')[-1]
+cv2.imwrite(f"outputs/{save_name}", orig_image)
