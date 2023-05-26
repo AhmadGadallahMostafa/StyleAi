@@ -17,16 +17,39 @@
 import sys
 import os
 import platform
+from PyQt5.QtCore import pyqtSignal as pyqtss
+from PyQt5.QtCore import QThread as qth 
+from PyQt5.QtCore import QObject as qobj 
+
 from PySide2 import QtCore, QtGui, QtWidgets
-from PySide2.QtCore import (QCoreApplication, QPropertyAnimation, QDate, QDateTime, QMetaObject, QObject, QPoint, QRect, QSize, QTime, QUrl, Qt, QEvent)
+from PySide2.QtCore import (QCoreApplication, QPropertyAnimation, QDate, QDateTime, QMetaObject, QObject, QPoint, QRect, QSize, QTime, QUrl, Qt, QEvent, QThread, )
 from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QCursor, QFont, QFontDatabase, QIcon, QKeySequence, QLinearGradient, QPalette, QPainter, QPixmap, QRadialGradient)
 from PySide2.QtWidgets import *
 from PIL import Image 
 from PIL.ImageQt import ImageQt
 from matplotlib import pyplot as plt
+import shutil
 
 # GUI FILE
 from app_modules import *
+
+class TryOnWorker(qobj):
+    finished = pyqtss()
+    def __init__(self, window):
+        super().__init__()
+        self.window = window
+        self.try_on_img_path = ''
+        self.try_on_img_pix_map = None
+
+    def run(self):
+        os.system('python Try-On/Run.py')
+        self.try_on_img_path = 'output_image_generator/try-on.png'
+        self.try_on_img_pix_map = QtGui.QPixmap(self.try_on_img_path)
+        # resize image
+        self.try_on_img_pix_map = self.try_on_img_pix_map.scaled(512, 512, QtCore.Qt.KeepAspectRatio)
+        self.window.ui.generated_img_lbl.setPixmap(self.try_on_img_pix_map)
+        self.finished.emit()
+        
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -70,9 +93,9 @@ class MainWindow(QMainWindow):
         self.ui.stackedWidget.setMinimumWidth(20)
         UIFunctions.addNewMenu(self, "HOME", "btn_home", "url(:/16x16/icons/16x16/cil-home.png)", True)
         UIFunctions.addNewMenu(self, "Add User", "btn_new_user", "url(:/16x16/icons/16x16/cil-user-follow.png)", True)
-        UIFunctions.addNewMenu(self, "Custom Widgets", "btn_widgets", "url(:/16x16/icons/16x16/cil-equalizer.png)", False)
+        UIFunctions.addNewMenu(self, "Custom Widgets", "btn_widgets", "url(:/16x16/icons/16x16/cil-3d.png)", False)
         # add new button for Try On Module 
-        UIFunctions.addNewMenu(self, "Try On", "btn_try_on", "url(:/16x16/icons/16x16/cil-truck.png)", True)
+        UIFunctions.addNewMenu(self, "Try On", "btn_try_on", "Interface/icons/16x16/try_on.png", True, True)
         ## ==> END ##
 
         # START MENU => SELECTION
@@ -256,14 +279,14 @@ class MainWindow(QMainWindow):
     def open_image(self, img_type):
         # get current directory
         if img_type == "person":
-            self.person_img_path = QtWidgets.QFileDialog.getOpenFileName(self, 'Open file', "C:/Users/Gogo/Documents/GitHub/StyleAi/Try-On/data/train/image", "Image files (*.jpg *.gif *.png)")
+            self.person_img_path = QtWidgets.QFileDialog.getOpenFileName(self, 'Open file', "G:/college/GP/try on/StyleAi/Try-On/data/train/image", "Image files (*.jpg *.gif *.png)")
             self.person_img_path  = self.person_img_path [0]
             self.person_img_pix_map = QtGui.QPixmap(self.person_img_path)
             # resize image
             self.person_img_pix_map = self.person_img_pix_map.scaled(512, 512, QtCore.Qt.KeepAspectRatio)
             self.ui.person_img_lbl.setPixmap(self.person_img_pix_map)
         else:
-            self.cloth_img_path = QtWidgets.QFileDialog.getOpenFileName(self, 'Open file', "C:/Users/Gogo/Documents/GitHub/StyleAi/Try-On/data/train/cloth", "Image files (*.jpg *.gif)")
+            self.cloth_img_path = QtWidgets.QFileDialog.getOpenFileName(self, 'Open file', "G:/college/GP/try on/StyleAi/Try-On/data/train/cloth", "Image files (*.jpg *.gif)")
             self.cloth_img_path = self.cloth_img_path[0]
             self.cloth_img_pix_map = QtGui.QPixmap(self.cloth_img_path)
             # resize image
@@ -272,7 +295,32 @@ class MainWindow(QMainWindow):
             
         
     def try_on(self):
-        pass
+        if self.person_img_path == None or self.cloth_img_path == None:
+            pass
+        else:
+            # Delete all images in input and output folders
+            for filename in os.listdir('Try-On/InputImages'):
+                os.remove('Try-On/InputImages/' + filename)
+            for filename in os.listdir('Try-On/InputClothesImages'):
+                os.remove('Try-On/InputClothesImages/' + filename)
+            for filename in os.listdir('output_image_generator'):
+               os.remove('output_image_generator/' + filename)
+            #Copy images to input and output folders
+            shutil.copy(self.person_img_path, 'Try-On/InputImages')
+            shutil.copy(self.cloth_img_path, 'Try-On/InputClothesImages')
+            # Run the image generator
+            self.thread = qth()
+            self.worker = TryOnWorker(self)
+            self.worker.moveToThread(self.thread)
+            self.thread.started.connect(self.worker.run)
+            self.worker.finished.connect(self.thread.quit)
+            self.worker.finished.connect(self.worker.deleteLater)
+            self.thread.finished.connect(self.thread.deleteLater)
+            self.thread.start()
+            # run it using popen
+            #process = Popen('python Try-On/Run.py', shell=True, stdout=PIPE)
+            #process.wait()
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

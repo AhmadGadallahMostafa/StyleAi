@@ -7,13 +7,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1000</width>
-    <height>745</height>
+    <width>1326</width>
+    <height>738</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>1000</width>
+    <width>1326</width>
     <height>720</height>
    </size>
   </property>
@@ -1096,7 +1096,7 @@ QPushButton:pressed {
                       <string/>
                      </property>
                      <property name="icon">
-                      <iconset resource="files.qrc">
+                      <iconset>
                        <normaloff>:/16x16/icons/16x16/cil-window-minimize.png</normaloff>:/16x16/icons/16x16/cil-window-minimize.png</iconset>
                      </property>
                     </widget>
@@ -1140,7 +1140,7 @@ QPushButton:pressed {
                       <string/>
                      </property>
                      <property name="icon">
-                      <iconset resource="files.qrc">
+                      <iconset>
                        <normaloff>:/16x16/icons/16x16/cil-window-maximize.png</normaloff>:/16x16/icons/16x16/cil-window-maximize.png</iconset>
                      </property>
                     </widget>
@@ -1184,7 +1184,7 @@ QPushButton:pressed {
                       <string/>
                      </property>
                      <property name="icon">
-                      <iconset resource="files.qrc">
+                      <iconset>
                        <normaloff>:/16x16/icons/16x16/cil-x.png</normaloff>:/16x16/icons/16x16/cil-x.png</iconset>
                      </property>
                     </widget>
@@ -1736,7 +1736,7 @@ QPushButton:pressed {
                                   <string>Open Blender</string>
                                  </property>
                                  <property name="icon">
-                                  <iconset resource="files.qrc">
+                                  <iconset>
                                    <normaloff>:/16x16/icons/16x16/cil-folder-open.png</normaloff>:/16x16/icons/16x16/cil-folder-open.png</iconset>
                                  </property>
                                 </widget>
@@ -1862,7 +1862,7 @@ QScrollBar:horizontal {
                              <rect>
                               <x>0</x>
                               <y>0</y>
-                              <width>274</width>
+                              <width>218</width>
                               <height>218</height>
                              </rect>
                             </property>
@@ -1993,7 +1993,7 @@ QCommandLinkButton:pressed {
                             <string>CommandLinkButton</string>
                            </property>
                            <property name="icon">
-                            <iconset resource="files.qrc">
+                            <iconset>
                              <normaloff>:/16x16/icons/16x16/cil-link.png</normaloff>:/16x16/icons/16x16/cil-link.png</iconset>
                            </property>
                            <property name="description">
@@ -2479,42 +2479,6 @@ QHeaderView::section:vertical
                        <enum>QFrame::Raised</enum>
                       </property>
                       <layout class="QGridLayout" name="gridLayout_3">
-                       <item row="0" column="0">
-                        <widget class="QFrame" name="Images_frame">
-                         <property name="frameShape">
-                          <enum>QFrame::StyledPanel</enum>
-                         </property>
-                         <property name="frameShadow">
-                          <enum>QFrame::Raised</enum>
-                         </property>
-                         <layout class="QHBoxLayout" name="horizontalLayout_14">
-                          <item>
-                           <widget class="QLabel" name="person_img_lbl">
-                            <property name="enabled">
-                             <bool>true</bool>
-                            </property>
-                            <property name="text">
-                             <string/>
-                            </property>
-                           </widget>
-                          </item>
-                          <item alignment="Qt::AlignHCenter">
-                           <widget class="QLabel" name="cloth_img_lbl">
-                            <property name="text">
-                             <string/>
-                            </property>
-                           </widget>
-                          </item>
-                          <item>
-                           <widget class="QLabel" name="generated_img_lbl">
-                            <property name="text">
-                             <string/>
-                            </property>
-                           </widget>
-                          </item>
-                         </layout>
-                        </widget>
-                       </item>
                        <item row="1" column="0">
                         <widget class="QFrame" name="btns_frame">
                          <property name="frameShape">
@@ -2557,7 +2521,7 @@ QPushButton:pressed {
                              <string>Add Your Image</string>
                             </property>
                             <property name="icon">
-                             <iconset resource="files.qrc">
+                             <iconset>
                               <normaloff>:/16x16/icons/16x16/cil-folder-open.png</normaloff>:/16x16/icons/16x16/cil-folder-open.png</iconset>
                             </property>
                            </widget>
@@ -2608,7 +2572,7 @@ QPushButton:pressed {
                              <string>Try New Clothes</string>
                             </property>
                             <property name="icon">
-                             <iconset resource="files.qrc">
+                             <iconset>
                               <normaloff>:/16x16/icons/16x16/cil-folder-open.png</normaloff>:/16x16/icons/16x16/cil-folder-open.png</iconset>
                             </property>
                            </widget>
@@ -2659,8 +2623,85 @@ QPushButton:pressed {
                              <string>Show me How I Look</string>
                             </property>
                             <property name="icon">
-                             <iconset resource="files.qrc">
+                             <iconset>
                               <normaloff>:/16x16/icons/16x16/cil-folder-open.png</normaloff>:/16x16/icons/16x16/cil-folder-open.png</iconset>
+                            </property>
+                           </widget>
+                          </item>
+                         </layout>
+                        </widget>
+                       </item>
+                       <item row="0" column="0">
+                        <widget class="QFrame" name="images_frame_2">
+                         <property name="frameShape">
+                          <enum>QFrame::StyledPanel</enum>
+                         </property>
+                         <property name="frameShadow">
+                          <enum>QFrame::Raised</enum>
+                         </property>
+                         <layout class="QHBoxLayout" name="horizontalLayout_14">
+                          <item>
+                           <widget class="QLabel" name="person_img_lbl">
+                            <property name="minimumSize">
+                             <size>
+                              <width>512</width>
+                              <height>512</height>
+                             </size>
+                            </property>
+                            <property name="text">
+                             <string/>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <spacer name="horizontalSpacer_3">
+                            <property name="orientation">
+                             <enum>Qt::Horizontal</enum>
+                            </property>
+                            <property name="sizeHint" stdset="0">
+                             <size>
+                              <width>40</width>
+                              <height>20</height>
+                             </size>
+                            </property>
+                           </spacer>
+                          </item>
+                          <item>
+                           <widget class="QLabel" name="cloth_img_lbl">
+                            <property name="minimumSize">
+                             <size>
+                              <width>512</width>
+                              <height>512</height>
+                             </size>
+                            </property>
+                            <property name="text">
+                             <string/>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <spacer name="horizontalSpacer_4">
+                            <property name="orientation">
+                             <enum>Qt::Horizontal</enum>
+                            </property>
+                            <property name="sizeHint" stdset="0">
+                             <size>
+                              <width>40</width>
+                              <height>20</height>
+                             </size>
+                            </property>
+                           </spacer>
+                          </item>
+                          <item>
+                           <widget class="QLabel" name="generated_img_lbl">
+                            <property name="minimumSize">
+                             <size>
+                              <width>512</width>
+                              <height>512</height>
+                             </size>
+                            </property>
+                            <property name="text">
+                             <string/>
                             </property>
                            </widget>
                           </item>

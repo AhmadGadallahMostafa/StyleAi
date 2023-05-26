@@ -18,8 +18,8 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1000, 745)
-        MainWindow.setMinimumSize(QSize(1000, 720))
+        MainWindow.resize(1326, 738)
+        MainWindow.setMinimumSize(QSize(1326, 720))
         palette = QPalette()
         brush = QBrush(QColor(255, 255, 255, 255))
         brush.setStyle(Qt.SolidPattern)
@@ -864,7 +864,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 274, 218))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 218, 218))
         self.horizontalLayout_11 = QHBoxLayout(self.scrollAreaWidgetContents)
         self.horizontalLayout_11.setObjectName(u"horizontalLayout_11")
         self.plainTextEdit = QPlainTextEdit(self.scrollAreaWidgetContents)
@@ -1147,31 +1147,6 @@ class Ui_MainWindow(object):
         self.images_frame.setFrameShadow(QFrame.Raised)
         self.gridLayout_3 = QGridLayout(self.images_frame)
         self.gridLayout_3.setObjectName(u"gridLayout_3")
-        self.Images_frame = QFrame(self.images_frame)
-        self.Images_frame.setObjectName(u"Images_frame")
-        self.Images_frame.setFrameShape(QFrame.StyledPanel)
-        self.Images_frame.setFrameShadow(QFrame.Raised)
-        self.horizontalLayout_14 = QHBoxLayout(self.Images_frame)
-        self.horizontalLayout_14.setObjectName(u"horizontalLayout_14")
-        self.person_img_lbl = QLabel(self.Images_frame)
-        self.person_img_lbl.setObjectName(u"person_img_lbl")
-        self.person_img_lbl.setEnabled(True)
-
-        self.horizontalLayout_14.addWidget(self.person_img_lbl)
-
-        self.cloth_img_lbl = QLabel(self.Images_frame)
-        self.cloth_img_lbl.setObjectName(u"cloth_img_lbl")
-
-        self.horizontalLayout_14.addWidget(self.cloth_img_lbl, 0, Qt.AlignHCenter)
-
-        self.generated_img_lbl = QLabel(self.Images_frame)
-        self.generated_img_lbl.setObjectName(u"generated_img_lbl")
-
-        self.horizontalLayout_14.addWidget(self.generated_img_lbl)
-
-
-        self.gridLayout_3.addWidget(self.Images_frame, 0, 0, 1, 1)
-
         self.btns_frame = QFrame(self.images_frame)
         self.btns_frame.setObjectName(u"btns_frame")
         self.btns_frame.setFrameShape(QFrame.StyledPanel)
@@ -1251,6 +1226,41 @@ class Ui_MainWindow(object):
 
 
         self.gridLayout_3.addWidget(self.btns_frame, 1, 0, 1, 1)
+
+        self.images_frame_2 = QFrame(self.images_frame)
+        self.images_frame_2.setObjectName(u"images_frame_2")
+        self.images_frame_2.setFrameShape(QFrame.StyledPanel)
+        self.images_frame_2.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_14 = QHBoxLayout(self.images_frame_2)
+        self.horizontalLayout_14.setObjectName(u"horizontalLayout_14")
+        self.person_img_lbl = QLabel(self.images_frame_2)
+        self.person_img_lbl.setObjectName(u"person_img_lbl")
+        self.person_img_lbl.setMinimumSize(QSize(512, 512))
+
+        self.horizontalLayout_14.addWidget(self.person_img_lbl)
+
+        self.horizontalSpacer_3 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_14.addItem(self.horizontalSpacer_3)
+
+        self.cloth_img_lbl = QLabel(self.images_frame_2)
+        self.cloth_img_lbl.setObjectName(u"cloth_img_lbl")
+        self.cloth_img_lbl.setMinimumSize(QSize(512, 512))
+
+        self.horizontalLayout_14.addWidget(self.cloth_img_lbl)
+
+        self.horizontalSpacer_4 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_14.addItem(self.horizontalSpacer_4)
+
+        self.generated_img_lbl = QLabel(self.images_frame_2)
+        self.generated_img_lbl.setObjectName(u"generated_img_lbl")
+        self.generated_img_lbl.setMinimumSize(QSize(512, 512))
+
+        self.horizontalLayout_14.addWidget(self.generated_img_lbl)
+
+
+        self.gridLayout_3.addWidget(self.images_frame_2, 0, 0, 1, 1)
 
 
         self.verticalLayout_10.addWidget(self.images_frame)
@@ -1431,12 +1441,12 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem23.setText(QCoreApplication.translate("MainWindow", u"Line", None));
         self.tableWidget.setSortingEnabled(__sortingEnabled)
 
-        self.person_img_lbl.setText("")
-        self.cloth_img_lbl.setText("")
-        self.generated_img_lbl.setText("")
         self.person_im_try_on_btn.setText(QCoreApplication.translate("MainWindow", u"Add Your Image", None))
         self.cloth_im_try_on_btn.setText(QCoreApplication.translate("MainWindow", u"Try New Clothes", None))
         self.generated_im_try_on_btn.setText(QCoreApplication.translate("MainWindow", u"Show me How I Look", None))
+        self.person_img_lbl.setText("")
+        self.cloth_img_lbl.setText("")
+        self.generated_img_lbl.setText("")
         self.label_credits.setText(QCoreApplication.translate("MainWindow", u"Registered by: Wanderson M. Pimenta", None))
         self.label_version.setText(QCoreApplication.translate("MainWindow", u"v1.0.0", None))
     # retranslateUi
