@@ -16,7 +16,6 @@
 
 ## ==> GUI FILE
 from main import *
-
 ## ==> GLOBALS
 GLOBAL_STATE = 0
 GLOBAL_TITLE_BAR = True
@@ -116,7 +115,7 @@ class UIFunctions(MainWindow):
 
     ## ==> DYNAMIC MENUS
     ########################################################################
-    def addNewMenu(self, name, objName, icon, isTopMenu):
+    def addNewMenu(self, name, objName, icon, isTopMenu, isPath=False):
         font = QFont()
         font.setFamily(u"Segoe UI")
         button = QPushButton(str(count),self)
@@ -129,8 +128,12 @@ class UIFunctions(MainWindow):
         button.setMinimumSize(QSize(0, 70))
         button.setLayoutDirection(Qt.LeftToRight)
         button.setFont(font)
-        button.setStyleSheet(Style.style_bt_standard.replace('ICON_REPLACE', icon))
-        button.setText(name)
+        if isPath:
+            rMyIcon = QtGui.QPixmap(icon)
+            button.setIcon(QtGui.QIcon(rMyIcon))
+        else:
+            button.setStyleSheet(Style.style_bt_standard.replace('ICON_REPLACE', icon))
+        button.setText("")
         button.setToolTip(name)
         button.clicked.connect(self.Button)
 
