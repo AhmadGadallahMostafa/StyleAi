@@ -92,10 +92,13 @@ class MainWindow(QMainWindow):
         ## ==> ADD CUSTOM MENUS
         self.ui.stackedWidget.setMinimumWidth(20)
         UIFunctions.addNewMenu(self, "HOME", "btn_home", "url(:/16x16/icons/16x16/cil-home.png)", True)
-        UIFunctions.addNewMenu(self, "Add User", "btn_new_user", "url(:/16x16/icons/16x16/cil-user-follow.png)", True)
-        UIFunctions.addNewMenu(self, "Custom Widgets", "btn_widgets", "url(:/16x16/icons/16x16/cil-3d.png)", False)
+        UIFunctions.addNewMenu(self, "Wardrobe", "btn_wardrobe", "url(:/16x16/icons/16x16/cil-user-follow.png)", True)
+        UIFunctions.addNewMenu(self, "Add", "btn_add", "url(:/16x16/icons/16x16/cil-user-follow.png)", True)
         # add new button for Try On Module 
         UIFunctions.addNewMenu(self, "Try On", "btn_try_on", "Interface/icons/16x16/try_on.png", True, True)
+
+        UIFunctions.addNewMenu(self, "Custom Widgets", "btn_widgets", "url(:/16x16/icons/16x16/cil-3d.png)", False)
+
         ## ==> END ##
 
         # START MENU => SELECTION
@@ -205,12 +208,20 @@ class MainWindow(QMainWindow):
             UIFunctions.labelPage(self, "Home")
             btnWidget.setStyleSheet(UIFunctions.selectMenu(btnWidget.styleSheet()))
 
-        # PAGE NEW USER
-        if btnWidget.objectName() == "btn_new_user":
-            self.ui.stackedWidget.setCurrentWidget(self.ui.page_home)
-            UIFunctions.resetStyle(self, "btn_new_user")
-            UIFunctions.labelPage(self, "New User")
+        # PAGE wardrobe
+        if btnWidget.objectName() == "btn_wardrobe":
+            self.ui.stackedWidget.setCurrentWidget(self.ui.page_wardrobe)
+            UIFunctions.resetStyle(self, "btn_wardrobe")
+            UIFunctions.labelPage(self, "Wardrobe")
             btnWidget.setStyleSheet(UIFunctions.selectMenu(btnWidget.styleSheet()))
+
+                # PAGE wardrobe
+        if btnWidget.objectName() == "btn_add":
+            self.ui.stackedWidget.setCurrentWidget(self.ui.page_home)
+            UIFunctions.resetStyle(self, "btn_add")
+            UIFunctions.labelPage(self, "Add")
+            btnWidget.setStyleSheet(UIFunctions.selectMenu(btnWidget.styleSheet()))
+
 
         # PAGE WIDGETS
         if btnWidget.objectName() == "btn_widgets":

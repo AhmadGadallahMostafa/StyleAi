@@ -18,8 +18,8 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1500, 800)
-        MainWindow.setMinimumSize(QSize(1500, 800))
+        MainWindow.resize(1706, 900)
+        MainWindow.setMinimumSize(QSize(1600, 900))
         palette = QPalette()
         brush = QBrush(QColor(255, 255, 255, 255))
         brush.setStyle(Qt.SolidPattern)
@@ -341,7 +341,7 @@ class Ui_MainWindow(object):
         self.frame_top.setObjectName(u"frame_top")
         self.frame_top.setMinimumSize(QSize(0, 65))
         self.frame_top.setMaximumSize(QSize(16777215, 65))
-        self.frame_top.setStyleSheet(u"background-color: green;")
+        self.frame_top.setStyleSheet(u"background-color: yellow;")
         self.frame_top.setFrameShape(QFrame.NoFrame)
         self.frame_top.setFrameShadow(QFrame.Raised)
         self.horizontalLayout_3 = QHBoxLayout(self.frame_top)
@@ -729,14 +729,6 @@ class Ui_MainWindow(object):
         self.gridLayout = QGridLayout()
         self.gridLayout.setObjectName(u"gridLayout")
         self.gridLayout.setContentsMargins(-1, -1, -1, 0)
-        self.labelVersion_3 = QLabel(self.frame_content_wid_1)
-        self.labelVersion_3.setObjectName(u"labelVersion_3")
-        self.labelVersion_3.setStyleSheet(u"color: rgb(98, 103, 111);")
-        self.labelVersion_3.setLineWidth(1)
-        self.labelVersion_3.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
-
-        self.gridLayout.addWidget(self.labelVersion_3, 1, 0, 1, 2)
-
         self.lineEdit = QLineEdit(self.frame_content_wid_1)
         self.lineEdit.setObjectName(u"lineEdit")
         self.lineEdit.setMinimumSize(QSize(0, 30))
@@ -754,6 +746,14 @@ class Ui_MainWindow(object):
 "}")
 
         self.gridLayout.addWidget(self.lineEdit, 0, 0, 1, 1)
+
+        self.labelVersion_3 = QLabel(self.frame_content_wid_1)
+        self.labelVersion_3.setObjectName(u"labelVersion_3")
+        self.labelVersion_3.setStyleSheet(u"color: rgb(98, 103, 111);")
+        self.labelVersion_3.setLineWidth(1)
+        self.labelVersion_3.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
+
+        self.gridLayout.addWidget(self.labelVersion_3, 1, 0, 1, 2)
 
         self.pushButton = QPushButton(self.frame_content_wid_1)
         self.pushButton.setObjectName(u"pushButton")
@@ -851,7 +851,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 467, 218))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 380, 218))
         self.horizontalLayout_11 = QHBoxLayout(self.scrollAreaWidgetContents)
         self.horizontalLayout_11.setObjectName(u"horizontalLayout_11")
         self.plainTextEdit = QPlainTextEdit(self.scrollAreaWidgetContents)
@@ -1138,6 +1138,17 @@ class Ui_MainWindow(object):
         self.verticalLayout_6.addWidget(self.frame_3)
 
         self.stackedWidget.addWidget(self.page_widgets)
+        self.page_wardrobe = QWidget()
+        self.page_wardrobe.setObjectName(u"page_wardrobe")
+        self.frame_4 = QFrame(self.page_wardrobe)
+        self.frame_4.setObjectName(u"frame_4")
+        self.frame_4.setGeometry(QRect(310, 310, 120, 80))
+        self.frame_4.setFrameShape(QFrame.StyledPanel)
+        self.frame_4.setFrameShadow(QFrame.Raised)
+        self.pushButton_2 = QPushButton(self.page_wardrobe)
+        self.pushButton_2.setObjectName(u"pushButton_2")
+        self.pushButton_2.setGeometry(QRect(510, 140, 75, 23))
+        self.stackedWidget.addWidget(self.page_wardrobe)
         self.page_try_on = QWidget()
         self.page_try_on.setObjectName(u"page_try_on")
         self.verticalLayout_10 = QVBoxLayout(self.page_try_on)
@@ -1370,8 +1381,8 @@ class Ui_MainWindow(object):
         self.label_top_info_2.setText(QCoreApplication.translate("MainWindow", u"| HOME", None))
         self.label_user_icon.setText(QCoreApplication.translate("MainWindow", u"WM", None))
         self.labelBoxBlenderInstalation.setText(QCoreApplication.translate("MainWindow", u"BLENDER INSTALLATION", None))
-        self.labelVersion_3.setText(QCoreApplication.translate("MainWindow", u"Ex: C:Program FilesBlender FoundationBlender 2.82 blender.exe", None))
         self.lineEdit.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Your Password", None))
+        self.labelVersion_3.setText(QCoreApplication.translate("MainWindow", u"Ex: C:Program FilesBlender FoundationBlender 2.82 blender.exe", None))
         self.pushButton.setText(QCoreApplication.translate("MainWindow", u"Open Blender", None))
         self.radioButton.setText(QCoreApplication.translate("MainWindow", u"RadioButton", None))
         self.checkBox.setText(QCoreApplication.translate("MainWindow", u"CheckBox", None))
@@ -1434,6 +1445,7 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem23.setText(QCoreApplication.translate("MainWindow", u"Line", None));
         self.tableWidget.setSortingEnabled(__sortingEnabled)
 
+        self.pushButton_2.setText(QCoreApplication.translate("MainWindow", u"PushButton", None))
         self.person_im_try_on_btn.setText(QCoreApplication.translate("MainWindow", u"Add Your Image", None))
         self.cloth_im_try_on_btn.setText(QCoreApplication.translate("MainWindow", u"Try New Clothes", None))
         self.generated_im_try_on_btn.setText(QCoreApplication.translate("MainWindow", u"Show me How I Look", None))

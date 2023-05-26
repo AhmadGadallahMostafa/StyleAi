@@ -7,14 +7,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1500</width>
-    <height>800</height>
+    <width>1706</width>
+    <height>900</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>1500</width>
-    <height>800</height>
+    <width>1600</width>
+    <height>900</height>
    </size>
   </property>
   <property name="palette">
@@ -798,7 +798,7 @@ QSlider::handle:vertical:pressed {
           </size>
          </property>
          <property name="styleSheet">
-          <string notr="true">background-color: green;</string>
+          <string notr="true">background-color: yellow;</string>
          </property>
          <property name="frameShape">
           <enum>QFrame::NoFrame</enum>
@@ -1534,7 +1534,7 @@ QPushButton:pressed {
                    <string notr="true">background: transparent;</string>
                   </property>
                   <property name="currentIndex">
-                   <number>1</number>
+                   <number>2</number>
                   </property>
                   <widget class="QWidget" name="page_home"/>
                   <widget class="QWidget" name="page_widgets">
@@ -1660,22 +1660,6 @@ border-radius: 5px;
                                <property name="bottomMargin">
                                 <number>0</number>
                                </property>
-                               <item row="1" column="0" colspan="2">
-                                <widget class="QLabel" name="labelVersion_3">
-                                 <property name="styleSheet">
-                                  <string notr="true">color: rgb(98, 103, 111);</string>
-                                 </property>
-                                 <property name="lineWidth">
-                                  <number>1</number>
-                                 </property>
-                                 <property name="text">
-                                  <string>Ex: C:Program FilesBlender FoundationBlender 2.82 blender.exe</string>
-                                 </property>
-                                 <property name="alignment">
-                                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-                                 </property>
-                                </widget>
-                               </item>
                                <item row="0" column="0">
                                 <widget class="QLineEdit" name="lineEdit">
                                  <property name="minimumSize">
@@ -1700,6 +1684,22 @@ QLineEdit:focus {
                                  </property>
                                  <property name="placeholderText">
                                   <string>Your Password</string>
+                                 </property>
+                                </widget>
+                               </item>
+                               <item row="1" column="0" colspan="2">
+                                <widget class="QLabel" name="labelVersion_3">
+                                 <property name="styleSheet">
+                                  <string notr="true">color: rgb(98, 103, 111);</string>
+                                 </property>
+                                 <property name="lineWidth">
+                                  <number>1</number>
+                                 </property>
+                                 <property name="text">
+                                  <string>Ex: C:Program FilesBlender FoundationBlender 2.82 blender.exe</string>
+                                 </property>
+                                 <property name="alignment">
+                                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
                                  </property>
                                 </widget>
                                </item>
@@ -1839,7 +1839,7 @@ QScrollBar:horizontal {
                              <rect>
                               <x>0</x>
                               <y>0</y>
-                              <width>467</width>
+                              <width>380</width>
                               <height>218</height>
                              </rect>
                             </property>
@@ -2473,6 +2473,37 @@ QHeaderView::section:vertical
                      </widget>
                     </item>
                    </layout>
+                  </widget>
+                  <widget class="QWidget" name="page_wardrobe">
+                   <widget class="QFrame" name="frame_4">
+                    <property name="geometry">
+                     <rect>
+                      <x>310</x>
+                      <y>310</y>
+                      <width>120</width>
+                      <height>80</height>
+                     </rect>
+                    </property>
+                    <property name="frameShape">
+                     <enum>QFrame::StyledPanel</enum>
+                    </property>
+                    <property name="frameShadow">
+                     <enum>QFrame::Raised</enum>
+                    </property>
+                   </widget>
+                   <widget class="QPushButton" name="pushButton_2">
+                    <property name="geometry">
+                     <rect>
+                      <x>510</x>
+                      <y>140</y>
+                      <width>75</width>
+                      <height>23</height>
+                     </rect>
+                    </property>
+                    <property name="text">
+                     <string>PushButton</string>
+                    </property>
+                   </widget>
                   </widget>
                   <widget class="QWidget" name="page_try_on">
                    <layout class="QVBoxLayout" name="verticalLayout_10">
