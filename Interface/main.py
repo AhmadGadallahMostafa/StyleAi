@@ -23,7 +23,7 @@ from PyQt5.QtCore import QObject as qobj
 
 from PySide2 import QtCore, QtGui, QtWidgets
 from PySide2.QtCore import (QCoreApplication, QPropertyAnimation, QDate, QDateTime, QMetaObject, QObject, QPoint, QRect, QSize, QTime, QUrl, Qt, QEvent, QThread, )
-from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QCursor, QFont, QFontDatabase, QIcon, QKeySequence, QLinearGradient, QPalette, QPainter, QPixmap, QRadialGradient)
+from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QCursor, QFont, QFontDatabase, QIcon, QKeySequence, QLinearGradient, QPalette, QPainter, QPixmap, QRadialGradient, QMovie)
 from PySide2.QtWidgets import *
 from PIL import Image 
 from PIL.ImageQt import ImageQt
@@ -180,7 +180,7 @@ class MainWindow(QMainWindow):
         # try on button
         self.ui.generated_im_try_on_btn.clicked.connect(self.try_on)
         self.try_on_img_path = None
-
+        
 
 
         
@@ -308,18 +308,23 @@ class MainWindow(QMainWindow):
             #Copy images to input and output folders
             shutil.copy(self.person_img_path, 'Try-On/InputImages')
             shutil.copy(self.cloth_img_path, 'Try-On/InputClothesImages')
+            
+            self.try_on_img_path = 'Interface/icons/load3.gif'
+            self.movie = QtGui.QMovie(self.try_on_img_path)
+            # resize movie
+            self.movie.setScaledSize(QtCore.QSize(400, 300))
+            self.ui.generated_img_lbl.setMovie(self.movie)
+            self.movie.start()
+            
             # Run the image generator
-            self.thread = qth()
-            self.worker = TryOnWorker(self)
-            self.worker.moveToThread(self.thread)
-            self.thread.started.connect(self.worker.run)
-            self.worker.finished.connect(self.thread.quit)
-            self.worker.finished.connect(self.worker.deleteLater)
-            self.thread.finished.connect(self.thread.deleteLater)
-            self.thread.start()
-            # run it using popen
-            #process = Popen('python Try-On/Run.py', shell=True, stdout=PIPE)
-            #process.wait()
+            # self.thread = qth()
+            # self.worker = TryOnWorker(self)
+            # self.worker.moveToThread(self.thread)
+            # self.thread.started.connect(self.worker.run)
+            # self.worker.finished.connect(self.thread.quit)
+            # self.worker.finished.connect(self.worker.deleteLater)
+            # self.thread.finished.connect(self.thread.deleteLater)
+            # self.thread.start()
 
 
 if __name__ == "__main__":

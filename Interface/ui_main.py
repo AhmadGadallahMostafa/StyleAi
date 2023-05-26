@@ -18,7 +18,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1326, 738)
+        MainWindow.resize(1719, 949)
         MainWindow.setMinimumSize(QSize(1326, 720))
         palette = QPalette()
         brush = QBrush(QColor(255, 255, 255, 255))
@@ -864,7 +864,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 218, 218))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 388, 218))
         self.horizontalLayout_11 = QHBoxLayout(self.scrollAreaWidgetContents)
         self.horizontalLayout_11.setObjectName(u"horizontalLayout_11")
         self.plainTextEdit = QPlainTextEdit(self.scrollAreaWidgetContents)
@@ -1239,19 +1239,11 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_14.addWidget(self.person_img_lbl)
 
-        self.horizontalSpacer_3 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.horizontalLayout_14.addItem(self.horizontalSpacer_3)
-
         self.cloth_img_lbl = QLabel(self.images_frame_2)
         self.cloth_img_lbl.setObjectName(u"cloth_img_lbl")
         self.cloth_img_lbl.setMinimumSize(QSize(512, 512))
 
         self.horizontalLayout_14.addWidget(self.cloth_img_lbl)
-
-        self.horizontalSpacer_4 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.horizontalLayout_14.addItem(self.horizontalSpacer_4)
 
         self.generated_img_lbl = QLabel(self.images_frame_2)
         self.generated_img_lbl.setObjectName(u"generated_img_lbl")

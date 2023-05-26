@@ -8,7 +8,7 @@
     <x>0</x>
     <y>0</y>
     <width>1326</width>
-    <height>738</height>
+    <height>720</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -557,7 +557,7 @@ color: rgb(210, 210, 210);</string>
       <property name="styleSheet">
        <string notr="true">/* LINE EDIT */
 QLineEdit {
-	background-color: rgb(27, 29, 35);
+	background-color: red;
 	border-radius: 5px;
 	border: 2px solid rgb(27, 29, 35);
 	padding-left: 10px;
@@ -578,7 +578,7 @@ QScrollBar:horizontal {
 	border-radius: 0px;
 }
 QScrollBar::handle:horizontal {
-    background: rgb(85, 170, 255);
+    background: red;
     min-width: 25px;
 	border-radius: 7px
 }
@@ -798,7 +798,7 @@ QSlider::handle:vertical:pressed {
           </size>
          </property>
          <property name="styleSheet">
-          <string notr="true">background-color: transparent;</string>
+          <string notr="true">background-color: green;</string>
          </property>
          <property name="frameShape">
           <enum>QFrame::NoFrame</enum>
@@ -1534,7 +1534,7 @@ QPushButton:pressed {
                    <string notr="true">background: transparent;</string>
                   </property>
                   <property name="currentIndex">
-                   <number>2</number>
+                   <number>1</number>
                   </property>
                   <widget class="QWidget" name="page_home"/>
                   <widget class="QWidget" name="page_widgets">
@@ -1862,7 +1862,7 @@ QScrollBar:horizontal {
                              <rect>
                               <x>0</x>
                               <y>0</y>
-                              <width>218</width>
+                              <width>388</width>
                               <height>218</height>
                              </rect>
                             </property>
@@ -2654,19 +2654,6 @@ QPushButton:pressed {
                            </widget>
                           </item>
                           <item>
-                           <spacer name="horizontalSpacer_3">
-                            <property name="orientation">
-                             <enum>Qt::Horizontal</enum>
-                            </property>
-                            <property name="sizeHint" stdset="0">
-                             <size>
-                              <width>40</width>
-                              <height>20</height>
-                             </size>
-                            </property>
-                           </spacer>
-                          </item>
-                          <item>
                            <widget class="QLabel" name="cloth_img_lbl">
                             <property name="minimumSize">
                              <size>
@@ -2678,19 +2665,6 @@ QPushButton:pressed {
                              <string/>
                             </property>
                            </widget>
-                          </item>
-                          <item>
-                           <spacer name="horizontalSpacer_4">
-                            <property name="orientation">
-                             <enum>Qt::Horizontal</enum>
-                            </property>
-                            <property name="sizeHint" stdset="0">
-                             <size>
-                              <width>40</width>
-                              <height>20</height>
-                             </size>
-                            </property>
-                           </spacer>
                           </item>
                           <item>
                            <widget class="QLabel" name="generated_img_lbl">
