@@ -2619,7 +2619,7 @@ QPushButton:pressed {
                     </item>
                    </layout>
                   </widget>
-                  <widget class="QWidget" name="page_shirt">
+                  <widget class="QWidget" name="page_items">
                    <widget class="QFrame" name="frame_4">
                     <property name="geometry">
                      <rect>
@@ -2635,7 +2635,7 @@ QPushButton:pressed {
                     <property name="frameShadow">
                      <enum>QFrame::Raised</enum>
                     </property>
-                    <widget class="QLabel" name="shirt_selected_img_lbl">
+                    <widget class="QLabel" name="selected_img_lbl">
                      <property name="geometry">
                       <rect>
                        <x>50</x>
@@ -2665,7 +2665,7 @@ QPushButton:pressed {
                      </property>
                      <layout class="QVBoxLayout" name="verticalLayout_12">
                       <item>
-                       <widget class="QLabel" name="shirt_article_lbl">
+                       <widget class="QLabel" name="article_lbl">
                         <property name="font">
                          <font>
                           <pointsize>20</pointsize>
@@ -2677,7 +2677,7 @@ QPushButton:pressed {
                        </widget>
                       </item>
                       <item>
-                       <widget class="QLabel" name="shirt_color_lbl">
+                       <widget class="QLabel" name="color_lbl">
                         <property name="font">
                          <font>
                           <pointsize>20</pointsize>
@@ -2689,7 +2689,7 @@ QPushButton:pressed {
                        </widget>
                       </item>
                       <item>
-                       <widget class="QLabel" name="shirt_gender_lbl">
+                       <widget class="QLabel" name="gender_lbl">
                         <property name="font">
                          <font>
                           <pointsize>20</pointsize>
@@ -2701,7 +2701,7 @@ QPushButton:pressed {
                        </widget>
                       </item>
                       <item>
-                       <widget class="QLabel" name="shirt_usage_lbl">
+                       <widget class="QLabel" name="usage_lbl">
                         <property name="font">
                          <font>
                           <pointsize>20</pointsize>
@@ -2715,7 +2715,7 @@ QPushButton:pressed {
                      </layout>
                     </widget>
                    </widget>
-                   <widget class="QScrollArea" name="scrollArea_shirts">
+                   <widget class="QScrollArea" name="scrollArea_items">
                     <property name="geometry">
                      <rect>
                       <x>0</x>
@@ -2727,7 +2727,7 @@ QPushButton:pressed {
                     <property name="widgetResizable">
                      <bool>true</bool>
                     </property>
-                    <widget class="QWidget" name="scrollAreaWidgetContents_shirts">
+                    <widget class="QWidget" name="scrollAreaWidgetContents_items">
                      <property name="geometry">
                       <rect>
                        <x>0</x>
