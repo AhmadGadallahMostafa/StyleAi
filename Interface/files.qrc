@@ -1,4 +1,9 @@
 <RCC>
+  <qresource prefix="400x400">
+    <file>icons/400x400/dress.png</file>
+    <file>icons/400x400/pants.png</file>
+    <file>icons/400x400/shirt.png</file>
+  </qresource>
   <qresource prefix="16x16">
     <file>icons/16x16/cil-arrow-bottom.png</file>
     <file>icons/16x16/cil-arrow-top.png</file>

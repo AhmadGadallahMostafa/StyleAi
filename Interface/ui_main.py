@@ -18,7 +18,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1706, 900)
+        MainWindow.resize(1631, 900)
         MainWindow.setMinimumSize(QSize(1600, 900))
         palette = QPalette()
         brush = QBrush(QColor(255, 255, 255, 255))
@@ -676,6 +676,9 @@ class Ui_MainWindow(object):
         self.page_home = QWidget()
         self.page_home.setObjectName(u"page_home")
         self.stackedWidget.addWidget(self.page_home)
+        self.page_pants = QWidget()
+        self.page_pants.setObjectName(u"page_pants")
+        self.stackedWidget.addWidget(self.page_pants)
         self.page_widgets = QWidget()
         self.page_widgets.setObjectName(u"page_widgets")
         self.verticalLayout_6 = QVBoxLayout(self.page_widgets)
@@ -851,7 +854,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 380, 218))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 532, 218))
         self.horizontalLayout_11 = QHBoxLayout(self.scrollAreaWidgetContents)
         self.horizontalLayout_11.setObjectName(u"horizontalLayout_11")
         self.plainTextEdit = QPlainTextEdit(self.scrollAreaWidgetContents)
@@ -1140,15 +1143,139 @@ class Ui_MainWindow(object):
         self.stackedWidget.addWidget(self.page_widgets)
         self.page_wardrobe = QWidget()
         self.page_wardrobe.setObjectName(u"page_wardrobe")
-        self.frame_4 = QFrame(self.page_wardrobe)
+        self.horizontalLayout_15 = QHBoxLayout(self.page_wardrobe)
+        self.horizontalLayout_15.setObjectName(u"horizontalLayout_15")
+        self.frame_5 = QFrame(self.page_wardrobe)
+        self.frame_5.setObjectName(u"frame_5")
+        self.frame_5.setFrameShape(QFrame.StyledPanel)
+        self.frame_5.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_16 = QHBoxLayout(self.frame_5)
+        self.horizontalLayout_16.setObjectName(u"horizontalLayout_16")
+        self.shirt_btn = QPushButton(self.frame_5)
+        self.shirt_btn.setObjectName(u"shirt_btn")
+        self.shirt_btn.setMinimumSize(QSize(150, 400))
+        self.shirt_btn.setFont(font5)
+        self.shirt_btn.setStyleSheet(u"QPushButton {\n"
+"	border: 2px solid rgb(52, 59, 72);\n"
+"	border-radius: 5px;	\n"
+"	background-color: rgb(52, 59, 72);\n"
+"}\n"
+"QPushButton:hover {\n"
+"	background-color: rgb(57, 65, 80);\n"
+"	border: 2px solid rgb(61, 70, 86);\n"
+"}\n"
+"QPushButton:pressed {	\n"
+"	background-color: rgb(35, 40, 49);\n"
+"	border: 2px solid rgb(43, 50, 61);\n"
+"}")
+        self.shirt_btn.setIconSize(QSize(150, 150))
+
+        self.horizontalLayout_16.addWidget(self.shirt_btn)
+
+        self.pants_btn = QPushButton(self.frame_5)
+        self.pants_btn.setObjectName(u"pants_btn")
+        self.pants_btn.setMinimumSize(QSize(150, 400))
+        self.pants_btn.setFont(font5)
+        self.pants_btn.setStyleSheet(u"QPushButton {\n"
+"	border: 2px solid rgb(52, 59, 72);\n"
+"	border-radius: 5px;	\n"
+"	background-color: rgb(52, 59, 72);\n"
+"}\n"
+"QPushButton:hover {\n"
+"	background-color: rgb(57, 65, 80);\n"
+"	border: 2px solid rgb(61, 70, 86);\n"
+"}\n"
+"QPushButton:pressed {	\n"
+"	background-color: rgb(35, 40, 49);\n"
+"	border: 2px solid rgb(43, 50, 61);\n"
+"}")
+        icon5 = QIcon()
+        icon5.addFile(u":/400x400/icons/pants.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.pants_btn.setIcon(icon5)
+        self.pants_btn.setIconSize(QSize(400, 400))
+
+        self.horizontalLayout_16.addWidget(self.pants_btn)
+
+        self.shoes_btn = QPushButton(self.frame_5)
+        self.shoes_btn.setObjectName(u"shoes_btn")
+        self.shoes_btn.setMinimumSize(QSize(150, 400))
+        self.shoes_btn.setFont(font5)
+        self.shoes_btn.setStyleSheet(u"QPushButton {\n"
+"	border: 2px solid rgb(52, 59, 72);\n"
+"	border-radius: 5px;	\n"
+"	background-color: rgb(52, 59, 72);\n"
+"}\n"
+"QPushButton:hover {\n"
+"	background-color: rgb(57, 65, 80);\n"
+"	border: 2px solid rgb(61, 70, 86);\n"
+"}\n"
+"QPushButton:pressed {	\n"
+"	background-color: rgb(35, 40, 49);\n"
+"	border: 2px solid rgb(43, 50, 61);\n"
+"}")
+        icon6 = QIcon()
+        icon6.addFile(u":/400x400/icons/dress.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.shoes_btn.setIcon(icon6)
+        self.shoes_btn.setIconSize(QSize(400, 400))
+
+        self.horizontalLayout_16.addWidget(self.shoes_btn)
+
+
+        self.horizontalLayout_15.addWidget(self.frame_5)
+
+        self.stackedWidget.addWidget(self.page_wardrobe)
+        self.page_shirt = QWidget()
+        self.page_shirt.setObjectName(u"page_shirt")
+        self.frame_4 = QFrame(self.page_shirt)
         self.frame_4.setObjectName(u"frame_4")
-        self.frame_4.setGeometry(QRect(310, 310, 120, 80))
+        self.frame_4.setGeometry(QRect(1110, 0, 421, 771))
         self.frame_4.setFrameShape(QFrame.StyledPanel)
         self.frame_4.setFrameShadow(QFrame.Raised)
-        self.pushButton_2 = QPushButton(self.page_wardrobe)
-        self.pushButton_2.setObjectName(u"pushButton_2")
-        self.pushButton_2.setGeometry(QRect(510, 140, 75, 23))
-        self.stackedWidget.addWidget(self.page_wardrobe)
+        self.shirt_selected_img_lbl = QLabel(self.frame_4)
+        self.shirt_selected_img_lbl.setObjectName(u"shirt_selected_img_lbl")
+        self.shirt_selected_img_lbl.setGeometry(QRect(50, 0, 421, 421))
+        self.frame_6 = QFrame(self.frame_4)
+        self.frame_6.setObjectName(u"frame_6")
+        self.frame_6.setGeometry(QRect(20, 430, 371, 341))
+        self.frame_6.setFrameShape(QFrame.StyledPanel)
+        self.frame_6.setFrameShadow(QFrame.Raised)
+        self.verticalLayout_12 = QVBoxLayout(self.frame_6)
+        self.verticalLayout_12.setObjectName(u"verticalLayout_12")
+        self.shirt_article_lbl = QLabel(self.frame_6)
+        self.shirt_article_lbl.setObjectName(u"shirt_article_lbl")
+        font6 = QFont()
+        font6.setPointSize(20)
+        self.shirt_article_lbl.setFont(font6)
+
+        self.verticalLayout_12.addWidget(self.shirt_article_lbl)
+
+        self.shirt_color_lbl = QLabel(self.frame_6)
+        self.shirt_color_lbl.setObjectName(u"shirt_color_lbl")
+        self.shirt_color_lbl.setFont(font6)
+
+        self.verticalLayout_12.addWidget(self.shirt_color_lbl)
+
+        self.shirt_gender_lbl = QLabel(self.frame_6)
+        self.shirt_gender_lbl.setObjectName(u"shirt_gender_lbl")
+        self.shirt_gender_lbl.setFont(font6)
+
+        self.verticalLayout_12.addWidget(self.shirt_gender_lbl)
+
+        self.shirt_usage_lbl = QLabel(self.frame_6)
+        self.shirt_usage_lbl.setObjectName(u"shirt_usage_lbl")
+        self.shirt_usage_lbl.setFont(font6)
+
+        self.verticalLayout_12.addWidget(self.shirt_usage_lbl)
+
+        self.scrollArea_shirts = QScrollArea(self.page_shirt)
+        self.scrollArea_shirts.setObjectName(u"scrollArea_shirts")
+        self.scrollArea_shirts.setGeometry(QRect(0, 0, 1111, 771))
+        self.scrollArea_shirts.setWidgetResizable(True)
+        self.scrollAreaWidgetContents_shirts = QWidget()
+        self.scrollAreaWidgetContents_shirts.setObjectName(u"scrollAreaWidgetContents_shirts")
+        self.scrollAreaWidgetContents_shirts.setGeometry(QRect(0, 0, 1109, 769))
+        self.scrollArea_shirts.setWidget(self.scrollAreaWidgetContents_shirts)
+        self.stackedWidget.addWidget(self.page_shirt)
         self.page_try_on = QWidget()
         self.page_try_on.setObjectName(u"page_try_on")
         self.verticalLayout_10 = QVBoxLayout(self.page_try_on)
@@ -1270,6 +1397,9 @@ class Ui_MainWindow(object):
         self.verticalLayout_10.addWidget(self.images_frame)
 
         self.stackedWidget.addWidget(self.page_try_on)
+        self.page_shoes = QWidget()
+        self.page_shoes.setObjectName(u"page_shoes")
+        self.stackedWidget.addWidget(self.page_shoes)
 
         self.verticalLayout_9.addWidget(self.stackedWidget)
 
@@ -1355,7 +1485,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.stackedWidget.setCurrentIndex(1)
+        self.stackedWidget.setCurrentIndex(4)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -1445,7 +1575,14 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem23.setText(QCoreApplication.translate("MainWindow", u"Line", None));
         self.tableWidget.setSortingEnabled(__sortingEnabled)
 
-        self.pushButton_2.setText(QCoreApplication.translate("MainWindow", u"PushButton", None))
+        self.shirt_btn.setText("")
+        self.pants_btn.setText("")
+        self.shoes_btn.setText("")
+        self.shirt_selected_img_lbl.setText("")
+        self.shirt_article_lbl.setText("")
+        self.shirt_color_lbl.setText("")
+        self.shirt_gender_lbl.setText("")
+        self.shirt_usage_lbl.setText("")
         self.person_im_try_on_btn.setText(QCoreApplication.translate("MainWindow", u"Add Your Image", None))
         self.cloth_im_try_on_btn.setText(QCoreApplication.translate("MainWindow", u"Try New Clothes", None))
         self.generated_im_try_on_btn.setText(QCoreApplication.translate("MainWindow", u"Show me How I Look", None))

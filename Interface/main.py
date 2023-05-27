@@ -29,7 +29,7 @@ from PIL import Image
 from PIL.ImageQt import ImageQt
 from matplotlib import pyplot as plt
 import shutil
-
+import json
 # GUI FILE
 from app_modules import *
 
@@ -98,7 +98,6 @@ class MainWindow(QMainWindow):
         UIFunctions.addNewMenu(self, "Try On", "btn_try_on", "Interface/icons/16x16/try_on.png", True, True)
 
         UIFunctions.addNewMenu(self, "Custom Widgets", "btn_widgets", "url(:/16x16/icons/16x16/cil-3d.png)", False)
-
         ## ==> END ##
 
         # START MENU => SELECTION
@@ -183,17 +182,20 @@ class MainWindow(QMainWindow):
         # try on button
         self.ui.generated_im_try_on_btn.clicked.connect(self.try_on)
         self.try_on_img_path = None
+        # binding wardrobe button
+        self.ui.shirt_btn.clicked.connect(lambda: self.set_wardrobe_item(self.ui.shirt_btn))
+        self.ui.pants_btn.clicked.connect(lambda: self.set_wardrobe_item(self.ui.pants_btn))
+        self.ui.shoes_btn.clicked.connect(lambda: self.set_wardrobe_item(self.ui.shoes_btn))
+
         
 
-
-        
-
-
+        self.set_icon()
+        self.remove_border()
         ## SHOW ==> MAIN WINDOW
         ########################################################################
         self.show()
         ## ==> END ##
-
+    
     ########################################################################
     ## MENUS ==> DYNAMIC MENUS FUNCTIONS
     ########################################################################
@@ -336,7 +338,91 @@ class MainWindow(QMainWindow):
             # self.worker.finished.connect(self.worker.deleteLater)
             # self.thread.finished.connect(self.thread.deleteLater)
             # self.thread.start()
+    def set_icon(self):
+        shirt_icon = QIcon('Interface/icons/400x400/shirt.png')
+        self.ui.shirt_btn.setIcon(shirt_icon)
+        self.ui.shirt_btn.setIconSize(QtCore.QSize(400, 400))
+        pants_icon = QIcon('Interface/icons/400x400/pants.png')
+        self.ui.pants_btn.setIcon(pants_icon)
+        self.ui.pants_btn.setIconSize(QtCore.QSize(400, 400))
+        shoes_icon = QIcon('Interface/icons/400x400/shoes.png')
+        self.ui.shoes_btn.setIcon(shoes_icon)
+        self.ui.shoes_btn.setIconSize(QtCore.QSize(400, 400))
 
+    def set_wardrobe_item(self, btnWidget):
+        path = None
+        page = None
+        if btnWidget.objectName() == "shirt_btn":
+            self.ui.stackedWidget.setCurrentWidget(self.ui.page_shirt)
+            UIFunctions.resetStyle(self, "shirt_btn")
+            UIFunctions.labelPage(self, "Shirts")
+            btnWidget.setStyleSheet(UIFunctions.selectMenu(btnWidget.styleSheet()))
+            path = "Interface/shirts"
+            page = self.ui.scrollAreaWidgetContents_shirts
+        if btnWidget.objectName() == "pants_btn":
+            self.ui.stackedWidget.setCurrentWidget(self.ui.page_pants)
+            UIFunctions.resetStyle(self, "pants_btn")
+            UIFunctions.labelPage(self, "Pants")
+            btnWidget.setStyleSheet(UIFunctions.selectMenu(btnWidget.styleSheet()))
+            path = "Interface/pants"
+            page = self.ui.page_pants
+        if btnWidget.objectName() == "shoes_btn":
+            self.ui.stackedWidget.setCurrentWidget(self.ui.page_shoes)
+            UIFunctions.resetStyle(self, "shoes_btn")
+            UIFunctions.labelPage(self, "Shoes")
+            btnWidget.setStyleSheet(UIFunctions.selectMenu(btnWidget.styleSheet()))
+            path = "Interface/shoes"
+            page = self.ui.page_shoes
+
+        if path == None or page == None:
+            return
+        
+        self.get_wardrobe_item_img(path, page)
+
+    def get_wardrobe_item_img(self, path, page):
+        layout = QtWidgets.QGridLayout(page)
+        row = 0
+        col = 0
+        layout.setVerticalSpacing(100)
+        for filename in os.listdir(path):
+            if filename.endswith(".jpg"):
+                btn = QtWidgets.QPushButton()
+                btn.setObjectName(filename)
+                btn.setStyleSheet("border: none;")
+                btn.setFixedSize(200, 200)
+                btn.setIcon(QtGui.QIcon(path + "/" + filename))
+                btn.setIconSize(QtCore.QSize(200, 200))
+                layout.addWidget(btn, row, col)
+                col += 1
+                if col == 4:
+                    col = 0
+                    row += 1
+                btn.clicked.connect(lambda path=path, filename=filename: self.set_wardrobe_item_img(path, filename))
+                
+                
+
+    def set_wardrobe_item_img(self, path, filename):
+        pixmap = QtGui.QPixmap(path + "/" + filename)
+        pixmap = pixmap.scaled(400, 400, QtCore.Qt.KeepAspectRatio)
+
+        # set shirt_selected_img_lbl to the image of the button
+        if path == "Interface/shirts":
+            self.ui.shirt_selected_img_lbl.setPixmap(pixmap)
+            json_file = open('Interface/shirtLabels/' + filename[:-4] + '.json')
+            json_str = json_file.read()
+            json_data = json.loads(json_str)
+            self.ui.shirt_article_lbl.setText("Article :" + json_data['Article'])
+            self.ui.shirt_color_lbl.setText("Color :" + json_data['Color'])
+            self.ui.shirt_gender_lbl.setText("Gender :" + json_data['Gender'])
+            self.ui.shirt_usage_lbl.setText("Usage :" + json_data['Usage'])
+        elif path == "Interface/pants":
+            self.ui.pants_selected_img_lbl.setPixmap(pixmap)
+        elif path == "Interface/shoes":
+            self.ui.shoes_selected_img_lbl.setPixmap(pixmap)
+
+    def remove_border(self):
+        # Remove border from scrollAreaWidgetContents_shirts
+        self.ui.scrollArea_shirts.setStyleSheet("border: none;")
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

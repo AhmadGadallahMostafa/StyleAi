@@ -7,7 +7,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1706</width>
+    <width>1631</width>
     <height>900</height>
    </rect>
   </property>
@@ -1534,9 +1534,10 @@ QPushButton:pressed {
                    <string notr="true">background: transparent;</string>
                   </property>
                   <property name="currentIndex">
-                   <number>2</number>
+                   <number>4</number>
                   </property>
                   <widget class="QWidget" name="page_home"/>
+                  <widget class="QWidget" name="page_pants"/>
                   <widget class="QWidget" name="page_widgets">
                    <layout class="QVBoxLayout" name="verticalLayout_6">
                     <item>
@@ -1839,7 +1840,7 @@ QScrollBar:horizontal {
                              <rect>
                               <x>0</x>
                               <y>0</y>
-                              <width>380</width>
+                              <width>532</width>
                               <height>218</height>
                              </rect>
                             </property>
@@ -2475,13 +2476,157 @@ QHeaderView::section:vertical
                    </layout>
                   </widget>
                   <widget class="QWidget" name="page_wardrobe">
+                   <layout class="QHBoxLayout" name="horizontalLayout_15">
+                    <item>
+                     <widget class="QFrame" name="frame_5">
+                      <property name="frameShape">
+                       <enum>QFrame::StyledPanel</enum>
+                      </property>
+                      <property name="frameShadow">
+                       <enum>QFrame::Raised</enum>
+                      </property>
+                      <layout class="QHBoxLayout" name="horizontalLayout_16">
+                       <item>
+                        <widget class="QPushButton" name="shirt_btn">
+                         <property name="minimumSize">
+                          <size>
+                           <width>150</width>
+                           <height>400</height>
+                          </size>
+                         </property>
+                         <property name="font">
+                          <font>
+                           <family>Segoe UI</family>
+                           <pointsize>9</pointsize>
+                          </font>
+                         </property>
+                         <property name="styleSheet">
+                          <string notr="true">QPushButton {
+	border: 2px solid rgb(52, 59, 72);
+	border-radius: 5px;	
+	background-color: rgb(52, 59, 72);
+}
+QPushButton:hover {
+	background-color: rgb(57, 65, 80);
+	border: 2px solid rgb(61, 70, 86);
+}
+QPushButton:pressed {	
+	background-color: rgb(35, 40, 49);
+	border: 2px solid rgb(43, 50, 61);
+}</string>
+                         </property>
+                         <property name="text">
+                          <string/>
+                         </property>
+                         <property name="iconSize">
+                          <size>
+                           <width>150</width>
+                           <height>150</height>
+                          </size>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QPushButton" name="pants_btn">
+                         <property name="minimumSize">
+                          <size>
+                           <width>150</width>
+                           <height>400</height>
+                          </size>
+                         </property>
+                         <property name="font">
+                          <font>
+                           <family>Segoe UI</family>
+                           <pointsize>9</pointsize>
+                          </font>
+                         </property>
+                         <property name="styleSheet">
+                          <string notr="true">QPushButton {
+	border: 2px solid rgb(52, 59, 72);
+	border-radius: 5px;	
+	background-color: rgb(52, 59, 72);
+}
+QPushButton:hover {
+	background-color: rgb(57, 65, 80);
+	border: 2px solid rgb(61, 70, 86);
+}
+QPushButton:pressed {	
+	background-color: rgb(35, 40, 49);
+	border: 2px solid rgb(43, 50, 61);
+}</string>
+                         </property>
+                         <property name="text">
+                          <string/>
+                         </property>
+                         <property name="icon">
+                          <iconset>
+                           <normaloff>:/400x400/icons/pants.png</normaloff>:/400x400/icons/pants.png</iconset>
+                         </property>
+                         <property name="iconSize">
+                          <size>
+                           <width>400</width>
+                           <height>400</height>
+                          </size>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QPushButton" name="shoes_btn">
+                         <property name="minimumSize">
+                          <size>
+                           <width>150</width>
+                           <height>400</height>
+                          </size>
+                         </property>
+                         <property name="font">
+                          <font>
+                           <family>Segoe UI</family>
+                           <pointsize>9</pointsize>
+                          </font>
+                         </property>
+                         <property name="styleSheet">
+                          <string notr="true">QPushButton {
+	border: 2px solid rgb(52, 59, 72);
+	border-radius: 5px;	
+	background-color: rgb(52, 59, 72);
+}
+QPushButton:hover {
+	background-color: rgb(57, 65, 80);
+	border: 2px solid rgb(61, 70, 86);
+}
+QPushButton:pressed {	
+	background-color: rgb(35, 40, 49);
+	border: 2px solid rgb(43, 50, 61);
+}</string>
+                         </property>
+                         <property name="text">
+                          <string/>
+                         </property>
+                         <property name="icon">
+                          <iconset>
+                           <normaloff>:/400x400/icons/dress.png</normaloff>:/400x400/icons/dress.png</iconset>
+                         </property>
+                         <property name="iconSize">
+                          <size>
+                           <width>400</width>
+                           <height>400</height>
+                          </size>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                  <widget class="QWidget" name="page_shirt">
                    <widget class="QFrame" name="frame_4">
                     <property name="geometry">
                      <rect>
-                      <x>310</x>
-                      <y>310</y>
-                      <width>120</width>
-                      <height>80</height>
+                      <x>1110</x>
+                      <y>0</y>
+                      <width>421</width>
+                      <height>771</height>
                      </rect>
                     </property>
                     <property name="frameShape">
@@ -2490,19 +2635,108 @@ QHeaderView::section:vertical
                     <property name="frameShadow">
                      <enum>QFrame::Raised</enum>
                     </property>
+                    <widget class="QLabel" name="shirt_selected_img_lbl">
+                     <property name="geometry">
+                      <rect>
+                       <x>50</x>
+                       <y>0</y>
+                       <width>421</width>
+                       <height>421</height>
+                      </rect>
+                     </property>
+                     <property name="text">
+                      <string/>
+                     </property>
+                    </widget>
+                    <widget class="QFrame" name="frame_6">
+                     <property name="geometry">
+                      <rect>
+                       <x>20</x>
+                       <y>430</y>
+                       <width>371</width>
+                       <height>341</height>
+                      </rect>
+                     </property>
+                     <property name="frameShape">
+                      <enum>QFrame::StyledPanel</enum>
+                     </property>
+                     <property name="frameShadow">
+                      <enum>QFrame::Raised</enum>
+                     </property>
+                     <layout class="QVBoxLayout" name="verticalLayout_12">
+                      <item>
+                       <widget class="QLabel" name="shirt_article_lbl">
+                        <property name="font">
+                         <font>
+                          <pointsize>20</pointsize>
+                         </font>
+                        </property>
+                        <property name="text">
+                         <string/>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QLabel" name="shirt_color_lbl">
+                        <property name="font">
+                         <font>
+                          <pointsize>20</pointsize>
+                         </font>
+                        </property>
+                        <property name="text">
+                         <string/>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QLabel" name="shirt_gender_lbl">
+                        <property name="font">
+                         <font>
+                          <pointsize>20</pointsize>
+                         </font>
+                        </property>
+                        <property name="text">
+                         <string/>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QLabel" name="shirt_usage_lbl">
+                        <property name="font">
+                         <font>
+                          <pointsize>20</pointsize>
+                         </font>
+                        </property>
+                        <property name="text">
+                         <string/>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </widget>
                    </widget>
-                   <widget class="QPushButton" name="pushButton_2">
+                   <widget class="QScrollArea" name="scrollArea_shirts">
                     <property name="geometry">
                      <rect>
-                      <x>510</x>
-                      <y>140</y>
-                      <width>75</width>
-                      <height>23</height>
+                      <x>0</x>
+                      <y>0</y>
+                      <width>1111</width>
+                      <height>771</height>
                      </rect>
                     </property>
-                    <property name="text">
-                     <string>PushButton</string>
+                    <property name="widgetResizable">
+                     <bool>true</bool>
                     </property>
+                    <widget class="QWidget" name="scrollAreaWidgetContents_shirts">
+                     <property name="geometry">
+                      <rect>
+                       <x>0</x>
+                       <y>0</y>
+                       <width>1109</width>
+                       <height>769</height>
+                      </rect>
+                     </property>
+                    </widget>
                    </widget>
                   </widget>
                   <widget class="QWidget" name="page_try_on">
@@ -2724,6 +2958,7 @@ QPushButton:pressed {
                     </item>
                    </layout>
                   </widget>
+                  <widget class="QWidget" name="page_shoes"/>
                  </widget>
                 </item>
                </layout>
