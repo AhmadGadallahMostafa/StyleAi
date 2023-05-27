@@ -678,6 +678,11 @@ class Ui_MainWindow(object):
         self.stackedWidget.addWidget(self.page_home)
         self.page_pants = QWidget()
         self.page_pants.setObjectName(u"page_pants")
+        self.frame_7 = QFrame(self.page_pants)
+        self.frame_7.setObjectName(u"frame_7")
+        self.frame_7.setGeometry(QRect(220, 220, 120, 80))
+        self.frame_7.setFrameShape(QFrame.StyledPanel)
+        self.frame_7.setFrameShadow(QFrame.Raised)
         self.stackedWidget.addWidget(self.page_pants)
         self.page_widgets = QWidget()
         self.page_widgets.setObjectName(u"page_widgets")
@@ -1397,9 +1402,238 @@ class Ui_MainWindow(object):
         self.verticalLayout_10.addWidget(self.images_frame)
 
         self.stackedWidget.addWidget(self.page_try_on)
-        self.page_shoes = QWidget()
-        self.page_shoes.setObjectName(u"page_shoes")
-        self.stackedWidget.addWidget(self.page_shoes)
+        self.page_add = QWidget()
+        self.page_add.setObjectName(u"page_add")
+        self.horizontalLayout_17 = QHBoxLayout(self.page_add)
+        self.horizontalLayout_17.setObjectName(u"horizontalLayout_17")
+        self.frame_8 = QFrame(self.page_add)
+        self.frame_8.setObjectName(u"frame_8")
+        self.frame_8.setFrameShape(QFrame.StyledPanel)
+        self.frame_8.setFrameShadow(QFrame.Raised)
+        self.classifier_input_lbl = QLabel(self.frame_8)
+        self.classifier_input_lbl.setObjectName(u"classifier_input_lbl")
+        self.classifier_input_lbl.setGeometry(QRect(30, 20, 331, 391))
+        self.add_classifier_input_btn = QPushButton(self.frame_8)
+        self.add_classifier_input_btn.setObjectName(u"add_classifier_input_btn")
+        self.add_classifier_input_btn.setGeometry(QRect(0, 580, 150, 30))
+        self.add_classifier_input_btn.setMinimumSize(QSize(150, 30))
+        self.add_classifier_input_btn.setFont(font5)
+        self.add_classifier_input_btn.setStyleSheet(u"QPushButton {\n"
+"	border: 2px solid rgb(52, 59, 72);\n"
+"	border-radius: 5px;	\n"
+"	background-color: rgb(52, 59, 72);\n"
+"}\n"
+"QPushButton:hover {\n"
+"	background-color: rgb(57, 65, 80);\n"
+"	border: 2px solid rgb(61, 70, 86);\n"
+"}\n"
+"QPushButton:pressed {	\n"
+"	background-color: rgb(35, 40, 49);\n"
+"	border: 2px solid rgb(43, 50, 61);\n"
+"}")
+        self.add_classifier_input_btn.setIcon(icon3)
+        self.classify_input_btn = QPushButton(self.frame_8)
+        self.classify_input_btn.setObjectName(u"classify_input_btn")
+        self.classify_input_btn.setGeometry(QRect(220, 580, 150, 30))
+        self.classify_input_btn.setMinimumSize(QSize(150, 30))
+        self.classify_input_btn.setFont(font5)
+        self.classify_input_btn.setStyleSheet(u"QPushButton {\n"
+"	border: 2px solid rgb(52, 59, 72);\n"
+"	border-radius: 5px;	\n"
+"	background-color: rgb(52, 59, 72);\n"
+"}\n"
+"QPushButton:hover {\n"
+"	background-color: rgb(57, 65, 80);\n"
+"	border: 2px solid rgb(61, 70, 86);\n"
+"}\n"
+"QPushButton:pressed {	\n"
+"	background-color: rgb(35, 40, 49);\n"
+"	border: 2px solid rgb(43, 50, 61);\n"
+"}")
+        self.classify_input_btn.setIcon(icon3)
+
+        self.horizontalLayout_17.addWidget(self.frame_8)
+
+        self.frame_9 = QFrame(self.page_add)
+        self.frame_9.setObjectName(u"frame_9")
+        self.frame_9.setFrameShape(QFrame.StyledPanel)
+        self.frame_9.setFrameShadow(QFrame.Raised)
+        self.classifier_top_lbl = QLabel(self.frame_9)
+        self.classifier_top_lbl.setObjectName(u"classifier_top_lbl")
+        self.classifier_top_lbl.setGeometry(QRect(30, 20, 331, 391))
+        self.frame_12 = QFrame(self.frame_9)
+        self.frame_12.setObjectName(u"frame_12")
+        self.frame_12.setGeometry(QRect(20, 480, 341, 161))
+        self.frame_12.setFrameShape(QFrame.StyledPanel)
+        self.frame_12.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_18 = QHBoxLayout(self.frame_12)
+        self.horizontalLayout_18.setObjectName(u"horizontalLayout_18")
+        self.frame_13 = QFrame(self.frame_12)
+        self.frame_13.setObjectName(u"frame_13")
+        self.frame_13.setFrameShape(QFrame.StyledPanel)
+        self.frame_13.setFrameShadow(QFrame.Raised)
+        self.verticalLayout_13 = QVBoxLayout(self.frame_13)
+        self.verticalLayout_13.setObjectName(u"verticalLayout_13")
+        self.article_classifier_top_lbl = QLabel(self.frame_13)
+        self.article_classifier_top_lbl.setObjectName(u"article_classifier_top_lbl")
+        font7 = QFont()
+        font7.setPointSize(15)
+        self.article_classifier_top_lbl.setFont(font7)
+
+        self.verticalLayout_13.addWidget(self.article_classifier_top_lbl)
+
+        self.color_classifier_top_lbl = QLabel(self.frame_13)
+        self.color_classifier_top_lbl.setObjectName(u"color_classifier_top_lbl")
+        self.color_classifier_top_lbl.setFont(font7)
+
+        self.verticalLayout_13.addWidget(self.color_classifier_top_lbl)
+
+
+        self.horizontalLayout_18.addWidget(self.frame_13)
+
+        self.frame_14 = QFrame(self.frame_12)
+        self.frame_14.setObjectName(u"frame_14")
+        self.frame_14.setFrameShape(QFrame.StyledPanel)
+        self.frame_14.setFrameShadow(QFrame.Raised)
+        self.verticalLayout_14 = QVBoxLayout(self.frame_14)
+        self.verticalLayout_14.setObjectName(u"verticalLayout_14")
+        self.gender_classifier_top_lbl = QLabel(self.frame_14)
+        self.gender_classifier_top_lbl.setObjectName(u"gender_classifier_top_lbl")
+        self.gender_classifier_top_lbl.setFont(font7)
+
+        self.verticalLayout_14.addWidget(self.gender_classifier_top_lbl)
+
+        self.usage_classifier_top_lbl = QLabel(self.frame_14)
+        self.usage_classifier_top_lbl.setObjectName(u"usage_classifier_top_lbl")
+        self.usage_classifier_top_lbl.setFont(font7)
+
+        self.verticalLayout_14.addWidget(self.usage_classifier_top_lbl)
+
+
+        self.horizontalLayout_18.addWidget(self.frame_14)
+
+
+        self.horizontalLayout_17.addWidget(self.frame_9)
+
+        self.frame_10 = QFrame(self.page_add)
+        self.frame_10.setObjectName(u"frame_10")
+        self.frame_10.setFrameShape(QFrame.StyledPanel)
+        self.frame_10.setFrameShadow(QFrame.Raised)
+        self.classifier_bottom_lbl = QLabel(self.frame_10)
+        self.classifier_bottom_lbl.setObjectName(u"classifier_bottom_lbl")
+        self.classifier_bottom_lbl.setGeometry(QRect(30, 20, 331, 391))
+        self.frame_15 = QFrame(self.frame_10)
+        self.frame_15.setObjectName(u"frame_15")
+        self.frame_15.setGeometry(QRect(10, 480, 341, 161))
+        self.frame_15.setFrameShape(QFrame.StyledPanel)
+        self.frame_15.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_19 = QHBoxLayout(self.frame_15)
+        self.horizontalLayout_19.setObjectName(u"horizontalLayout_19")
+        self.frame_16 = QFrame(self.frame_15)
+        self.frame_16.setObjectName(u"frame_16")
+        self.frame_16.setFrameShape(QFrame.StyledPanel)
+        self.frame_16.setFrameShadow(QFrame.Raised)
+        self.verticalLayout_16 = QVBoxLayout(self.frame_16)
+        self.verticalLayout_16.setObjectName(u"verticalLayout_16")
+        self.article_classifier_bottom_lbl = QLabel(self.frame_16)
+        self.article_classifier_bottom_lbl.setObjectName(u"article_classifier_bottom_lbl")
+        self.article_classifier_bottom_lbl.setFont(font7)
+
+        self.verticalLayout_16.addWidget(self.article_classifier_bottom_lbl)
+
+        self.color_classifier_bottom_lbl = QLabel(self.frame_16)
+        self.color_classifier_bottom_lbl.setObjectName(u"color_classifier_bottom_lbl")
+        self.color_classifier_bottom_lbl.setFont(font7)
+
+        self.verticalLayout_16.addWidget(self.color_classifier_bottom_lbl)
+
+
+        self.horizontalLayout_19.addWidget(self.frame_16)
+
+        self.frame_17 = QFrame(self.frame_15)
+        self.frame_17.setObjectName(u"frame_17")
+        self.frame_17.setFrameShape(QFrame.StyledPanel)
+        self.frame_17.setFrameShadow(QFrame.Raised)
+        self.verticalLayout_17 = QVBoxLayout(self.frame_17)
+        self.verticalLayout_17.setObjectName(u"verticalLayout_17")
+        self.gender_classifier_bottom_lbl = QLabel(self.frame_17)
+        self.gender_classifier_bottom_lbl.setObjectName(u"gender_classifier_bottom_lbl")
+        self.gender_classifier_bottom_lbl.setFont(font7)
+
+        self.verticalLayout_17.addWidget(self.gender_classifier_bottom_lbl)
+
+        self.usage_classifier_bottom_lbl = QLabel(self.frame_17)
+        self.usage_classifier_bottom_lbl.setObjectName(u"usage_classifier_bottom_lbl")
+        self.usage_classifier_bottom_lbl.setFont(font7)
+
+        self.verticalLayout_17.addWidget(self.usage_classifier_bottom_lbl)
+
+
+        self.horizontalLayout_19.addWidget(self.frame_17)
+
+
+        self.horizontalLayout_17.addWidget(self.frame_10)
+
+        self.frame_11 = QFrame(self.page_add)
+        self.frame_11.setObjectName(u"frame_11")
+        self.frame_11.setFrameShape(QFrame.StyledPanel)
+        self.frame_11.setFrameShadow(QFrame.Raised)
+        self.classifier_shoes_lbl = QLabel(self.frame_11)
+        self.classifier_shoes_lbl.setObjectName(u"classifier_shoes_lbl")
+        self.classifier_shoes_lbl.setGeometry(QRect(30, 20, 331, 391))
+        self.frame_18 = QFrame(self.frame_11)
+        self.frame_18.setObjectName(u"frame_18")
+        self.frame_18.setGeometry(QRect(10, 480, 341, 161))
+        self.frame_18.setFrameShape(QFrame.StyledPanel)
+        self.frame_18.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_20 = QHBoxLayout(self.frame_18)
+        self.horizontalLayout_20.setObjectName(u"horizontalLayout_20")
+        self.frame_19 = QFrame(self.frame_18)
+        self.frame_19.setObjectName(u"frame_19")
+        self.frame_19.setFrameShape(QFrame.StyledPanel)
+        self.frame_19.setFrameShadow(QFrame.Raised)
+        self.verticalLayout_18 = QVBoxLayout(self.frame_19)
+        self.verticalLayout_18.setObjectName(u"verticalLayout_18")
+        self.article_classifier_shoes_lbl = QLabel(self.frame_19)
+        self.article_classifier_shoes_lbl.setObjectName(u"article_classifier_shoes_lbl")
+        self.article_classifier_shoes_lbl.setFont(font7)
+
+        self.verticalLayout_18.addWidget(self.article_classifier_shoes_lbl)
+
+        self.color_classifier_shoes_lbl = QLabel(self.frame_19)
+        self.color_classifier_shoes_lbl.setObjectName(u"color_classifier_shoes_lbl")
+        self.color_classifier_shoes_lbl.setFont(font7)
+
+        self.verticalLayout_18.addWidget(self.color_classifier_shoes_lbl)
+
+
+        self.horizontalLayout_20.addWidget(self.frame_19)
+
+        self.frame_20 = QFrame(self.frame_18)
+        self.frame_20.setObjectName(u"frame_20")
+        self.frame_20.setFrameShape(QFrame.StyledPanel)
+        self.frame_20.setFrameShadow(QFrame.Raised)
+        self.verticalLayout_19 = QVBoxLayout(self.frame_20)
+        self.verticalLayout_19.setObjectName(u"verticalLayout_19")
+        self.gender_classifier_shoes_lbl = QLabel(self.frame_20)
+        self.gender_classifier_shoes_lbl.setObjectName(u"gender_classifier_shoes_lbl")
+        self.gender_classifier_shoes_lbl.setFont(font7)
+
+        self.verticalLayout_19.addWidget(self.gender_classifier_shoes_lbl)
+
+        self.usage_classifier_shoes_lbl = QLabel(self.frame_20)
+        self.usage_classifier_shoes_lbl.setObjectName(u"usage_classifier_shoes_lbl")
+        self.usage_classifier_shoes_lbl.setFont(font7)
+
+        self.verticalLayout_19.addWidget(self.usage_classifier_shoes_lbl)
+
+
+        self.horizontalLayout_20.addWidget(self.frame_20)
+
+
+        self.horizontalLayout_17.addWidget(self.frame_11)
+
+        self.stackedWidget.addWidget(self.page_add)
 
         self.verticalLayout_9.addWidget(self.stackedWidget)
 
@@ -1485,7 +1719,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.stackedWidget.setCurrentIndex(4)
+        self.stackedWidget.setCurrentIndex(6)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -1589,6 +1823,24 @@ class Ui_MainWindow(object):
         self.person_img_lbl.setText("")
         self.cloth_img_lbl.setText("")
         self.generated_img_lbl.setText("")
+        self.classifier_input_lbl.setText("")
+        self.add_classifier_input_btn.setText(QCoreApplication.translate("MainWindow", u"Add image", None))
+        self.classify_input_btn.setText(QCoreApplication.translate("MainWindow", u"Classify", None))
+        self.classifier_top_lbl.setText("")
+        self.article_classifier_top_lbl.setText("")
+        self.color_classifier_top_lbl.setText("")
+        self.gender_classifier_top_lbl.setText("")
+        self.usage_classifier_top_lbl.setText("")
+        self.classifier_bottom_lbl.setText("")
+        self.article_classifier_bottom_lbl.setText("")
+        self.color_classifier_bottom_lbl.setText("")
+        self.gender_classifier_bottom_lbl.setText("")
+        self.usage_classifier_bottom_lbl.setText("")
+        self.classifier_shoes_lbl.setText("")
+        self.article_classifier_shoes_lbl.setText("")
+        self.color_classifier_shoes_lbl.setText("")
+        self.gender_classifier_shoes_lbl.setText("")
+        self.usage_classifier_shoes_lbl.setText("")
         self.label_credits.setText(QCoreApplication.translate("MainWindow", u"Registered by: Wanderson M. Pimenta", None))
         self.label_version.setText(QCoreApplication.translate("MainWindow", u"v1.0.0", None))
     # retranslateUi

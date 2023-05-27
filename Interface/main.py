@@ -30,6 +30,7 @@ from PIL.ImageQt import ImageQt
 from matplotlib import pyplot as plt
 import shutil
 import json
+import time
 # GUI FILE
 from app_modules import *
 
@@ -43,13 +44,74 @@ class TryOnWorker(qobj):
 
     def run(self):
         os.system('python Try-On/Run.py')
+        self.window.movie.stop()
         self.try_on_img_path = 'output_image_generator/try-on.png'
         self.try_on_img_pix_map = QtGui.QPixmap(self.try_on_img_path)
         # resize image
         self.try_on_img_pix_map = self.try_on_img_pix_map.scaled(512, 512, QtCore.Qt.KeepAspectRatio)
         self.window.ui.generated_img_lbl.setPixmap(self.try_on_img_pix_map)
+        self.window.ui.classify_input_btn.setEnabled(True)
+        self.window.ui.generated_im_try_on_btn.setEnabled(True)
         self.finished.emit()
+
+class ClassifierWorker(qobj):
+    finished = pyqtss()
+    def __init__(self, window):
+        super().__init__()
+        self.window = window
+        self.classifier_img_top_path = ''
+        self.classifier_img_bottom_path = ''
+        self.classifier_img_shoes_path = ''
+        self.classifier_img_top_pix_map = None
+        self.classifier_img_bottom_pix_map = None
+        self.classifier_img_shoes_pix_map = None
+
+    def run(self):
+        # sleep for 5 seconds
+        time.sleep(2)
+        self.window.movie.stop()
+        # emit signal to update the UI
+        self.classifier_img_top_path = 'Interface/classifieroutput/top.jpg'
+        self.classifier_img_bottom_path = 'Interface/classifieroutput/bottom.jpg'
+        self.classifier_img_shoes_path = 'Interface/classifieroutput/shoes.jpg'
+        self.classifier_img_top_pix_map = QtGui.QPixmap(self.classifier_img_top_path)
+        self.classifier_img_bottom_pix_map = QtGui.QPixmap(self.classifier_img_bottom_path)
+        self.classifier_img_shoes_pix_map = QtGui.QPixmap(self.classifier_img_shoes_path)
+        # resize image
+        self.classifier_img_top_pix_map = self.classifier_img_top_pix_map.scaled(400, 400, QtCore.Qt.KeepAspectRatio)
+        self.classifier_img_bottom_pix_map = self.classifier_img_bottom_pix_map.scaled(400, 400, QtCore.Qt.KeepAspectRatio)
+        self.classifier_img_shoes_pix_map = self.classifier_img_shoes_pix_map.scaled(400, 400, QtCore.Qt.KeepAspectRatio)
+        self.window.ui.classifier_top_lbl.setPixmap(self.classifier_img_top_pix_map)
+        self.window.ui.classifier_bottom_lbl.setPixmap(self.classifier_img_bottom_pix_map)
+        self.window.ui.classifier_shoes_lbl.setPixmap(self.classifier_img_shoes_pix_map)
+        # get the json files
+        json_file_top = open('Interface/classifieroutput/top.json')
+        json_data_top = json.load(json_file_top)
+        json_file_bottom = open('Interface/classifieroutput/bottom.json')
+        json_data_bottom = json.load(json_file_bottom)
+        json_file_shoes = open('Interface/classifieroutput/shoes.json')
+        json_data_shoes = json.load(json_file_shoes)
+
+        self.window.ui.article_classifier_top_lbl.setText("Article :" + json_data_top['Article'])
+        self.window.ui.color_classifier_top_lbl.setText("Color :" + json_data_top['Color'])
+        self.window.ui.gender_classifier_top_lbl.setText("Gender :" + json_data_top['Gender'])
+        self.window.ui.usage_classifier_top_lbl.setText("Usage :" + json_data_top['Usage'])
+
+        self.window.ui.article_classifier_bottom_lbl.setText("Article :" + json_data_bottom['Article'])
+        self.window.ui.color_classifier_bottom_lbl.setText("Color :" + json_data_bottom['Color'])
+        self.window.ui.gender_classifier_bottom_lbl.setText("Gender :" + json_data_top['Gender'])
+        self.window.ui.usage_classifier_bottom_lbl.setText("Usage :" + json_data_bottom['Usage'])
+
+        self.window.ui.article_classifier_shoes_lbl.setText("Article :" + json_data_shoes['Article'])
+        self.window.ui.color_classifier_shoes_lbl.setText("Color :" + json_data_shoes['Color'])
+        self.window.ui.gender_classifier_shoes_lbl.setText("Gender :" + json_data_top['Gender'])
+        self.window.ui.usage_classifier_shoes_lbl.setText("Usage :" + json_data_shoes['Usage'])
+
         
+
+        self.window.ui.classify_input_btn.setEnabled(True)
+        self.window.ui.generated_im_try_on_btn.setEnabled(True)
+        self.finished.emit()
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -179,6 +241,10 @@ class MainWindow(QMainWindow):
         self.ui.cloth_im_try_on_btn.clicked.connect(lambda: self.open_image("cloth"))
         self.cloth_img_path = None
         self.cloth_img_pix_map = None
+        # classifier image
+        self.ui.add_classifier_input_btn.clicked.connect(lambda: self.open_image("classifier"))
+        # classifier button
+        self.ui.classify_input_btn.clicked.connect(self.classify)
         # try on button
         self.ui.generated_im_try_on_btn.clicked.connect(self.try_on)
         self.try_on_img_path = None
@@ -219,7 +285,7 @@ class MainWindow(QMainWindow):
 
                 # PAGE wardrobe
         if btnWidget.objectName() == "btn_add":
-            self.ui.stackedWidget.setCurrentWidget(self.ui.page_home)
+            self.ui.stackedWidget.setCurrentWidget(self.ui.page_add)
             UIFunctions.resetStyle(self, "btn_add")
             UIFunctions.labelPage(self, "Add")
             btnWidget.setStyleSheet(UIFunctions.selectMenu(btnWidget.styleSheet()))
@@ -298,14 +364,20 @@ class MainWindow(QMainWindow):
             # resize image
             self.person_img_pix_map = self.person_img_pix_map.scaled(512, 512, QtCore.Qt.KeepAspectRatio)
             self.ui.person_img_lbl.setPixmap(self.person_img_pix_map)
-        else:
+        elif img_type == "cloth":
             self.cloth_img_path = QtWidgets.QFileDialog.getOpenFileName(self, 'Open file', "G:/college/GP/try on/StyleAi/Try-On/data/train/cloth", "Image files (*.jpg *.gif)")
             self.cloth_img_path = self.cloth_img_path[0]
             self.cloth_img_pix_map = QtGui.QPixmap(self.cloth_img_path)
             # resize image
             self.cloth_img_pix_map = self.cloth_img_pix_map.scaled(512, 512, QtCore.Qt.KeepAspectRatio)
             self.ui.cloth_img_lbl.setPixmap(self.cloth_img_pix_map)
-            
+        elif img_type == "classifier":
+            self.input_classifier_img_path = QtWidgets.QFileDialog.getOpenFileName(self, 'Open file', "G:/college/GP/try on/StyleAi/Try-On/data/train/cloth", "Image files (*.jpg *.gif *.png)")
+            self.input_classifier_img_path = self.input_classifier_img_path[0]
+            self.input_classifier_img_pix_map = QtGui.QPixmap(self.input_classifier_img_path)
+            # resize image
+            self.input_classifier_img_pix_map = self.input_classifier_img_pix_map.scaled(400, 400, QtCore.Qt.KeepAspectRatio)
+            self.ui.classifier_input_lbl.setPixmap(self.input_classifier_img_pix_map)    
         
     def try_on(self):
         if self.person_img_path == None or self.cloth_img_path == None:
@@ -329,6 +401,8 @@ class MainWindow(QMainWindow):
             self.ui.generated_img_lbl.setMovie(self.movie)
             self.movie.start()
             
+            self.ui.classify_input_btn.setEnabled(False)
+            self.ui.generated_im_try_on_btn.setEnabled(False)
             #Run the image generator
             self.thread = qth()
             self.worker = TryOnWorker(self)
@@ -338,6 +412,57 @@ class MainWindow(QMainWindow):
             self.worker.finished.connect(self.worker.deleteLater)
             self.thread.finished.connect(self.thread.deleteLater)
             self.thread.start()
+
+    def classify(self):
+        if self.input_classifier_img_path == None:
+            pass
+        else:
+            # Delete all images in input and output folders
+            # for filename in os.listdir('Try-On/InputImages'):
+            #     os.remove('Try-On/InputImages/' + filename)
+            # for filename in os.listdir('Try-On/InputClothesImages'):
+            #     os.remove('Try-On/InputClothesImages/' + filename)
+            # for filename in os.listdir('output_image_generator'):
+            #     os.remove('output_image_generator/' + filename)
+            #Copy images to input and output folders
+            # shutil.copy(self.input_classifier_img_path, 'Try-On/InputImages')
+            
+            self.classifier_img_path = 'Interface/icons/load3.gif'
+            self.movie = QtGui.QMovie(self.classifier_img_path)
+            # resize movie
+            self.movie.setScaledSize(QtCore.QSize(400, 300))
+            self.ui.classifier_top_lbl.setMovie(self.movie)
+            self.ui.classifier_bottom_lbl.setMovie(self.movie)
+            self.ui.classifier_shoes_lbl.setMovie(self.movie)
+            self.movie.setSpeed(100)
+            self.movie.start()
+            
+            self.ui.article_classifier_top_lbl.setText("Article :")
+            self.ui.color_classifier_top_lbl.setText("Color :")
+            self.ui.gender_classifier_top_lbl.setText("Gender :")
+            self.ui.usage_classifier_top_lbl.setText("Usage :")
+
+            self.ui.article_classifier_bottom_lbl.setText("Article :")
+            self.ui.color_classifier_bottom_lbl.setText("Color :")
+            self.ui.gender_classifier_bottom_lbl.setText("Gender :")
+            self.ui.usage_classifier_bottom_lbl.setText("Usage :")
+
+            self.ui.article_classifier_shoes_lbl.setText("Article :")
+            self.ui.color_classifier_shoes_lbl.setText("Color :")
+            self.ui.gender_classifier_shoes_lbl.setText("Gender :")
+            self.ui.usage_classifier_shoes_lbl.setText("Usage :")
+
+            self.ui.classify_input_btn.setEnabled(False)
+            self.ui.generated_im_try_on_btn.setEnabled(False)
+            #Run the classifier
+            self.thread = qth()
+            self.worker = ClassifierWorker(self)
+            self.worker.moveToThread(self.thread)
+            self.thread.started.connect(self.worker.run)
+            self.worker.finished.connect(self.thread.quit)
+            self.worker.finished.connect(self.worker.deleteLater)
+            self.thread.start()
+
     def set_icon(self):
         shirt_icon = QIcon('Interface/icons/400x400/shirt.png')
         self.ui.shirt_btn.setIcon(shirt_icon)
@@ -378,7 +503,6 @@ class MainWindow(QMainWindow):
             return
         
         self.get_wardrobe_item_img(path, page)
-
 
     def get_wardrobe_item_img(self, path, page):
         self.ui.article_lbl.setText("Article :")
@@ -432,6 +556,7 @@ class MainWindow(QMainWindow):
         self.ui.color_lbl.setText("Color :" + json_data['Color'])
         self.ui.gender_lbl.setText("Gender :" + json_data['Gender'])
         self.ui.usage_lbl.setText("Usage :" + json_data['Usage'])
+    
     def remove_border(self):
         # Remove border from scrollAreaWidgetContents_shirts
         self.ui.scrollArea_items.setStyleSheet("border: none;")
