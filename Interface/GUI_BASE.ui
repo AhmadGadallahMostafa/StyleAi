@@ -7,14 +7,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1326</width>
-    <height>720</height>
+    <width>1500</width>
+    <height>800</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>1326</width>
-    <height>720</height>
+    <width>1500</width>
+    <height>800</height>
    </size>
   </property>
   <property name="palette">
@@ -1096,7 +1096,7 @@ QPushButton:pressed {
                       <string/>
                      </property>
                      <property name="icon">
-                      <iconset>
+                      <iconset resource="files.qrc">
                        <normaloff>:/16x16/icons/16x16/cil-window-minimize.png</normaloff>:/16x16/icons/16x16/cil-window-minimize.png</iconset>
                      </property>
                     </widget>
@@ -1140,7 +1140,7 @@ QPushButton:pressed {
                       <string/>
                      </property>
                      <property name="icon">
-                      <iconset>
+                      <iconset resource="files.qrc">
                        <normaloff>:/16x16/icons/16x16/cil-window-maximize.png</normaloff>:/16x16/icons/16x16/cil-window-maximize.png</iconset>
                      </property>
                     </widget>
@@ -1184,7 +1184,7 @@ QPushButton:pressed {
                       <string/>
                      </property>
                      <property name="icon">
-                      <iconset>
+                      <iconset resource="files.qrc">
                        <normaloff>:/16x16/icons/16x16/cil-x.png</normaloff>:/16x16/icons/16x16/cil-x.png</iconset>
                      </property>
                     </widget>
@@ -1736,7 +1736,7 @@ QPushButton:pressed {
                                   <string>Open Blender</string>
                                  </property>
                                  <property name="icon">
-                                  <iconset>
+                                  <iconset resource="files.qrc">
                                    <normaloff>:/16x16/icons/16x16/cil-folder-open.png</normaloff>:/16x16/icons/16x16/cil-folder-open.png</iconset>
                                  </property>
                                 </widget>
@@ -1773,39 +1773,6 @@ border-radius: 5px;</string>
                       <layout class="QVBoxLayout" name="verticalLayout_11">
                        <item>
                         <layout class="QGridLayout" name="gridLayout_2">
-                         <item row="0" column="0">
-                          <widget class="QCheckBox" name="checkBox">
-                           <property name="autoFillBackground">
-                            <bool>false</bool>
-                           </property>
-                           <property name="styleSheet">
-                            <string notr="true"/>
-                           </property>
-                           <property name="text">
-                            <string>CheckBox</string>
-                           </property>
-                          </widget>
-                         </item>
-                         <item row="0" column="1">
-                          <widget class="QRadioButton" name="radioButton">
-                           <property name="styleSheet">
-                            <string notr="true"/>
-                           </property>
-                           <property name="text">
-                            <string>RadioButton</string>
-                           </property>
-                          </widget>
-                         </item>
-                         <item row="0" column="2" rowspan="3">
-                          <widget class="QSlider" name="verticalSlider">
-                           <property name="styleSheet">
-                            <string notr="true"/>
-                           </property>
-                           <property name="orientation">
-                            <enum>Qt::Vertical</enum>
-                           </property>
-                          </widget>
-                         </item>
                          <item row="0" column="4" rowspan="3">
                           <widget class="QScrollBar" name="verticalScrollBar">
                            <property name="styleSheet">
@@ -1816,6 +1783,16 @@ border-radius: 5px;</string>
     margin: 21px 0 21px 0;
 	border-radius: 0px;
  }</string>
+                           </property>
+                           <property name="orientation">
+                            <enum>Qt::Vertical</enum>
+                           </property>
+                          </widget>
+                         </item>
+                         <item row="0" column="2" rowspan="3">
+                          <widget class="QSlider" name="verticalSlider">
+                           <property name="styleSheet">
+                            <string notr="true"/>
                            </property>
                            <property name="orientation">
                             <enum>Qt::Vertical</enum>
@@ -1862,7 +1839,7 @@ QScrollBar:horizontal {
                              <rect>
                               <x>0</x>
                               <y>0</y>
-                              <width>388</width>
+                              <width>467</width>
                               <height>218</height>
                              </rect>
                             </property>
@@ -1892,6 +1869,52 @@ QPlainTextEdit:focus {
                              </item>
                             </layout>
                            </widget>
+                          </widget>
+                         </item>
+                         <item row="0" column="1">
+                          <widget class="QRadioButton" name="radioButton">
+                           <property name="styleSheet">
+                            <string notr="true"/>
+                           </property>
+                           <property name="text">
+                            <string>RadioButton</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item row="0" column="0">
+                          <widget class="QCheckBox" name="checkBox">
+                           <property name="autoFillBackground">
+                            <bool>false</bool>
+                           </property>
+                           <property name="styleSheet">
+                            <string notr="true"/>
+                           </property>
+                           <property name="text">
+                            <string>CheckBox</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item row="1" column="3">
+                          <widget class="QScrollBar" name="horizontalScrollBar">
+                           <property name="sizePolicy">
+                            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                             <horstretch>0</horstretch>
+                             <verstretch>0</verstretch>
+                            </sizepolicy>
+                           </property>
+                           <property name="styleSheet">
+                            <string notr="true">QScrollBar:horizontal {
+    border: none;
+    background: rgb(52, 59, 72);
+    height: 14px;
+    margin: 0px 21px 0 21px;
+	border-radius: 0px;
+}
+</string>
+                           </property>
+                           <property name="orientation">
+                            <enum>Qt::Horizontal</enum>
+                           </property>
                           </widget>
                          </item>
                          <item row="1" column="0" colspan="2">
@@ -1949,29 +1972,6 @@ QComboBox QAbstractItemView {
                            </item>
                           </widget>
                          </item>
-                         <item row="1" column="3">
-                          <widget class="QScrollBar" name="horizontalScrollBar">
-                           <property name="sizePolicy">
-                            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                             <horstretch>0</horstretch>
-                             <verstretch>0</verstretch>
-                            </sizepolicy>
-                           </property>
-                           <property name="styleSheet">
-                            <string notr="true">QScrollBar:horizontal {
-    border: none;
-    background: rgb(52, 59, 72);
-    height: 14px;
-    margin: 0px 21px 0 21px;
-	border-radius: 0px;
-}
-</string>
-                           </property>
-                           <property name="orientation">
-                            <enum>Qt::Horizontal</enum>
-                           </property>
-                          </widget>
-                         </item>
                          <item row="1" column="6">
                           <widget class="QCommandLinkButton" name="commandLinkButton">
                            <property name="styleSheet">
@@ -1993,7 +1993,7 @@ QCommandLinkButton:pressed {
                             <string>CommandLinkButton</string>
                            </property>
                            <property name="icon">
-                            <iconset>
+                            <iconset resource="files.qrc">
                              <normaloff>:/16x16/icons/16x16/cil-link.png</normaloff>:/16x16/icons/16x16/cil-link.png</iconset>
                            </property>
                            <property name="description">
@@ -2053,6 +2053,12 @@ QCommandLinkButton:pressed {
                            <horstretch>0</horstretch>
                            <verstretch>0</verstretch>
                           </sizepolicy>
+                         </property>
+                         <property name="minimumSize">
+                          <size>
+                           <width>1500</width>
+                           <height>800</height>
+                          </size>
                          </property>
                          <property name="palette">
                           <palette>
@@ -2521,7 +2527,7 @@ QPushButton:pressed {
                              <string>Add Your Image</string>
                             </property>
                             <property name="icon">
-                             <iconset>
+                             <iconset resource="files.qrc">
                               <normaloff>:/16x16/icons/16x16/cil-folder-open.png</normaloff>:/16x16/icons/16x16/cil-folder-open.png</iconset>
                             </property>
                            </widget>
@@ -2572,7 +2578,7 @@ QPushButton:pressed {
                              <string>Try New Clothes</string>
                             </property>
                             <property name="icon">
-                             <iconset>
+                             <iconset resource="files.qrc">
                               <normaloff>:/16x16/icons/16x16/cil-folder-open.png</normaloff>:/16x16/icons/16x16/cil-folder-open.png</iconset>
                             </property>
                            </widget>
@@ -2623,7 +2629,7 @@ QPushButton:pressed {
                              <string>Show me How I Look</string>
                             </property>
                             <property name="icon">
-                             <iconset>
+                             <iconset resource="files.qrc">
                               <normaloff>:/16x16/icons/16x16/cil-folder-open.png</normaloff>:/16x16/icons/16x16/cil-folder-open.png</iconset>
                             </property>
                            </widget>
