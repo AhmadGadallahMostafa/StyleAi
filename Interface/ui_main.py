@@ -1512,6 +1512,25 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_18.addWidget(self.frame_14)
 
+        self.classify_save_top_btn = QPushButton(self.frame_9)
+        self.classify_save_top_btn.setObjectName(u"classify_save_top_btn")
+        self.classify_save_top_btn.setGeometry(QRect(110, 680, 161, 51))
+        self.classify_save_top_btn.setMinimumSize(QSize(150, 30))
+        self.classify_save_top_btn.setFont(font5)
+        self.classify_save_top_btn.setStyleSheet(u"QPushButton {\n"
+"	border: 2px solid rgb(52, 59, 72);\n"
+"	border-radius: 5px;	\n"
+"	background-color: green;\n"
+"}\n"
+"QPushButton:hover {\n"
+"	background-color: rgb(1, 50, 32);\n"
+"	border: 2px solid rgb(61, 70, 86);\n"
+"}\n"
+"QPushButton:pressed {	\n"
+"	background-color: rgb(1, 50, 32);\n"
+"	border: 2px solid rgb(43, 50, 61);\n"
+"}")
+        self.classify_save_top_btn.setIcon(icon3)
 
         self.horizontalLayout_17.addWidget(self.frame_9)
 
@@ -1571,6 +1590,25 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_19.addWidget(self.frame_17)
 
+        self.classify_save_bottom_btn = QPushButton(self.frame_10)
+        self.classify_save_bottom_btn.setObjectName(u"classify_save_bottom_btn")
+        self.classify_save_bottom_btn.setGeometry(QRect(120, 680, 161, 51))
+        self.classify_save_bottom_btn.setMinimumSize(QSize(150, 30))
+        self.classify_save_bottom_btn.setFont(font5)
+        self.classify_save_bottom_btn.setStyleSheet(u"QPushButton {\n"
+"	border: 2px solid rgb(52, 59, 72);\n"
+"	border-radius: 5px;	\n"
+"	background-color: green;\n"
+"}\n"
+"QPushButton:hover {\n"
+"	background-color: rgb(1, 50, 32);\n"
+"	border: 2px solid rgb(61, 70, 86);\n"
+"}\n"
+"QPushButton:pressed {	\n"
+"	background-color: rgb(1, 50, 32);\n"
+"	border: 2px solid rgb(43, 50, 61);\n"
+"}")
+        self.classify_save_bottom_btn.setIcon(icon3)
 
         self.horizontalLayout_17.addWidget(self.frame_10)
 
@@ -1630,6 +1668,25 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_20.addWidget(self.frame_20)
 
+        self.classify_save_shoes_btn = QPushButton(self.frame_11)
+        self.classify_save_shoes_btn.setObjectName(u"classify_save_shoes_btn")
+        self.classify_save_shoes_btn.setGeometry(QRect(110, 680, 161, 51))
+        self.classify_save_shoes_btn.setMinimumSize(QSize(150, 30))
+        self.classify_save_shoes_btn.setFont(font5)
+        self.classify_save_shoes_btn.setStyleSheet(u"QPushButton {\n"
+"	border: 2px solid rgb(52, 59, 72);\n"
+"	border-radius: 5px;	\n"
+"	background-color: green;\n"
+"}\n"
+"QPushButton:hover {\n"
+"	background-color: rgb(1, 50, 32);\n"
+"	border: 2px solid rgb(61, 70, 86);\n"
+"}\n"
+"QPushButton:pressed {	\n"
+"	background-color: rgb(1, 50, 32);\n"
+"	border: 2px solid rgb(43, 50, 61);\n"
+"}")
+        self.classify_save_shoes_btn.setIcon(icon3)
 
         self.horizontalLayout_17.addWidget(self.frame_11)
 
@@ -1831,16 +1888,19 @@ class Ui_MainWindow(object):
         self.color_classifier_top_lbl.setText("")
         self.gender_classifier_top_lbl.setText("")
         self.usage_classifier_top_lbl.setText("")
+        self.classify_save_top_btn.setText(QCoreApplication.translate("MainWindow", u"Save", None))
         self.classifier_bottom_lbl.setText("")
         self.article_classifier_bottom_lbl.setText("")
         self.color_classifier_bottom_lbl.setText("")
         self.gender_classifier_bottom_lbl.setText("")
         self.usage_classifier_bottom_lbl.setText("")
+        self.classify_save_bottom_btn.setText(QCoreApplication.translate("MainWindow", u"Save", None))
         self.classifier_shoes_lbl.setText("")
         self.article_classifier_shoes_lbl.setText("")
         self.color_classifier_shoes_lbl.setText("")
         self.gender_classifier_shoes_lbl.setText("")
         self.usage_classifier_shoes_lbl.setText("")
+        self.classify_save_shoes_btn.setText(QCoreApplication.translate("MainWindow", u"Save", None))
         self.label_credits.setText(QCoreApplication.translate("MainWindow", u"Registered by: Wanderson M. Pimenta", None))
         self.label_version.setText(QCoreApplication.translate("MainWindow", u"v1.0.0", None))
     # retranslateUi

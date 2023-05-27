@@ -3199,13 +3199,13 @@ QPushButton:pressed {
                         </item>
                        </layout>
                       </widget>
-                      <widget class="QPushButton" name="classify_input_btn_2">
+                      <widget class="QPushButton" name="classify_save_top_btn">
                        <property name="geometry">
                         <rect>
                          <x>110</x>
                          <y>680</y>
-                         <width>150</width>
-                         <height>30</height>
+                         <width>161</width>
+                         <height>51</height>
                         </rect>
                        </property>
                        <property name="minimumSize">
@@ -3227,11 +3227,11 @@ QPushButton:pressed {
 	background-color: green;
 }
 QPushButton:hover {
-	background-color: rgb(57, 65, 80);
+	background-color: rgb(1, 50, 32);
 	border: 2px solid rgb(61, 70, 86);
 }
 QPushButton:pressed {	
-	background-color: rgb(35, 40, 49);
+	background-color: rgb(1, 50, 32);
 	border: 2px solid rgb(43, 50, 61);
 }</string>
                        </property>
@@ -3356,13 +3356,13 @@ QPushButton:pressed {
                         </item>
                        </layout>
                       </widget>
-                      <widget class="QPushButton" name="classify_input_btn_3">
+                      <widget class="QPushButton" name="classify_save_bottom_btn">
                        <property name="geometry">
                         <rect>
                          <x>120</x>
                          <y>680</y>
-                         <width>150</width>
-                         <height>30</height>
+                         <width>161</width>
+                         <height>51</height>
                         </rect>
                        </property>
                        <property name="minimumSize">
@@ -3384,11 +3384,11 @@ QPushButton:pressed {
 	background-color: green;
 }
 QPushButton:hover {
-	background-color: rgb(57, 65, 80);
+	background-color: rgb(1, 50, 32);
 	border: 2px solid rgb(61, 70, 86);
 }
 QPushButton:pressed {	
-	background-color: rgb(35, 40, 49);
+	background-color: rgb(1, 50, 32);
 	border: 2px solid rgb(43, 50, 61);
 }</string>
                        </property>
@@ -3513,13 +3513,13 @@ QPushButton:pressed {
                         </item>
                        </layout>
                       </widget>
-                      <widget class="QPushButton" name="classify_input_btn_4">
+                      <widget class="QPushButton" name="classify_save_shoes_btn">
                        <property name="geometry">
                         <rect>
                          <x>110</x>
                          <y>680</y>
-                         <width>150</width>
-                         <height>30</height>
+                         <width>161</width>
+                         <height>51</height>
                         </rect>
                        </property>
                        <property name="minimumSize">
@@ -3541,11 +3541,11 @@ QPushButton:pressed {
 	background-color: green;
 }
 QPushButton:hover {
-	background-color: rgb(57, 65, 80);
+	background-color: rgb(1, 50, 32);
 	border: 2px solid rgb(61, 70, 86);
 }
 QPushButton:pressed {	
-	background-color: rgb(35, 40, 49);
+	background-color: rgb(1, 50, 32);
 	border: 2px solid rgb(43, 50, 61);
 }</string>
                        </property>

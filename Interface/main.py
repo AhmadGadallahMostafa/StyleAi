@@ -107,10 +107,15 @@ class ClassifierWorker(qobj):
         self.window.ui.gender_classifier_shoes_lbl.setText("Gender :" + json_data_top['Gender'])
         self.window.ui.usage_classifier_shoes_lbl.setText("Usage :" + json_data_shoes['Usage'])
 
-        
-
         self.window.ui.classify_input_btn.setEnabled(True)
         self.window.ui.generated_im_try_on_btn.setEnabled(True)
+        
+        self.window.ui.classify_save_top_btn.setVisible(True)
+        self.window.ui.classify_save_bottom_btn.setVisible(True)
+        self.window.ui.classify_save_shoes_btn.setVisible(True)
+        self.window.ui.classify_save_top_btn.setEnabled(True)
+        self.window.ui.classify_save_bottom_btn.setEnabled(True)
+        self.window.ui.classify_save_shoes_btn.setEnabled(True)
         self.finished.emit()
 
 class MainWindow(QMainWindow):
@@ -252,6 +257,17 @@ class MainWindow(QMainWindow):
         self.ui.shirt_btn.clicked.connect(lambda: self.set_wardrobe_item(self.ui.shirt_btn))
         self.ui.pants_btn.clicked.connect(lambda: self.set_wardrobe_item(self.ui.pants_btn))
         self.ui.shoes_btn.clicked.connect(lambda: self.set_wardrobe_item(self.ui.shoes_btn))
+        #binding save button
+        self.ui.classify_save_top_btn.clicked.connect(lambda: self.save_classifier_output("top"))
+        self.ui.classify_save_bottom_btn.clicked.connect(lambda: self.save_classifier_output("bottom"))
+        self.ui.classify_save_shoes_btn.clicked.connect(lambda: self.save_classifier_output("shoes"))
+        # make save buttons invisible and disabled
+        self.ui.classify_save_top_btn.setVisible(False)
+        self.ui.classify_save_bottom_btn.setVisible(False)
+        self.ui.classify_save_shoes_btn.setVisible(False)
+        self.ui.classify_save_top_btn.setEnabled(False)
+        self.ui.classify_save_bottom_btn.setEnabled(False)
+        self.ui.classify_save_shoes_btn.setEnabled(False)
 
         self.wardrobe_items = []
 
@@ -560,6 +576,38 @@ class MainWindow(QMainWindow):
     def remove_border(self):
         # Remove border from scrollAreaWidgetContents_shirts
         self.ui.scrollArea_items.setStyleSheet("border: none;")
+
+    def save_classifier_output(self, output):
+        num = 0
+        img_path = ''
+        json_path = ''
+        if output == "top":
+            num = len(os.listdir("Interface/shirts")) + 1
+            img_path = 'Interface/classifieroutput/top.jpg'
+            json_path = 'Interface/classifieroutput/top.json'
+            # save in shirts folder and shirtLabels folder and change name to num.jpg
+            shutil.copy(img_path, 'Interface/shirts/' + str(num) + '.jpg')
+            shutil.copy(json_path, 'Interface/shirtLabels/' + str(num) + '.json')
+            self.ui.classify_save_top_btn.setEnabled(False)
+            self.ui.classify_save_top_btn.setVisible(False)            
+        elif output == "bottom":
+            num = len(os.listdir("Interface/pants")) + 1
+            img_path = 'Interface/classifieroutput/bottom.jpg'
+            json_path = 'Interface/classifieroutput/bottom.json'
+            # save in pants folder and pantLabels folder and change name to num.jpg
+            shutil.copy(img_path, 'Interface/pants/' + str(num) + '.jpg')
+            shutil.copy(json_path, 'Interface/pantLabels/' + str(num) + '.json')
+            self.ui.classify_save_bottom_btn.setVisible(False)
+            self.ui.classify_save_bottom_btn.setEnabled(False)
+        elif output == "shoes":
+            num = len(os.listdir("Interface/shoes")) + 1
+            img_path = 'Interface/classifieroutput/shoes.jpg'
+            json_path = 'Interface/classifieroutput/shoes.json'
+            # save in shoes folder and shoeLabels folder and change name to num.jpg
+            shutil.copy(img_path, 'Interface/shoes/' + str(num) + '.jpg')
+            shutil.copy(json_path, 'Interface/shoeLabels/' + str(num) + '.json')
+            self.ui.classify_save_shoes_btn.setVisible(False)
+            self.ui.classify_save_shoes_btn.setEnabled(False)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
