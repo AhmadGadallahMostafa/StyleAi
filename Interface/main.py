@@ -130,10 +130,14 @@ class RecommenderScoreWorker(qobj):
 
     def run(self):
         # sleep for 5 seconds
-        time.sleep(2)
+        os.system('python Recommendation\score.py')
         self.window.recommenderScoreMovie.stop()
-        self.window.ui.recommender_outfit_score_lbl.setText("Score : 0.8")
-        
+        # read score from Interface\score.txt
+        score_file = open('Interface/score.txt', 'r')
+        score = score_file.read()
+        # round score to 4 decimal places
+        score = round(float(score), 4)
+        self.window.ui.recommender_outfit_score_lbl.setText("Score : " + score)
         self.window.ui.get_score_btn.setEnabled(True)
 
         self.finished.emit()
@@ -770,7 +774,10 @@ class MainWindow(QMainWindow):
             #     os.remove('Try-On/InputClothesImages/' + filename)
             # for filename in os.listdir('output_image_generator'):
             #     os.remove('output_image_generator/' + filename)
-            
+            shutil.copy(self.recommender_top_path, 'Interface\outfit_evaluated/top.jpg')
+            shutil.copy(self.recommender_bottom_path, 'Interface\outfit_evaluated/bottom.jpg')
+            shutil.copy(self.recommender_shoes_path, 'Interface\outfit_evaluated/shoes.jpg')
+
             self.ui.recommender_outfit_score_lbl.setText("")
             self.recommenderScoreMovie = QtGui.QMovie('Interface/icons/load3.gif')
             # resize movie
