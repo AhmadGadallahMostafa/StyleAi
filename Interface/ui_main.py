@@ -676,14 +676,202 @@ class Ui_MainWindow(object):
         self.page_home = QWidget()
         self.page_home.setObjectName(u"page_home")
         self.stackedWidget.addWidget(self.page_home)
-        self.page_pants = QWidget()
-        self.page_pants.setObjectName(u"page_pants")
-        self.frame_7 = QFrame(self.page_pants)
+        self.page_recommender_get_outfit = QWidget()
+        self.page_recommender_get_outfit.setObjectName(u"page_recommender_get_outfit")
+        self.top_recommender_get_outfit_btn = QPushButton(self.page_recommender_get_outfit)
+        self.top_recommender_get_outfit_btn.setObjectName(u"top_recommender_get_outfit_btn")
+        self.top_recommender_get_outfit_btn.setGeometry(QRect(20, 270, 211, 201))
+        self.top_recommender_get_outfit_btn.setMinimumSize(QSize(150, 150))
+        font5 = QFont()
+        font5.setFamily(u"Segoe UI")
+        font5.setPointSize(9)
+        self.top_recommender_get_outfit_btn.setFont(font5)
+        self.top_recommender_get_outfit_btn.setStyleSheet(u"QPushButton {\n"
+"	border: 2px solid rgb(52, 59, 72);\n"
+"	border-radius: 5px;	\n"
+"	background-color: rgb(52, 59, 72);\n"
+"}\n"
+"QPushButton:hover {\n"
+"	background-color: rgb(57, 65, 80);\n"
+"	border: 2px solid rgb(61, 70, 86);\n"
+"}\n"
+"QPushButton:pressed {	\n"
+"	background-color: rgb(35, 40, 49);\n"
+"	border: 2px solid rgb(43, 50, 61);\n"
+"}")
+        self.top_recommender_get_outfit_btn.setIconSize(QSize(150, 150))
+        self.bottom_recommender_get_outfit_btn = QPushButton(self.page_recommender_get_outfit)
+        self.bottom_recommender_get_outfit_btn.setObjectName(u"bottom_recommender_get_outfit_btn")
+        self.bottom_recommender_get_outfit_btn.setGeometry(QRect(260, 270, 211, 201))
+        self.bottom_recommender_get_outfit_btn.setMinimumSize(QSize(150, 150))
+        self.bottom_recommender_get_outfit_btn.setFont(font5)
+        self.bottom_recommender_get_outfit_btn.setStyleSheet(u"QPushButton {\n"
+"	border: 2px solid rgb(52, 59, 72);\n"
+"	border-radius: 5px;	\n"
+"	background-color: rgb(52, 59, 72);\n"
+"}\n"
+"QPushButton:hover {\n"
+"	background-color: rgb(57, 65, 80);\n"
+"	border: 2px solid rgb(61, 70, 86);\n"
+"}\n"
+"QPushButton:pressed {	\n"
+"	background-color: rgb(35, 40, 49);\n"
+"	border: 2px solid rgb(43, 50, 61);\n"
+"}")
+        self.bottom_recommender_get_outfit_btn.setIconSize(QSize(150, 150))
+        self.shoes_recommender_get_outfit_btn = QPushButton(self.page_recommender_get_outfit)
+        self.shoes_recommender_get_outfit_btn.setObjectName(u"shoes_recommender_get_outfit_btn")
+        self.shoes_recommender_get_outfit_btn.setGeometry(QRect(500, 270, 211, 201))
+        self.shoes_recommender_get_outfit_btn.setMinimumSize(QSize(150, 150))
+        self.shoes_recommender_get_outfit_btn.setFont(font5)
+        self.shoes_recommender_get_outfit_btn.setStyleSheet(u"QPushButton {\n"
+"	border: 2px solid rgb(52, 59, 72);\n"
+"	border-radius: 5px;	\n"
+"	background-color: rgb(52, 59, 72);\n"
+"}\n"
+"QPushButton:hover {\n"
+"	background-color: rgb(57, 65, 80);\n"
+"	border: 2px solid rgb(61, 70, 86);\n"
+"}\n"
+"QPushButton:pressed {	\n"
+"	background-color: rgb(35, 40, 49);\n"
+"	border: 2px solid rgb(43, 50, 61);\n"
+"}")
+        self.shoes_recommender_get_outfit_btn.setIconSize(QSize(150, 150))
+        self.frame_7 = QFrame(self.page_recommender_get_outfit)
         self.frame_7.setObjectName(u"frame_7")
-        self.frame_7.setGeometry(QRect(220, 220, 120, 80))
+        self.frame_7.setGeometry(QRect(720, 0, 811, 721))
         self.frame_7.setFrameShape(QFrame.StyledPanel)
         self.frame_7.setFrameShadow(QFrame.Raised)
-        self.stackedWidget.addWidget(self.page_pants)
+        self.verticalLayout_20 = QVBoxLayout(self.frame_7)
+        self.verticalLayout_20.setObjectName(u"verticalLayout_20")
+        self.frame_21 = QFrame(self.frame_7)
+        self.frame_21.setObjectName(u"frame_21")
+        self.frame_21.setFrameShape(QFrame.StyledPanel)
+        self.frame_21.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_21 = QHBoxLayout(self.frame_21)
+        self.horizontalLayout_21.setObjectName(u"horizontalLayout_21")
+        self.top_recommender_outfit_lbl = QLabel(self.frame_21)
+        self.top_recommender_outfit_lbl.setObjectName(u"top_recommender_outfit_lbl")
+
+        self.horizontalLayout_21.addWidget(self.top_recommender_outfit_lbl)
+
+        self.bottom_recommender_outfit_lbl = QLabel(self.frame_21)
+        self.bottom_recommender_outfit_lbl.setObjectName(u"bottom_recommender_outfit_lbl")
+
+        self.horizontalLayout_21.addWidget(self.bottom_recommender_outfit_lbl)
+
+        self.shoes_recommender_outfit_lbl = QLabel(self.frame_21)
+        self.shoes_recommender_outfit_lbl.setObjectName(u"shoes_recommender_outfit_lbl")
+
+        self.horizontalLayout_21.addWidget(self.shoes_recommender_outfit_lbl)
+
+
+        self.verticalLayout_20.addWidget(self.frame_21)
+
+        self.frame_22 = QFrame(self.frame_7)
+        self.frame_22.setObjectName(u"frame_22")
+        self.frame_22.setFrameShape(QFrame.StyledPanel)
+        self.frame_22.setFrameShadow(QFrame.Raised)
+        self.recommender_outfit_score_lbl = QLabel(self.frame_22)
+        self.recommender_outfit_score_lbl.setObjectName(u"recommender_outfit_score_lbl")
+        self.recommender_outfit_score_lbl.setGeometry(QRect(180, 20, 281, 71))
+        font6 = QFont()
+        font6.setPointSize(15)
+        self.recommender_outfit_score_lbl.setFont(font6)
+        self.get_score_btn = QPushButton(self.frame_22)
+        self.get_score_btn.setObjectName(u"get_score_btn")
+        self.get_score_btn.setGeometry(QRect(10, 20, 151, 71))
+        self.get_score_btn.setMinimumSize(QSize(150, 30))
+        self.get_score_btn.setFont(font5)
+        self.get_score_btn.setStyleSheet(u"QPushButton {\n"
+"	border: 2px solid rgb(52, 59, 72);\n"
+"	border-radius: 5px;	\n"
+"	background-color: rgb(52, 59, 72);\n"
+"}\n"
+"QPushButton:hover {\n"
+"	background-color: rgb(57, 65, 80);\n"
+"	border: 2px solid rgb(61, 70, 86);\n"
+"}\n"
+"QPushButton:pressed {	\n"
+"	background-color: rgb(35, 40, 49);\n"
+"	border: 2px solid rgb(43, 50, 61);\n"
+"}")
+        icon3 = QIcon()
+        icon3.addFile(u":/16x16/icons/16x16/cil-folder-open.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.get_score_btn.setIcon(icon3)
+
+        self.verticalLayout_20.addWidget(self.frame_22)
+
+        self.top_recommender_manual_get_outfit_btn = QPushButton(self.page_recommender_get_outfit)
+        self.top_recommender_manual_get_outfit_btn.setObjectName(u"top_recommender_manual_get_outfit_btn")
+        self.top_recommender_manual_get_outfit_btn.setGeometry(QRect(60, 500, 150, 30))
+        self.top_recommender_manual_get_outfit_btn.setMinimumSize(QSize(150, 30))
+        self.top_recommender_manual_get_outfit_btn.setFont(font5)
+        self.top_recommender_manual_get_outfit_btn.setStyleSheet(u"QPushButton {\n"
+"	border: 2px solid rgb(52, 59, 72);\n"
+"	border-radius: 5px;	\n"
+"	background-color: rgb(52, 59, 72);\n"
+"}\n"
+"QPushButton:hover {\n"
+"	background-color: rgb(57, 65, 80);\n"
+"	border: 2px solid rgb(61, 70, 86);\n"
+"}\n"
+"QPushButton:pressed {	\n"
+"	background-color: rgb(35, 40, 49);\n"
+"	border: 2px solid rgb(43, 50, 61);\n"
+"}")
+        self.top_recommender_manual_get_outfit_btn.setIcon(icon3)
+        self.bottom_recommender_manual_get_outfit_btn = QPushButton(self.page_recommender_get_outfit)
+        self.bottom_recommender_manual_get_outfit_btn.setObjectName(u"bottom_recommender_manual_get_outfit_btn")
+        self.bottom_recommender_manual_get_outfit_btn.setGeometry(QRect(290, 500, 150, 30))
+        self.bottom_recommender_manual_get_outfit_btn.setMinimumSize(QSize(150, 30))
+        self.bottom_recommender_manual_get_outfit_btn.setFont(font5)
+        self.bottom_recommender_manual_get_outfit_btn.setStyleSheet(u"QPushButton {\n"
+"	border: 2px solid rgb(52, 59, 72);\n"
+"	border-radius: 5px;	\n"
+"	background-color: rgb(52, 59, 72);\n"
+"}\n"
+"QPushButton:hover {\n"
+"	background-color: rgb(57, 65, 80);\n"
+"	border: 2px solid rgb(61, 70, 86);\n"
+"}\n"
+"QPushButton:pressed {	\n"
+"	background-color: rgb(35, 40, 49);\n"
+"	border: 2px solid rgb(43, 50, 61);\n"
+"}")
+        self.bottom_recommender_manual_get_outfit_btn.setIcon(icon3)
+        self.shoes_recommender_manual_get_outfit_btn = QPushButton(self.page_recommender_get_outfit)
+        self.shoes_recommender_manual_get_outfit_btn.setObjectName(u"shoes_recommender_manual_get_outfit_btn")
+        self.shoes_recommender_manual_get_outfit_btn.setGeometry(QRect(530, 500, 150, 30))
+        self.shoes_recommender_manual_get_outfit_btn.setMinimumSize(QSize(150, 30))
+        self.shoes_recommender_manual_get_outfit_btn.setFont(font5)
+        self.shoes_recommender_manual_get_outfit_btn.setStyleSheet(u"QPushButton {\n"
+"	border: 2px solid rgb(52, 59, 72);\n"
+"	border-radius: 5px;	\n"
+"	background-color: rgb(52, 59, 72);\n"
+"}\n"
+"QPushButton:hover {\n"
+"	background-color: rgb(57, 65, 80);\n"
+"	border: 2px solid rgb(61, 70, 86);\n"
+"}\n"
+"QPushButton:pressed {	\n"
+"	background-color: rgb(35, 40, 49);\n"
+"	border: 2px solid rgb(43, 50, 61);\n"
+"}")
+        self.shoes_recommender_manual_get_outfit_btn.setIcon(icon3)
+        self.stackedWidget.addWidget(self.page_recommender_get_outfit)
+        self.page_recommender_items = QWidget()
+        self.page_recommender_items.setObjectName(u"page_recommender_items")
+        self.scrollArea_recommender_items = QScrollArea(self.page_recommender_items)
+        self.scrollArea_recommender_items.setObjectName(u"scrollArea_recommender_items")
+        self.scrollArea_recommender_items.setGeometry(QRect(0, 0, 1521, 771))
+        self.scrollArea_recommender_items.setWidgetResizable(True)
+        self.scrollAreaWidgetContents_recommender_items = QWidget()
+        self.scrollAreaWidgetContents_recommender_items.setObjectName(u"scrollAreaWidgetContents_recommender_items")
+        self.scrollAreaWidgetContents_recommender_items.setGeometry(QRect(0, 0, 1519, 769))
+        self.scrollArea_recommender_items.setWidget(self.scrollAreaWidgetContents_recommender_items)
+        self.stackedWidget.addWidget(self.page_recommender_items)
         self.page_widgets = QWidget()
         self.page_widgets.setObjectName(u"page_widgets")
         self.verticalLayout_6 = QVBoxLayout(self.page_widgets)
@@ -766,9 +954,6 @@ class Ui_MainWindow(object):
         self.pushButton = QPushButton(self.frame_content_wid_1)
         self.pushButton.setObjectName(u"pushButton")
         self.pushButton.setMinimumSize(QSize(150, 30))
-        font5 = QFont()
-        font5.setFamily(u"Segoe UI")
-        font5.setPointSize(9)
         self.pushButton.setFont(font5)
         self.pushButton.setStyleSheet(u"QPushButton {\n"
 "	border: 2px solid rgb(52, 59, 72);\n"
@@ -783,8 +968,6 @@ class Ui_MainWindow(object):
 "	background-color: rgb(35, 40, 49);\n"
 "	border: 2px solid rgb(43, 50, 61);\n"
 "}")
-        icon3 = QIcon()
-        icon3.addFile(u":/16x16/icons/16x16/cil-folder-open.png", QSize(), QIcon.Normal, QIcon.Off)
         self.pushButton.setIcon(icon3)
 
         self.gridLayout.addWidget(self.pushButton, 0, 1, 1, 1)
@@ -1248,27 +1431,27 @@ class Ui_MainWindow(object):
         self.verticalLayout_12.setObjectName(u"verticalLayout_12")
         self.article_lbl = QLabel(self.frame_6)
         self.article_lbl.setObjectName(u"article_lbl")
-        font6 = QFont()
-        font6.setPointSize(20)
-        self.article_lbl.setFont(font6)
+        font7 = QFont()
+        font7.setPointSize(20)
+        self.article_lbl.setFont(font7)
 
         self.verticalLayout_12.addWidget(self.article_lbl)
 
         self.color_lbl = QLabel(self.frame_6)
         self.color_lbl.setObjectName(u"color_lbl")
-        self.color_lbl.setFont(font6)
+        self.color_lbl.setFont(font7)
 
         self.verticalLayout_12.addWidget(self.color_lbl)
 
         self.gender_lbl = QLabel(self.frame_6)
         self.gender_lbl.setObjectName(u"gender_lbl")
-        self.gender_lbl.setFont(font6)
+        self.gender_lbl.setFont(font7)
 
         self.verticalLayout_12.addWidget(self.gender_lbl)
 
         self.usage_lbl = QLabel(self.frame_6)
         self.usage_lbl.setObjectName(u"usage_lbl")
-        self.usage_lbl.setFont(font6)
+        self.usage_lbl.setFont(font7)
 
         self.verticalLayout_12.addWidget(self.usage_lbl)
 
@@ -1476,15 +1659,13 @@ class Ui_MainWindow(object):
         self.verticalLayout_13.setObjectName(u"verticalLayout_13")
         self.article_classifier_top_lbl = QLabel(self.frame_13)
         self.article_classifier_top_lbl.setObjectName(u"article_classifier_top_lbl")
-        font7 = QFont()
-        font7.setPointSize(15)
-        self.article_classifier_top_lbl.setFont(font7)
+        self.article_classifier_top_lbl.setFont(font6)
 
         self.verticalLayout_13.addWidget(self.article_classifier_top_lbl)
 
         self.color_classifier_top_lbl = QLabel(self.frame_13)
         self.color_classifier_top_lbl.setObjectName(u"color_classifier_top_lbl")
-        self.color_classifier_top_lbl.setFont(font7)
+        self.color_classifier_top_lbl.setFont(font6)
 
         self.verticalLayout_13.addWidget(self.color_classifier_top_lbl)
 
@@ -1499,13 +1680,13 @@ class Ui_MainWindow(object):
         self.verticalLayout_14.setObjectName(u"verticalLayout_14")
         self.gender_classifier_top_lbl = QLabel(self.frame_14)
         self.gender_classifier_top_lbl.setObjectName(u"gender_classifier_top_lbl")
-        self.gender_classifier_top_lbl.setFont(font7)
+        self.gender_classifier_top_lbl.setFont(font6)
 
         self.verticalLayout_14.addWidget(self.gender_classifier_top_lbl)
 
         self.usage_classifier_top_lbl = QLabel(self.frame_14)
         self.usage_classifier_top_lbl.setObjectName(u"usage_classifier_top_lbl")
-        self.usage_classifier_top_lbl.setFont(font7)
+        self.usage_classifier_top_lbl.setFont(font6)
 
         self.verticalLayout_14.addWidget(self.usage_classifier_top_lbl)
 
@@ -1556,13 +1737,13 @@ class Ui_MainWindow(object):
         self.verticalLayout_16.setObjectName(u"verticalLayout_16")
         self.article_classifier_bottom_lbl = QLabel(self.frame_16)
         self.article_classifier_bottom_lbl.setObjectName(u"article_classifier_bottom_lbl")
-        self.article_classifier_bottom_lbl.setFont(font7)
+        self.article_classifier_bottom_lbl.setFont(font6)
 
         self.verticalLayout_16.addWidget(self.article_classifier_bottom_lbl)
 
         self.color_classifier_bottom_lbl = QLabel(self.frame_16)
         self.color_classifier_bottom_lbl.setObjectName(u"color_classifier_bottom_lbl")
-        self.color_classifier_bottom_lbl.setFont(font7)
+        self.color_classifier_bottom_lbl.setFont(font6)
 
         self.verticalLayout_16.addWidget(self.color_classifier_bottom_lbl)
 
@@ -1577,13 +1758,13 @@ class Ui_MainWindow(object):
         self.verticalLayout_17.setObjectName(u"verticalLayout_17")
         self.gender_classifier_bottom_lbl = QLabel(self.frame_17)
         self.gender_classifier_bottom_lbl.setObjectName(u"gender_classifier_bottom_lbl")
-        self.gender_classifier_bottom_lbl.setFont(font7)
+        self.gender_classifier_bottom_lbl.setFont(font6)
 
         self.verticalLayout_17.addWidget(self.gender_classifier_bottom_lbl)
 
         self.usage_classifier_bottom_lbl = QLabel(self.frame_17)
         self.usage_classifier_bottom_lbl.setObjectName(u"usage_classifier_bottom_lbl")
-        self.usage_classifier_bottom_lbl.setFont(font7)
+        self.usage_classifier_bottom_lbl.setFont(font6)
 
         self.verticalLayout_17.addWidget(self.usage_classifier_bottom_lbl)
 
@@ -1634,13 +1815,13 @@ class Ui_MainWindow(object):
         self.verticalLayout_18.setObjectName(u"verticalLayout_18")
         self.article_classifier_shoes_lbl = QLabel(self.frame_19)
         self.article_classifier_shoes_lbl.setObjectName(u"article_classifier_shoes_lbl")
-        self.article_classifier_shoes_lbl.setFont(font7)
+        self.article_classifier_shoes_lbl.setFont(font6)
 
         self.verticalLayout_18.addWidget(self.article_classifier_shoes_lbl)
 
         self.color_classifier_shoes_lbl = QLabel(self.frame_19)
         self.color_classifier_shoes_lbl.setObjectName(u"color_classifier_shoes_lbl")
-        self.color_classifier_shoes_lbl.setFont(font7)
+        self.color_classifier_shoes_lbl.setFont(font6)
 
         self.verticalLayout_18.addWidget(self.color_classifier_shoes_lbl)
 
@@ -1655,13 +1836,13 @@ class Ui_MainWindow(object):
         self.verticalLayout_19.setObjectName(u"verticalLayout_19")
         self.gender_classifier_shoes_lbl = QLabel(self.frame_20)
         self.gender_classifier_shoes_lbl.setObjectName(u"gender_classifier_shoes_lbl")
-        self.gender_classifier_shoes_lbl.setFont(font7)
+        self.gender_classifier_shoes_lbl.setFont(font6)
 
         self.verticalLayout_19.addWidget(self.gender_classifier_shoes_lbl)
 
         self.usage_classifier_shoes_lbl = QLabel(self.frame_20)
         self.usage_classifier_shoes_lbl.setObjectName(u"usage_classifier_shoes_lbl")
-        self.usage_classifier_shoes_lbl.setFont(font7)
+        self.usage_classifier_shoes_lbl.setFont(font6)
 
         self.verticalLayout_19.addWidget(self.usage_classifier_shoes_lbl)
 
@@ -1776,7 +1957,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.stackedWidget.setCurrentIndex(6)
+        self.stackedWidget.setCurrentIndex(1)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -1801,6 +1982,17 @@ class Ui_MainWindow(object):
         self.label_top_info_1.setText(QCoreApplication.translate("MainWindow", u"C:\\Program Files\\Blender Foundation\\Blender 2.82", None))
         self.label_top_info_2.setText(QCoreApplication.translate("MainWindow", u"| HOME", None))
         self.label_user_icon.setText(QCoreApplication.translate("MainWindow", u"WM", None))
+        self.top_recommender_get_outfit_btn.setText("")
+        self.bottom_recommender_get_outfit_btn.setText("")
+        self.shoes_recommender_get_outfit_btn.setText("")
+        self.top_recommender_outfit_lbl.setText("")
+        self.bottom_recommender_outfit_lbl.setText("")
+        self.shoes_recommender_outfit_lbl.setText("")
+        self.recommender_outfit_score_lbl.setText("")
+        self.get_score_btn.setText(QCoreApplication.translate("MainWindow", u"Get Score", None))
+        self.top_recommender_manual_get_outfit_btn.setText(QCoreApplication.translate("MainWindow", u"Upload Top Image", None))
+        self.bottom_recommender_manual_get_outfit_btn.setText(QCoreApplication.translate("MainWindow", u"Upload Bottom Image", None))
+        self.shoes_recommender_manual_get_outfit_btn.setText(QCoreApplication.translate("MainWindow", u"Upload Shoes Image", None))
         self.labelBoxBlenderInstalation.setText(QCoreApplication.translate("MainWindow", u"BLENDER INSTALLATION", None))
         self.lineEdit.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Your Password", None))
         self.labelVersion_3.setText(QCoreApplication.translate("MainWindow", u"Ex: C:Program FilesBlender FoundationBlender 2.82 blender.exe", None))

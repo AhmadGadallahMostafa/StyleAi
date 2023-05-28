@@ -44,14 +44,15 @@ class TryOnWorker(qobj):
 
     def run(self):
         os.system('python Try-On/Run.py')
-        self.window.movie.stop()
+        self.window.tryonMovie.stop()
         self.try_on_img_path = 'output_image_generator/try-on.png'
         self.try_on_img_pix_map = QtGui.QPixmap(self.try_on_img_path)
         # resize image
         self.try_on_img_pix_map = self.try_on_img_pix_map.scaled(512, 512, QtCore.Qt.KeepAspectRatio)
         self.window.ui.generated_img_lbl.setPixmap(self.try_on_img_pix_map)
-        self.window.ui.classify_input_btn.setEnabled(True)
+
         self.window.ui.generated_im_try_on_btn.setEnabled(True)
+        
         self.finished.emit()
 
 class ClassifierWorker(qobj):
@@ -69,7 +70,7 @@ class ClassifierWorker(qobj):
     def run(self):
         # sleep for 5 seconds
         time.sleep(2)
-        self.window.movie.stop()
+        self.window.classifierMovie.stop()
         # emit signal to update the UI
         self.classifier_img_top_path = 'Interface/classifieroutput/top.jpg'
         self.classifier_img_bottom_path = 'Interface/classifieroutput/bottom.jpg'
@@ -108,14 +109,31 @@ class ClassifierWorker(qobj):
         self.window.ui.usage_classifier_shoes_lbl.setText("Usage :" + json_data_shoes['Usage'])
 
         self.window.ui.classify_input_btn.setEnabled(True)
-        self.window.ui.generated_im_try_on_btn.setEnabled(True)
-        
+
         self.window.ui.classify_save_top_btn.setVisible(True)
         self.window.ui.classify_save_bottom_btn.setVisible(True)
         self.window.ui.classify_save_shoes_btn.setVisible(True)
         self.window.ui.classify_save_top_btn.setEnabled(True)
         self.window.ui.classify_save_bottom_btn.setEnabled(True)
         self.window.ui.classify_save_shoes_btn.setEnabled(True)
+        self.finished.emit()
+
+class RecommenderScoreWorker(qobj):
+    finished = pyqtss()
+    def __init__(self, window):
+        super().__init__()
+        self.window = window
+        self.recommender_score_img_path = ''
+        self.recommender_score_img_pix_map = None
+
+    def run(self):
+        # sleep for 5 seconds
+        time.sleep(2)
+        self.window.recommenderScoreMovie.stop()
+        self.window.ui.recommender_outfit_score_lbl.setText("Score : 0.8")
+        
+        self.window.ui.get_score_btn.setEnabled(True)
+
         self.finished.emit()
 
 class MainWindow(QMainWindow):
@@ -161,6 +179,7 @@ class MainWindow(QMainWindow):
         UIFunctions.addNewMenu(self, "HOME", "btn_home", "url(:/16x16/icons/16x16/cil-home.png)", True)
         UIFunctions.addNewMenu(self, "Wardrobe", "btn_wardrobe", "url(:/16x16/icons/16x16/cil-user-follow.png)", True)
         UIFunctions.addNewMenu(self, "Add", "btn_add", "url(:/16x16/icons/16x16/cil-user-follow.png)", True)
+        UIFunctions.addNewMenu(self, "Get Outfit", "btn_get_outfit", "url(:/16x16/icons/16x16/cil-user-follow.png)", True)
         # add new button for Try On Module 
         UIFunctions.addNewMenu(self, "Try On", "btn_try_on", "Interface/icons/16x16/try_on.png", True, True)
 
@@ -178,7 +197,6 @@ class MainWindow(QMainWindow):
         ## USER ICON ==> SHOW HIDE
         UIFunctions.userIcon(self, "WM", "", True)
         ## ==> END ##
-
 
         ## ==> MOVE WINDOW / MAXIMIZE / RESTORE
         ########################################################################
@@ -248,6 +266,21 @@ class MainWindow(QMainWindow):
         self.cloth_img_pix_map = None
         # classifier image
         self.ui.add_classifier_input_btn.clicked.connect(lambda: self.open_image("classifier"))
+        self.classifier_img_path = None
+        self.classifier_img_pix_map = None
+        # top image
+        self.ui.top_recommender_manual_get_outfit_btn.clicked.connect(lambda: self.open_image("top"))
+        self.recommender_top_path = None
+        self.recommender_top_pix_map = None
+        # bottom image
+        self.ui.bottom_recommender_manual_get_outfit_btn.clicked.connect(lambda: self.open_image("bottom"))
+        self.recommender_bottom_path = None
+        self.recommender_bottom_pix_map = None
+        # shoes image
+        self.ui.shoes_recommender_manual_get_outfit_btn.clicked.connect(lambda: self.open_image("shoes"))
+        self.recommender_shoes_path = None
+        self.recommender_shoes_pix_map = None
+
         # classifier button
         self.ui.classify_input_btn.clicked.connect(self.classify)
         # try on button
@@ -257,10 +290,17 @@ class MainWindow(QMainWindow):
         self.ui.shirt_btn.clicked.connect(lambda: self.set_wardrobe_item(self.ui.shirt_btn))
         self.ui.pants_btn.clicked.connect(lambda: self.set_wardrobe_item(self.ui.pants_btn))
         self.ui.shoes_btn.clicked.connect(lambda: self.set_wardrobe_item(self.ui.shoes_btn))
-        #binding save button
+        # binding save button
         self.ui.classify_save_top_btn.clicked.connect(lambda: self.save_classifier_output("top"))
         self.ui.classify_save_bottom_btn.clicked.connect(lambda: self.save_classifier_output("bottom"))
         self.ui.classify_save_shoes_btn.clicked.connect(lambda: self.save_classifier_output("shoes"))
+        # binding recommender buttons
+        self.ui.top_recommender_get_outfit_btn.clicked.connect(lambda: self.set_recommender_item("top"))
+        self.ui.bottom_recommender_get_outfit_btn.clicked.connect(lambda: self.set_recommender_item("bottom"))
+        self.ui.shoes_recommender_get_outfit_btn.clicked.connect(lambda: self.set_recommender_item("shoes"))
+        # binding recommender score button
+        self.ui.get_score_btn.clicked.connect(self.get_score_recommender)
+
         # make save buttons invisible and disabled
         self.ui.classify_save_top_btn.setVisible(False)
         self.ui.classify_save_bottom_btn.setVisible(False)
@@ -270,6 +310,8 @@ class MainWindow(QMainWindow):
         self.ui.classify_save_shoes_btn.setEnabled(False)
 
         self.wardrobe_items = []
+        self.recommender_items = []
+        
 
         self.set_icon()
         self.remove_border()
@@ -299,13 +341,12 @@ class MainWindow(QMainWindow):
             UIFunctions.labelPage(self, "Wardrobe")
             btnWidget.setStyleSheet(UIFunctions.selectMenu(btnWidget.styleSheet()))
 
-                # PAGE wardrobe
+        # PAGE add
         if btnWidget.objectName() == "btn_add":
             self.ui.stackedWidget.setCurrentWidget(self.ui.page_add)
             UIFunctions.resetStyle(self, "btn_add")
             UIFunctions.labelPage(self, "Add")
             btnWidget.setStyleSheet(UIFunctions.selectMenu(btnWidget.styleSheet()))
-
 
         # PAGE WIDGETS
         if btnWidget.objectName() == "btn_widgets":
@@ -321,6 +362,11 @@ class MainWindow(QMainWindow):
             UIFunctions.labelPage(self, "Try On")
             btnWidget.setStyleSheet(UIFunctions.selectMenu(btnWidget.styleSheet()))
 
+        if btnWidget.objectName() == "btn_get_outfit":
+            self.ui.stackedWidget.setCurrentWidget(self.ui.page_recommender_get_outfit)
+            UIFunctions.resetStyle(self, "btn_get_outfit")
+            UIFunctions.labelPage(self, "Get Outfit")
+            btnWidget.setStyleSheet(UIFunctions.selectMenu(btnWidget.styleSheet()))
     ## ==> END ##
 
     ########################################################################
@@ -393,7 +439,28 @@ class MainWindow(QMainWindow):
             self.input_classifier_img_pix_map = QtGui.QPixmap(self.input_classifier_img_path)
             # resize image
             self.input_classifier_img_pix_map = self.input_classifier_img_pix_map.scaled(400, 400, QtCore.Qt.KeepAspectRatio)
-            self.ui.classifier_input_lbl.setPixmap(self.input_classifier_img_pix_map)    
+            self.ui.classifier_input_lbl.setPixmap(self.input_classifier_img_pix_map)
+        elif img_type == "top":
+            self.recommender_top_path = QtWidgets.QFileDialog.getOpenFileName(self, 'Open file', "Interface\shirts", "Image files (*.jpg *.gif *.png)")
+            self.recommender_top_path = self.recommender_top_path[0]
+            self.recommender_top_pix_map = QtGui.QPixmap(self.recommender_top_path)
+            # resize image
+            self.recommender_top_pix_map = self.recommender_top_pix_map.scaled(200, 200, QtCore.Qt.KeepAspectRatio)
+            self.ui.top_recommender_outfit_lbl.setPixmap(self.recommender_top_pix_map)
+        elif img_type == "bottom":
+            self.recommender_bottom_path = QtWidgets.QFileDialog.getOpenFileName(self, 'Open file', "Interface\pants", "Image files (*.jpg *.gif *.png)")
+            self.recommender_bottom_path = self.recommender_bottom_path[0]
+            self.recommender_bottom_pix_map = QtGui.QPixmap(self.recommender_bottom_path)
+            # resize image
+            self.recommender_bottom_pix_map = self.recommender_bottom_pix_map.scaled(200, 200, QtCore.Qt.KeepAspectRatio)
+            self.ui.bottom_recommender_outfit_lbl.setPixmap(self.recommender_bottom_pix_map)
+        elif img_type == "shoes":
+            self.recommender_shoes_path = QtWidgets.QFileDialog.getOpenFileName(self, 'Open file', "Interface\shoes", "Image files (*.jpg *.gif *.png)")
+            self.recommender_shoes_path = self.recommender_shoes_path[0]
+            self.recommender_shoes_pix_map = QtGui.QPixmap(self.recommender_shoes_path)
+            # resize image
+            self.recommender_shoes_pix_map = self.recommender_shoes_pix_map.scaled(200, 200, QtCore.Qt.KeepAspectRatio)
+            self.ui.shoes_recommender_outfit_lbl.setPixmap(self.recommender_shoes_pix_map)
         
     def try_on(self):
         if self.person_img_path == None or self.cloth_img_path == None:
@@ -411,23 +478,25 @@ class MainWindow(QMainWindow):
             shutil.copy(self.cloth_img_path, 'Try-On/InputClothesImages')
             
             self.try_on_img_path = 'Interface/icons/load3.gif'
-            self.movie = QtGui.QMovie(self.try_on_img_path)
+            self.tryonMovie = QtGui.QMovie(self.try_on_img_path)
             # resize movie
-            self.movie.setScaledSize(QtCore.QSize(400, 300))
-            self.ui.generated_img_lbl.setMovie(self.movie)
-            self.movie.start()
+            self.tryonMovie.setScaledSize(QtCore.QSize(400, 300))
+            self.ui.generated_img_lbl.setMovie(self.tryonMovie)
+            self.tryonMovie.start()
             
-            self.ui.classify_input_btn.setEnabled(False)
+            #self.ui.classify_input_btn.setEnabled(False)
             self.ui.generated_im_try_on_btn.setEnabled(False)
+            #self.ui.get_score_btn.setEnabled(False)
+
             #Run the image generator
-            self.thread = qth()
-            self.worker = TryOnWorker(self)
-            self.worker.moveToThread(self.thread)
-            self.thread.started.connect(self.worker.run)
-            self.worker.finished.connect(self.thread.quit)
-            self.worker.finished.connect(self.worker.deleteLater)
-            self.thread.finished.connect(self.thread.deleteLater)
-            self.thread.start()
+            self.tryonThread = qth()
+            self.tryonWorker = TryOnWorker(self)
+            self.tryonWorker.moveToThread(self.tryonThread)
+            self.tryonThread.started.connect(self.tryonWorker.run)
+            self.tryonWorker.finished.connect(self.tryonThread.quit)
+            self.tryonWorker.finished.connect(self.tryonWorker.deleteLater)
+            self.tryonThread.finished.connect(self.tryonThread.deleteLater)
+            self.tryonThread.start()
 
     def classify(self):
         if self.input_classifier_img_path == None:
@@ -444,14 +513,14 @@ class MainWindow(QMainWindow):
             # shutil.copy(self.input_classifier_img_path, 'Try-On/InputImages')
             
             self.classifier_img_path = 'Interface/icons/load3.gif'
-            self.movie = QtGui.QMovie(self.classifier_img_path)
+            self.classifierMovie = QtGui.QMovie('Interface/icons/load3.gif')
             # resize movie
-            self.movie.setScaledSize(QtCore.QSize(400, 300))
-            self.ui.classifier_top_lbl.setMovie(self.movie)
-            self.ui.classifier_bottom_lbl.setMovie(self.movie)
-            self.ui.classifier_shoes_lbl.setMovie(self.movie)
-            self.movie.setSpeed(100)
-            self.movie.start()
+            self.classifierMovie.setScaledSize(QtCore.QSize(400, 300))
+            self.ui.classifier_top_lbl.setMovie(self.classifierMovie)
+            self.ui.classifier_bottom_lbl.setMovie(self.classifierMovie)
+            self.ui.classifier_shoes_lbl.setMovie(self.classifierMovie)
+            self.classifierMovie.setSpeed(100)
+            self.classifierMovie.start()
             
             self.ui.article_classifier_top_lbl.setText("Article :")
             self.ui.color_classifier_top_lbl.setText("Color :")
@@ -469,15 +538,17 @@ class MainWindow(QMainWindow):
             self.ui.usage_classifier_shoes_lbl.setText("Usage :")
 
             self.ui.classify_input_btn.setEnabled(False)
-            self.ui.generated_im_try_on_btn.setEnabled(False)
+            #self.ui.generated_im_try_on_btn.setEnabled(False)
+            #self.ui.get_score_btn.setEnabled(False)
+
             #Run the classifier
-            self.thread = qth()
-            self.worker = ClassifierWorker(self)
-            self.worker.moveToThread(self.thread)
-            self.thread.started.connect(self.worker.run)
-            self.worker.finished.connect(self.thread.quit)
-            self.worker.finished.connect(self.worker.deleteLater)
-            self.thread.start()
+            self.classifierThread = qth()
+            self.classifierWorker = ClassifierWorker(self)
+            self.classifierWorker.moveToThread(self.classifierThread)
+            self.classifierThread.started.connect(self.classifierWorker.run)
+            self.classifierWorker.finished.connect(self.classifierThread.quit)
+            self.classifierWorker.finished.connect(self.classifierWorker.deleteLater)
+            self.classifierThread.start()
 
     def set_icon(self):
         shirt_icon = QIcon('Interface/icons/400x400/shirt.png')
@@ -489,6 +560,13 @@ class MainWindow(QMainWindow):
         shoes_icon = QIcon('Interface/icons/400x400/shoes.png')
         self.ui.shoes_btn.setIcon(shoes_icon)
         self.ui.shoes_btn.setIconSize(QtCore.QSize(400, 400))
+
+        self.ui.top_recommender_get_outfit_btn.setIcon(shirt_icon)
+        self.ui.top_recommender_get_outfit_btn.setIconSize(QtCore.QSize(150, 150))
+        self.ui.bottom_recommender_get_outfit_btn.setIcon(pants_icon)
+        self.ui.bottom_recommender_get_outfit_btn.setIconSize(QtCore.QSize(150, 150))
+        self.ui.shoes_recommender_get_outfit_btn.setIcon(shoes_icon)
+        self.ui.shoes_recommender_get_outfit_btn.setIconSize(QtCore.QSize(150, 150))
 
     def set_wardrobe_item(self, btnWidget):
         path = None
@@ -574,8 +652,10 @@ class MainWindow(QMainWindow):
         self.ui.usage_lbl.setText("Usage :" + json_data['Usage'])
     
     def remove_border(self):
-        # Remove border from scrollAreaWidgetContents_shirts
+        # Remove border from scrollArea_items
         self.ui.scrollArea_items.setStyleSheet("border: none;")
+        # Remove border from scrollArea_recommender_items
+        self.ui.scrollArea_recommender_items.setStyleSheet("border: none;")
 
     def save_classifier_output(self, output):
         num = 0
@@ -608,6 +688,105 @@ class MainWindow(QMainWindow):
             shutil.copy(json_path, 'Interface/shoeLabels/' + str(num) + '.json')
             self.ui.classify_save_shoes_btn.setVisible(False)
             self.ui.classify_save_shoes_btn.setEnabled(False)
+
+    def set_recommender_item(self, inputType):
+        path = None
+        page = None
+        if inputType == "top":
+            self.ui.stackedWidget.setCurrentWidget(self.ui.page_recommender_items)
+            UIFunctions.labelPage(self, "Tops")
+            path = "Interface/shirts"
+            page = self.ui.scrollAreaWidgetContents_recommender_items 
+        elif inputType == "bottom":
+            self.ui.stackedWidget.setCurrentWidget(self.ui.page_recommender_items)
+            UIFunctions.labelPage(self, "Bottoms")
+            path = "Interface/pants"
+            page = self.ui.scrollAreaWidgetContents_recommender_items
+        elif inputType == "shoes":
+            self.ui.stackedWidget.setCurrentWidget(self.ui.page_recommender_items)
+            UIFunctions.labelPage(self, "Shoes")
+            path = "Interface/shoes"
+            page = self.ui.scrollAreaWidgetContents_recommender_items
+        
+        if path == None or page == None:
+            return
+        
+        self.get_recommender_item(path, page, inputType)
+
+    def get_recommender_item(self, path, page, inputType):
+        if self.recommender_items:
+            for btn in self.recommender_items:
+                page.layout().removeWidget(btn)
+                btn.deleteLater()
+            self.recommender_items = []
+            layout = page.layout()
+        else:
+            layout = QtWidgets.QGridLayout(page)
+        row = 0
+        col = 0
+        layout.setVerticalSpacing(100)
+        for filename in os.listdir(path):
+            if filename.endswith(".jpg"):
+                btn = QtWidgets.QPushButton()
+                btn.setObjectName(filename)
+                btn.setStyleSheet("border: none;")
+                btn.setFixedSize(200, 200)
+                btn.setIcon(QtGui.QIcon(path + "/" + filename))
+                btn.setIconSize(QtCore.QSize(200, 200))
+                self.recommender_items.append(btn)
+                layout.addWidget(btn, row, col)
+                col += 1
+                if col == 5:
+                    col = 0
+                    row += 1
+                btn.clicked.connect(lambda path=path, filename=filename, inputType=inputType: self.set_recommender_item_img(path, filename, inputType))
+
+    def set_recommender_item_img(self, path, filename, inputType):
+        pixmap = QtGui.QPixmap(path + "/" + filename)
+        pixmap = pixmap.scaled(200, 200, QtCore.Qt.KeepAspectRatio)
+        if inputType == "top":
+            self.ui.top_recommender_outfit_lbl.setPixmap(pixmap)
+            self.recommender_top_path = path + "/" + filename
+        elif inputType == "bottom":
+            self.ui.bottom_recommender_outfit_lbl.setPixmap(pixmap)
+            self.recommender_bottom_path = path + "/" + filename
+        elif inputType == "shoes":
+            self.ui.shoes_recommender_outfit_lbl.setPixmap(pixmap)
+            self.recommender_shoes_path = path + "/" + filename
+        self.ui.stackedWidget.setCurrentWidget(self.ui.page_recommender_get_outfit)
+
+    def get_score_recommender(self):
+        if self.recommender_top_path == None or self.recommender_bottom_path == None or self.recommender_shoes_path == None:
+            pass
+        else:
+            # Delete previous outfit
+            # for filename in os.listdir('Try-On/InputImages'):
+            #     os.remove('Try-On/InputImages/' + filename)
+            # for filename in os.listdir('Try-On/InputClothesImages'):
+            #     os.remove('Try-On/InputClothesImages/' + filename)
+            # for filename in os.listdir('output_image_generator'):
+            #     os.remove('output_image_generator/' + filename)
+            
+            self.ui.recommender_outfit_score_lbl.setText("")
+            self.recommenderScoreMovie = QtGui.QMovie('Interface/icons/load3.gif')
+            # resize movie
+            self.recommenderScoreMovie.setScaledSize(QtCore.QSize(150, 150))
+            self.ui.recommender_outfit_score_lbl.setMovie(self.recommenderScoreMovie)
+            self.recommenderScoreMovie.setSpeed(100)
+            self.recommenderScoreMovie.start()
+
+            #self.ui.classify_input_btn.setEnabled(False)
+            #self.ui.generated_im_try_on_btn.setEnabled(False)
+            self.ui.get_score_btn.setEnabled(False)
+
+            # Run recommender score
+            self.recommenderScoreThread = qth()
+            self.recommenderWorker = RecommenderScoreWorker(self)
+            self.recommenderWorker.moveToThread(self.recommenderScoreThread)
+            self.recommenderScoreThread.started.connect(self.recommenderWorker.run)
+            self.recommenderWorker.finished.connect(self.recommenderScoreThread.quit)
+            self.recommenderWorker.finished.connect(self.recommenderScoreThread.deleteLater)
+            self.recommenderScoreThread.start()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
