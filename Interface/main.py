@@ -135,7 +135,7 @@ class RecommenderScoreWorker(qobj):
         score = score_file.read()
         # round score to 4 decimal places
         score = round(float(score), 4)
-        self.window.ui.recommender_outfit_score_lbl.setText("Score : " + score)
+        self.window.ui.recommender_outfit_score_lbl.setText("Score : " + str(score))
         self.window.ui.get_score_btn.setEnabled(True)
 
         self.finished.emit()
@@ -148,26 +148,46 @@ class RecommenderImprovedOutfitWorker(qobj):
 
     def run(self):
         # sleep for 5 seconds
-        time.sleep(3)
+        os.system('python Recommendation\score.py')
         self.window.recommenderImprovedOutfitMovie.stop()
         self.window.recommenderImprovedScoreMovie.stop()
-
+        
         # emit signal to update the UI
-        self.classifier_improved_img_top_path = 'Interface/classifieroutput/top.jpg'
-        self.classifier_improved_img_bottom_path = 'Interface/classifieroutput/top.jpg'
-        self.classifier_improved_img_shoes_path = 'Interface/classifieroutput/top.jpg'
+        self.classifier_improved_img_top_path = 'Interface\outfit_evaluated/top.jpg'
+        self.classifier_improved_img_bottom_path = 'Interface\outfit_evaluated/bottom.jpg'
+        self.classifier_improved_img_shoes_path = 'Interface\outfit_evaluated/shoes.jpg'
         self.classifier_improved_img_top_pix_map = QtGui.QPixmap(self.classifier_improved_img_top_path)
         self.classifier_improved_img_bottom_pix_map = QtGui.QPixmap(self.classifier_improved_img_bottom_path)
         self.classifier_improved_img_shoes_pix_map = QtGui.QPixmap(self.classifier_improved_img_shoes_path)
+
+        # read json of improved article
+        json_data_best = json.load(open('Interface/best_img_path.json'))
+        # get the image paths
+        # check if top key exists
+        if 'top' in json_data_best.keys():
+            self.classifier_improved_img_top_path = json_data_best['top']
+            self.classifier_improved_img_top_pix_map = QtGui.QPixmap(self.classifier_improved_img_top_path)
+        if 'bottom' in json_data_best.keys():
+            self.classifier_improved_img_bottom_path = json_data_best['bottom']
+            self.classifier_improved_img_bottom_pix_map = QtGui.QPixmap(self.classifier_improved_img_bottom_path)
+        if 'shoes' in json_data_best.keys():
+            self.classifier_improved_img_shoes_path = json_data_best['shoes']
+            self.classifier_improved_img_shoes_pix_map = QtGui.QPixmap(self.classifier_improved_img_shoes_path)
+
         # resize image
-        self.classifier_improved_img_top_pix_map = self.classifier_improved_img_top_pix_map.scaled(300, 300, QtCore.Qt.KeepAspectRatio)
-        self.classifier_improved_img_bottom_pix_map = self.classifier_improved_img_bottom_pix_map.scaled(300, 300, QtCore.Qt.KeepAspectRatio)
-        self.classifier_improved_img_shoes_pix_map = self.classifier_improved_img_shoes_pix_map.scaled(300, 300, QtCore.Qt.KeepAspectRatio)
+        self.classifier_improved_img_top_pix_map = self.classifier_improved_img_top_pix_map.scaled(250, 250, QtCore.Qt.KeepAspectRatio)
+        self.classifier_improved_img_bottom_pix_map = self.classifier_improved_img_bottom_pix_map.scaled(250, 250, QtCore.Qt.KeepAspectRatio)
+        self.classifier_improved_img_shoes_pix_map = self.classifier_improved_img_shoes_pix_map.scaled(250, 250, QtCore.Qt.KeepAspectRatio)
         self.window.ui.top_recommender_improved_outfit_lbl.setPixmap(self.classifier_improved_img_top_pix_map)
         self.window.ui.bottom_recommender_improved_outfit_lbl.setPixmap(self.classifier_improved_img_bottom_pix_map)
         self.window.ui.shoes_recommender_improved_outfit_lbl.setPixmap(self.classifier_improved_img_shoes_pix_map)
+
+        score_file = open('Interface/best_score.txt', 'r')
+        score = score_file.read()
+        # round score to 4 decimal places
+        score = round(float(score), 4)
         # get score
-        self.window.ui.recommender_improved_outfit_score_lbl.setText("Score : zbi")
+        self.window.ui.recommender_improved_outfit_score_lbl.setText("Score :" + str(score))
         
         self.window.ui.improve_outfit_btn.setEnabled(True)
         self.finished.emit()
@@ -484,21 +504,21 @@ class MainWindow(QMainWindow):
             self.recommender_top_path = self.recommender_top_path[0]
             self.recommender_top_pix_map = QtGui.QPixmap(self.recommender_top_path)
             # resize image
-            self.recommender_top_pix_map = self.recommender_top_pix_map.scaled(200, 200, QtCore.Qt.KeepAspectRatio)
+            self.recommender_top_pix_map = self.recommender_top_pix_map.scaled(250, 250, QtCore.Qt.KeepAspectRatio)
             self.ui.top_recommender_outfit_lbl.setPixmap(self.recommender_top_pix_map)
         elif img_type == "bottom":
             self.recommender_bottom_path = QtWidgets.QFileDialog.getOpenFileName(self, 'Open file', "Interface\pants", "Image files (*.jpg *.gif *.png)")
             self.recommender_bottom_path = self.recommender_bottom_path[0]
             self.recommender_bottom_pix_map = QtGui.QPixmap(self.recommender_bottom_path)
             # resize image
-            self.recommender_bottom_pix_map = self.recommender_bottom_pix_map.scaled(200, 200, QtCore.Qt.KeepAspectRatio)
+            self.recommender_bottom_pix_map = self.recommender_bottom_pix_map.scaled(250, 250, QtCore.Qt.KeepAspectRatio)
             self.ui.bottom_recommender_outfit_lbl.setPixmap(self.recommender_bottom_pix_map)
         elif img_type == "shoes":
             self.recommender_shoes_path = QtWidgets.QFileDialog.getOpenFileName(self, 'Open file', "Interface\shoes", "Image files (*.jpg *.gif *.png)")
             self.recommender_shoes_path = self.recommender_shoes_path[0]
             self.recommender_shoes_pix_map = QtGui.QPixmap(self.recommender_shoes_path)
             # resize image
-            self.recommender_shoes_pix_map = self.recommender_shoes_pix_map.scaled(200, 200, QtCore.Qt.KeepAspectRatio)
+            self.recommender_shoes_pix_map = self.recommender_shoes_pix_map.scaled(250, 250, QtCore.Qt.KeepAspectRatio)
             self.ui.shoes_recommender_outfit_lbl.setPixmap(self.recommender_shoes_pix_map)
         
     def try_on(self):
@@ -784,7 +804,7 @@ class MainWindow(QMainWindow):
 
     def set_recommender_item_img(self, path, filename, inputType):
         pixmap = QtGui.QPixmap(path + "/" + filename)
-        pixmap = pixmap.scaled(300, 300, QtCore.Qt.KeepAspectRatio)
+        pixmap = pixmap.scaled(250, 250, QtCore.Qt.KeepAspectRatio)
         if inputType == "top":
             self.ui.top_recommender_outfit_lbl.setPixmap(pixmap)
             self.recommender_top_path = path + "/" + filename
