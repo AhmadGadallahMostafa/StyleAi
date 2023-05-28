@@ -125,8 +125,6 @@ class RecommenderScoreWorker(qobj):
     def __init__(self, window):
         super().__init__()
         self.window = window
-        self.recommender_score_img_path = ''
-        self.recommender_score_img_pix_map = None
 
     def run(self):
         # sleep for 5 seconds
@@ -140,6 +138,35 @@ class RecommenderScoreWorker(qobj):
         self.window.ui.recommender_outfit_score_lbl.setText("Score : " + score)
         self.window.ui.get_score_btn.setEnabled(True)
 
+        self.finished.emit()
+
+class RecommenderImprovedOutfitWorker(qobj):
+    finished = pyqtss()
+    def __init__(self, window):
+        super().__init__()
+        self.window = window
+
+    def run(self):
+        # sleep for 5 seconds
+        time.sleep(3)
+        self.window.recommenderImprovedOutfitMovie.stop()
+
+        # emit signal to update the UI
+        self.classifier_improved_img_top_path = 'Interface/classifieroutput/top.jpg'
+        self.classifier_improved_img_bottom_path = 'Interface/classifieroutput/top.jpg'
+        self.classifier_improved_img_shoes_path = 'Interface/classifieroutput/top.jpg'
+        self.classifier_improved_img_top_pix_map = QtGui.QPixmap(self.classifier_improved_img_top_path)
+        self.classifier_improved_img_bottom_pix_map = QtGui.QPixmap(self.classifier_improved_img_bottom_path)
+        self.classifier_improved_img_shoes_pix_map = QtGui.QPixmap(self.classifier_improved_img_shoes_path)
+        # resize image
+        self.classifier_improved_img_top_pix_map = self.classifier_improved_img_top_pix_map.scaled(300, 300, QtCore.Qt.KeepAspectRatio)
+        self.classifier_improved_img_bottom_pix_map = self.classifier_improved_img_bottom_pix_map.scaled(300, 300, QtCore.Qt.KeepAspectRatio)
+        self.classifier_improved_img_shoes_pix_map = self.classifier_improved_img_shoes_pix_map.scaled(300, 300, QtCore.Qt.KeepAspectRatio)
+        self.window.ui.top_recommender_improved_outfit_lbl.setPixmap(self.classifier_improved_img_top_pix_map)
+        self.window.ui.bottom_recommender_improved_outfit_lbl.setPixmap(self.classifier_improved_img_bottom_pix_map)
+        self.window.ui.shoes_recommender_improved_outfit_lbl.setPixmap(self.classifier_improved_img_shoes_pix_map)
+        
+        self.window.ui.improve_outfit_btn.setEnabled(True)
         self.finished.emit()
 
 class MainWindow(QMainWindow):
@@ -306,6 +333,9 @@ class MainWindow(QMainWindow):
         self.ui.shoes_recommender_get_outfit_btn.clicked.connect(lambda: self.set_recommender_item("shoes"))
         # binding recommender score button
         self.ui.get_score_btn.clicked.connect(self.get_score_recommender)
+        # binding improve outfit button
+        self.ui.improve_outfit_btn.clicked.connect(self.get_improved_outfit)
+
 
         # make save buttons invisible and disabled
         self.ui.classify_save_top_btn.setVisible(False)
@@ -751,7 +781,7 @@ class MainWindow(QMainWindow):
 
     def set_recommender_item_img(self, path, filename, inputType):
         pixmap = QtGui.QPixmap(path + "/" + filename)
-        pixmap = pixmap.scaled(200, 200, QtCore.Qt.KeepAspectRatio)
+        pixmap = pixmap.scaled(300, 300, QtCore.Qt.KeepAspectRatio)
         if inputType == "top":
             self.ui.top_recommender_outfit_lbl.setPixmap(pixmap)
             self.recommender_top_path = path + "/" + filename
@@ -786,8 +816,6 @@ class MainWindow(QMainWindow):
             self.recommenderScoreMovie.setSpeed(100)
             self.recommenderScoreMovie.start()
 
-            #self.ui.classify_input_btn.setEnabled(False)
-            #self.ui.generated_im_try_on_btn.setEnabled(False)
             self.ui.get_score_btn.setEnabled(False)
 
             # Run recommender score
@@ -798,6 +826,44 @@ class MainWindow(QMainWindow):
             self.recommenderWorker.finished.connect(self.recommenderScoreThread.quit)
             self.recommenderWorker.finished.connect(self.recommenderScoreThread.deleteLater)
             self.recommenderScoreThread.start()
+
+    def get_improved_outfit(self):
+        if self.recommender_top_path == None or self.recommender_bottom_path == None or self.recommender_shoes_path == None:
+            pass
+        else:
+            # Delete previous outfit
+            # for filename in os.listdir('Try-On/InputImages'):
+            #     os.remove('Try-On/InputImages/' + filename)
+            # for filename in os.listdir('Try-On/InputClothesImages'):
+            #     os.remove('Try-On/InputClothesImages/' + filename)
+            # for filename in os.listdir('output_image_generator'):
+            #     os.remove('output_image_generator/' + filename)
+            # shutil.copy(self.recommender_top_path, 'Interface\outfit_evaluated/top.jpg')
+            # shutil.copy(self.recommender_bottom_path, 'Interface\outfit_evaluated/bottom.jpg')
+            # shutil.copy(self.recommender_shoes_path, 'Interface\outfit_evaluated/shoes.jpg')
+            self.recommenderImprovedOutfitMovie = QtGui.QMovie('Interface/icons/load3.gif')
+            # resize movie
+            self.recommenderImprovedOutfitMovie.setScaledSize(QtCore.QSize(300, 300))
+            self.ui.top_recommender_improved_outfit_lbl.setMovie(self.recommenderImprovedOutfitMovie)
+            self.ui.bottom_recommender_improved_outfit_lbl.setMovie(self.recommenderImprovedOutfitMovie)
+            self.ui.shoes_recommender_improved_outfit_lbl.setMovie(self.recommenderImprovedOutfitMovie)
+            self.recommenderImprovedOutfitMovie.setSpeed(100)
+            self.recommenderImprovedOutfitMovie.start()
+
+            self.ui.improve_outfit_btn.setEnabled(False)
+
+            # Run recommender improved outfit
+            self.recommenderImprovedOutfitThread = qth()
+            self.recommenderImprovedOutfitWorker = RecommenderImprovedOutfitWorker(self)
+            self.recommenderImprovedOutfitWorker.moveToThread(self.recommenderImprovedOutfitThread)
+            self.recommenderImprovedOutfitThread.started.connect(self.recommenderImprovedOutfitWorker.run)
+            self.recommenderImprovedOutfitWorker.finished.connect(self.recommenderImprovedOutfitThread.quit)
+            self.recommenderImprovedOutfitWorker.finished.connect(self.recommenderImprovedOutfitThread.deleteLater)
+            self.recommenderImprovedOutfitThread.start()
+            
+
+
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

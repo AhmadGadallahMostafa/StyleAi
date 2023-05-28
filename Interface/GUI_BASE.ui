@@ -1542,7 +1542,7 @@ QPushButton:pressed {
                     <property name="geometry">
                      <rect>
                       <x>20</x>
-                      <y>270</y>
+                      <y>20</y>
                       <width>211</width>
                       <height>201</height>
                      </rect>
@@ -1588,7 +1588,7 @@ QPushButton:pressed {
                     <property name="geometry">
                      <rect>
                       <x>260</x>
-                      <y>270</y>
+                      <y>20</y>
                       <width>211</width>
                       <height>201</height>
                      </rect>
@@ -1634,7 +1634,7 @@ QPushButton:pressed {
                     <property name="geometry">
                      <rect>
                       <x>500</x>
-                      <y>270</y>
+                      <y>20</y>
                       <width>211</width>
                       <height>201</height>
                      </rect>
@@ -1733,67 +1733,44 @@ QPushButton:pressed {
                        <property name="frameShadow">
                         <enum>QFrame::Raised</enum>
                        </property>
-                       <widget class="QLabel" name="recommender_outfit_score_lbl">
+                       <widget class="QFrame" name="frame_23">
                         <property name="geometry">
                          <rect>
-                          <x>180</x>
-                          <y>20</y>
-                          <width>281</width>
-                          <height>71</height>
+                          <x>0</x>
+                          <y>0</y>
+                          <width>791</width>
+                          <height>348</height>
                          </rect>
                         </property>
-                        <property name="font">
-                         <font>
-                          <pointsize>15</pointsize>
-                         </font>
+                        <property name="frameShape">
+                         <enum>QFrame::StyledPanel</enum>
                         </property>
-                        <property name="text">
-                         <string/>
+                        <property name="frameShadow">
+                         <enum>QFrame::Raised</enum>
                         </property>
-                       </widget>
-                       <widget class="QPushButton" name="get_score_btn">
-                        <property name="geometry">
-                         <rect>
-                          <x>10</x>
-                          <y>20</y>
-                          <width>151</width>
-                          <height>71</height>
-                         </rect>
-                        </property>
-                        <property name="minimumSize">
-                         <size>
-                          <width>150</width>
-                          <height>30</height>
-                         </size>
-                        </property>
-                        <property name="font">
-                         <font>
-                          <family>Segoe UI</family>
-                          <pointsize>9</pointsize>
-                         </font>
-                        </property>
-                        <property name="styleSheet">
-                         <string notr="true">QPushButton {
-	border: 2px solid rgb(52, 59, 72);
-	border-radius: 5px;	
-	background-color: rgb(52, 59, 72);
-}
-QPushButton:hover {
-	background-color: rgb(57, 65, 80);
-	border: 2px solid rgb(61, 70, 86);
-}
-QPushButton:pressed {	
-	background-color: rgb(35, 40, 49);
-	border: 2px solid rgb(43, 50, 61);
-}</string>
-                        </property>
-                        <property name="text">
-                         <string>Get Score</string>
-                        </property>
-                        <property name="icon">
-                         <iconset resource="files.qrc">
-                          <normaloff>:/16x16/icons/16x16/cil-folder-open.png</normaloff>:/16x16/icons/16x16/cil-folder-open.png</iconset>
-                        </property>
+                        <layout class="QHBoxLayout" name="horizontalLayout_22">
+                         <item>
+                          <widget class="QLabel" name="top_recommender_improved_outfit_lbl">
+                           <property name="text">
+                            <string/>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QLabel" name="bottom_recommender_improved_outfit_lbl">
+                           <property name="text">
+                            <string/>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QLabel" name="shoes_recommender_improved_outfit_lbl">
+                           <property name="text">
+                            <string/>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
                        </widget>
                       </widget>
                      </item>
@@ -1803,7 +1780,7 @@ QPushButton:pressed {
                     <property name="geometry">
                      <rect>
                       <x>60</x>
-                      <y>500</y>
+                      <y>250</y>
                       <width>150</width>
                       <height>30</height>
                      </rect>
@@ -1847,7 +1824,7 @@ QPushButton:pressed {
                     <property name="geometry">
                      <rect>
                       <x>290</x>
-                      <y>500</y>
+                      <y>250</y>
                       <width>150</width>
                       <height>30</height>
                      </rect>
@@ -1891,7 +1868,7 @@ QPushButton:pressed {
                     <property name="geometry">
                      <rect>
                       <x>530</x>
-                      <y>500</y>
+                      <y>250</y>
                       <width>150</width>
                       <height>30</height>
                      </rect>
@@ -1925,6 +1902,112 @@ QPushButton:pressed {
                     </property>
                     <property name="text">
                      <string>Upload Shoes Image</string>
+                    </property>
+                    <property name="icon">
+                     <iconset resource="files.qrc">
+                      <normaloff>:/16x16/icons/16x16/cil-folder-open.png</normaloff>:/16x16/icons/16x16/cil-folder-open.png</iconset>
+                    </property>
+                   </widget>
+                   <widget class="QPushButton" name="get_score_btn">
+                    <property name="geometry">
+                     <rect>
+                      <x>60</x>
+                      <y>330</y>
+                      <width>151</width>
+                      <height>71</height>
+                     </rect>
+                    </property>
+                    <property name="minimumSize">
+                     <size>
+                      <width>150</width>
+                      <height>30</height>
+                     </size>
+                    </property>
+                    <property name="font">
+                     <font>
+                      <family>Segoe UI</family>
+                      <pointsize>9</pointsize>
+                     </font>
+                    </property>
+                    <property name="styleSheet">
+                     <string notr="true">QPushButton {
+	border: 2px solid rgb(52, 59, 72);
+	border-radius: 5px;	
+	background-color: rgb(52, 59, 72);
+}
+QPushButton:hover {
+	background-color: rgb(57, 65, 80);
+	border: 2px solid rgb(61, 70, 86);
+}
+QPushButton:pressed {	
+	background-color: rgb(35, 40, 49);
+	border: 2px solid rgb(43, 50, 61);
+}</string>
+                    </property>
+                    <property name="text">
+                     <string>Get Score</string>
+                    </property>
+                    <property name="icon">
+                     <iconset resource="files.qrc">
+                      <normaloff>:/16x16/icons/16x16/cil-folder-open.png</normaloff>:/16x16/icons/16x16/cil-folder-open.png</iconset>
+                    </property>
+                   </widget>
+                   <widget class="QLabel" name="recommender_outfit_score_lbl">
+                    <property name="geometry">
+                     <rect>
+                      <x>230</x>
+                      <y>330</y>
+                      <width>281</width>
+                      <height>71</height>
+                     </rect>
+                    </property>
+                    <property name="font">
+                     <font>
+                      <pointsize>15</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string/>
+                    </property>
+                   </widget>
+                   <widget class="QPushButton" name="improve_outfit_btn">
+                    <property name="geometry">
+                     <rect>
+                      <x>60</x>
+                      <y>450</y>
+                      <width>151</width>
+                      <height>71</height>
+                     </rect>
+                    </property>
+                    <property name="minimumSize">
+                     <size>
+                      <width>150</width>
+                      <height>30</height>
+                     </size>
+                    </property>
+                    <property name="font">
+                     <font>
+                      <family>Segoe UI</family>
+                      <pointsize>9</pointsize>
+                     </font>
+                    </property>
+                    <property name="styleSheet">
+                     <string notr="true">QPushButton {
+	border: 2px solid rgb(52, 59, 72);
+	border-radius: 5px;	
+	background-color: rgb(52, 59, 72);
+}
+QPushButton:hover {
+	background-color: rgb(57, 65, 80);
+	border: 2px solid rgb(61, 70, 86);
+}
+QPushButton:pressed {	
+	background-color: rgb(35, 40, 49);
+	border: 2px solid rgb(43, 50, 61);
+}</string>
+                    </property>
+                    <property name="text">
+                     <string>Improve Outfit</string>
                     </property>
                     <property name="icon">
                      <iconset resource="files.qrc">
