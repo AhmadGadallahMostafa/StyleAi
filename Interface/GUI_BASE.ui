@@ -2014,6 +2014,24 @@ QPushButton:pressed {
                       <normaloff>:/16x16/icons/16x16/cil-folder-open.png</normaloff>:/16x16/icons/16x16/cil-folder-open.png</iconset>
                     </property>
                    </widget>
+                   <widget class="QLabel" name="recommender_improved_outfit_score_lbl">
+                    <property name="geometry">
+                     <rect>
+                      <x>230</x>
+                      <y>450</y>
+                      <width>281</width>
+                      <height>71</height>
+                     </rect>
+                    </property>
+                    <property name="font">
+                     <font>
+                      <pointsize>15</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string/>
+                    </property>
+                   </widget>
                   </widget>
                   <widget class="QWidget" name="page_recommender_items">
                    <widget class="QScrollArea" name="scrollArea_recommender_items">
@@ -2342,7 +2360,7 @@ QScrollBar:horizontal {
                              <rect>
                               <x>0</x>
                               <y>0</y>
-                              <width>532</width>
+                              <width>218</width>
                               <height>218</height>
                              </rect>
                             </property>

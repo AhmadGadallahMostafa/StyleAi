@@ -150,6 +150,7 @@ class RecommenderImprovedOutfitWorker(qobj):
         # sleep for 5 seconds
         time.sleep(3)
         self.window.recommenderImprovedOutfitMovie.stop()
+        self.window.recommenderImprovedScoreMovie.stop()
 
         # emit signal to update the UI
         self.classifier_improved_img_top_path = 'Interface/classifieroutput/top.jpg'
@@ -165,6 +166,8 @@ class RecommenderImprovedOutfitWorker(qobj):
         self.window.ui.top_recommender_improved_outfit_lbl.setPixmap(self.classifier_improved_img_top_pix_map)
         self.window.ui.bottom_recommender_improved_outfit_lbl.setPixmap(self.classifier_improved_img_bottom_pix_map)
         self.window.ui.shoes_recommender_improved_outfit_lbl.setPixmap(self.classifier_improved_img_shoes_pix_map)
+        # get score
+        self.window.ui.recommender_improved_outfit_score_lbl.setText("Score : zbi")
         
         self.window.ui.improve_outfit_btn.setEnabled(True)
         self.finished.emit()
@@ -850,6 +853,14 @@ class MainWindow(QMainWindow):
             self.recommenderImprovedOutfitMovie.setSpeed(100)
             self.recommenderImprovedOutfitMovie.start()
 
+            self.ui.recommender_improved_outfit_score_lbl.setText("")
+            self.recommenderImprovedScoreMovie = QtGui.QMovie('Interface/icons/load3.gif')
+            # resize movie
+            self.recommenderImprovedScoreMovie.setScaledSize(QtCore.QSize(150, 150))
+            self.ui.recommender_improved_outfit_score_lbl.setMovie(self.recommenderImprovedScoreMovie)
+            self.recommenderImprovedScoreMovie.setSpeed(100)
+            self.recommenderImprovedScoreMovie.start()
+            
             self.ui.improve_outfit_btn.setEnabled(False)
 
             # Run recommender improved outfit
