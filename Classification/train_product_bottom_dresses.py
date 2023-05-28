@@ -4,7 +4,7 @@ import torch.optim as optim
 
 from utils.dataset import train_valid_split, FashionDataset_Product
 from torch.utils.data import DataLoader
-from models.resnet_mod_product_bottom import MultiHeadResNet
+from models.resnet_mod_product_bottom import MultiHeadResNet_Bottoms
 from tqdm import tqdm
 from utils.loss_function import loss_fn
 from utils.utils import save_loss_plot, save_model
@@ -16,7 +16,7 @@ device = torch.device("cuda")
 # model.to(device)
 
 # Load model code
-model = MultiHeadResNet(pre_trained=False, requires_grad=False).to(device)
+model = MultiHeadResNet_Bottoms(pre_trained=False, requires_grad=False).to(device)
 checkpoint = torch.load('Classification\outputs\models\model_resnet_bottom_14.pth')
 model.load_state_dict(checkpoint['model_state_dict'])
 model.to(device)

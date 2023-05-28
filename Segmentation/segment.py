@@ -19,8 +19,8 @@ from utils import load_ckpt
 from network.u2net import U2NET
 device = "cuda"
 
-images_dir = "Segmentation\\test_images\inputs"
-result_dir = "Segmentation\\test_images\outputs"
+images_dir = "Interface\input_segmentation"
+result_dir = "Interface\output_segmentation"
 checkpoint_path = os.path.join("", "Segmentation\\trained\\best.pth")
 
 transforms_list = []
@@ -62,7 +62,7 @@ for image in tqdm(images):
     img = np.where(img == 0, 255, img)
     img = Image.fromarray(img.astype("uint8"), mode="RGB")
     # save upper body image
-    img.save(os.path.join(result_dir, image_name + "_upper_body.jpg"))
+    img.save(os.path.join(result_dir, "top.jpg"))
 
     # get mask for lower body
     lower_body_mask = np.where(output_arr == 2, 255, 0).astype("uint8")
@@ -74,7 +74,7 @@ for image in tqdm(images):
     img = np.where(img == 0, 255, img)
     img = Image.fromarray(img.astype("uint8"), mode="RGB")
     # save lower body image
-    img.save(os.path.join(result_dir, image_name + "_lower_body.jpg"))
+    img.save(os.path.join(result_dir, "bottom.jpg"))
 
     # get mask for full body
     full_body_mask = np.where(output_arr == 3, 255, 0).astype("uint8")
@@ -86,5 +86,4 @@ for image in tqdm(images):
     img = np.where(img == 0, 255, img)
     img = Image.fromarray(img.astype("uint8"), mode="RGB")
     # save full body image
-    img.save(os.path.join(result_dir, image_name + "_full_body.jpg"))
-
+    img.save(os.path.join(result_dir, "full_body.jpg"))

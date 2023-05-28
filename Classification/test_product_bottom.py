@@ -4,7 +4,7 @@ import torchvision.transforms as transforms
 import numpy as np
 import joblib
 import argparse
-from models.resnet_mod_product_bottom import MultiHeadResNet
+from models.resnet_mod_product_bottom import MultiHeadResNet_Bottoms
 
 LABELS_PATH = 'Classification\inputs\labels\\bottoms'
 
@@ -13,7 +13,7 @@ parser.add_argument('-i', '--input', help='path to input image', default='test_i
 args = vars(parser.parse_args())
 # define the computation device
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model = MultiHeadResNet(pre_trained=False, requires_grad=False)
+model = MultiHeadResNet_Bottoms(pre_trained=False, requires_grad=False)
 checkpoint = torch.load('Classification\outputs\models\model_resnet_best_bottom.pth')
 model.load_state_dict(checkpoint['model_state_dict'])
 model.to(device)

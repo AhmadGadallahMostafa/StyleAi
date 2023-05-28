@@ -7,9 +7,9 @@ from torchvision.models import ResNet50_Weights
 import torch
 from torchsummary import summary
 
-class MultiHeadResNet(nn.Module):
+class MultiHeadResNet_Shoes(nn.Module):
     def __init__(self, pre_trained, requires_grad):
-        super(MultiHeadResNet, self).__init__()
+        super(MultiHeadResNet_Shoes, self).__init__()
         if pre_trained == True:
             self.model = ResNet50(ResNetBlock50, 3, 1000, include_top = False)
         else:

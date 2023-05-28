@@ -69,12 +69,14 @@ class ClassifierWorker(qobj):
 
     def run(self):
         # sleep for 5 seconds
-        time.sleep(2)
+        os.system('python Segmentation/segment.py')
+        os.system('python Classification\Run.py')
         self.window.classifierMovie.stop()
+
         # emit signal to update the UI
         self.classifier_img_top_path = 'Interface/classifieroutput/top.jpg'
         self.classifier_img_bottom_path = 'Interface/classifieroutput/bottom.jpg'
-        self.classifier_img_shoes_path = 'Interface/classifieroutput/shoes.jpg'
+        self.classifier_img_shoes_path = 'Interface/classifieroutput/full_body.jpg'
         self.classifier_img_top_pix_map = QtGui.QPixmap(self.classifier_img_top_path)
         self.classifier_img_bottom_pix_map = QtGui.QPixmap(self.classifier_img_bottom_path)
         self.classifier_img_shoes_pix_map = QtGui.QPixmap(self.classifier_img_shoes_path)
@@ -90,7 +92,7 @@ class ClassifierWorker(qobj):
         json_data_top = json.load(json_file_top)
         json_file_bottom = open('Interface/classifieroutput/bottom.json')
         json_data_bottom = json.load(json_file_bottom)
-        json_file_shoes = open('Interface/classifieroutput/shoes.json')
+        json_file_shoes = open('Interface/classifieroutput/full_body.json')
         json_data_shoes = json.load(json_file_shoes)
 
         self.window.ui.article_classifier_top_lbl.setText("Article :" + json_data_top['Article'])
@@ -100,12 +102,12 @@ class ClassifierWorker(qobj):
 
         self.window.ui.article_classifier_bottom_lbl.setText("Article :" + json_data_bottom['Article'])
         self.window.ui.color_classifier_bottom_lbl.setText("Color :" + json_data_bottom['Color'])
-        self.window.ui.gender_classifier_bottom_lbl.setText("Gender :" + json_data_top['Gender'])
+        self.window.ui.gender_classifier_bottom_lbl.setText("Gender :" + json_data_bottom['Gender'])
         self.window.ui.usage_classifier_bottom_lbl.setText("Usage :" + json_data_bottom['Usage'])
 
         self.window.ui.article_classifier_shoes_lbl.setText("Article :" + json_data_shoes['Article'])
         self.window.ui.color_classifier_shoes_lbl.setText("Color :" + json_data_shoes['Color'])
-        self.window.ui.gender_classifier_shoes_lbl.setText("Gender :" + json_data_top['Gender'])
+        self.window.ui.gender_classifier_shoes_lbl.setText("Gender :" + json_data_shoes['Gender'])
         self.window.ui.usage_classifier_shoes_lbl.setText("Usage :" + json_data_shoes['Usage'])
 
         self.window.ui.classify_input_btn.setEnabled(True)
@@ -293,7 +295,7 @@ class MainWindow(QMainWindow):
         # binding save button
         self.ui.classify_save_top_btn.clicked.connect(lambda: self.save_classifier_output("top"))
         self.ui.classify_save_bottom_btn.clicked.connect(lambda: self.save_classifier_output("bottom"))
-        self.ui.classify_save_shoes_btn.clicked.connect(lambda: self.save_classifier_output("shoes"))
+        self.ui.classify_save_shoes_btn.clicked.connect(lambda: self.save_classifier_output("full_body"))
         # binding recommender buttons
         self.ui.top_recommender_get_outfit_btn.clicked.connect(lambda: self.set_recommender_item("top"))
         self.ui.bottom_recommender_get_outfit_btn.clicked.connect(lambda: self.set_recommender_item("bottom"))
@@ -503,14 +505,16 @@ class MainWindow(QMainWindow):
             pass
         else:
             # Delete all images in input and output folders
-            # for filename in os.listdir('Try-On/InputImages'):
-            #     os.remove('Try-On/InputImages/' + filename)
-            # for filename in os.listdir('Try-On/InputClothesImages'):
-            #     os.remove('Try-On/InputClothesImages/' + filename)
-            # for filename in os.listdir('output_image_generator'):
-            #     os.remove('output_image_generator/' + filename)
+            for filename in os.listdir('Interface\input_segmentation'):
+                os.remove('Interface\input_segmentation/' + filename)
+
+            for filename in os.listdir('Interface\classifieroutput'):
+                os.remove('Interface\classifieroutput/' + filename)
+
+            for filename in os.listdir('Interface\output_segmentation'):
+                os.remove('Interface\output_segmentation/' + filename)
             #Copy images to input and output folders
-            # shutil.copy(self.input_classifier_img_path, 'Try-On/InputImages')
+            shutil.copy(self.input_classifier_img_path, 'Interface\input_segmentation')
             
             self.classifier_img_path = 'Interface/icons/load3.gif'
             self.classifierMovie = QtGui.QMovie('Interface/icons/load3.gif')
@@ -679,13 +683,13 @@ class MainWindow(QMainWindow):
             shutil.copy(json_path, 'Interface/pantLabels/' + str(num) + '.json')
             self.ui.classify_save_bottom_btn.setVisible(False)
             self.ui.classify_save_bottom_btn.setEnabled(False)
-        elif output == "shoes":
-            num = len(os.listdir("Interface/shoes")) + 1
-            img_path = 'Interface/classifieroutput/shoes.jpg'
-            json_path = 'Interface/classifieroutput/shoes.json'
+        elif output == "full_body":
+            num = len(os.listdir("Interface/pants")) + 1
+            img_path = 'Interface/classifieroutput/full_body.jpg'
+            json_path = 'Interface/classifieroutput/full_body.json'
             # save in shoes folder and shoeLabels folder and change name to num.jpg
-            shutil.copy(img_path, 'Interface/shoes/' + str(num) + '.jpg')
-            shutil.copy(json_path, 'Interface/shoeLabels/' + str(num) + '.json')
+            shutil.copy(img_path, 'Interface/pants/' + str(num) + '.jpg')
+            shutil.copy(json_path, 'Interface/pantLabels/' + str(num) + '.json')
             self.ui.classify_save_shoes_btn.setVisible(False)
             self.ui.classify_save_shoes_btn.setEnabled(False)
 
