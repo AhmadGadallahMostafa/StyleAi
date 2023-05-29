@@ -81,7 +81,7 @@ def train_condition(data_loader_train, condition_generator, discriminator, num_e
     criterion_vgg = LossVGG()
     criterion_l1 = nn.L1Loss()
     # we define the tensorboard writer
-    writer = SummaryWriter('runs/condition_generator')
+    writer = SummaryWriter('runs/condition_generator_final')
     start_time = time.time()
     # we start the training process
     for step in tqdm(range(0, 300000)):
@@ -240,15 +240,32 @@ def train_condition(data_loader_train, condition_generator, discriminator, num_e
                 print("step: %8d, time: %.3f\nloss G: %.4f, L1_cloth loss: %.4f, VGG loss: %.4f, TV loss: %.4f CE: %.4f, G GAN: %.4f\nloss D: %.4f, D real: %.4f, D fake: %.4f"
                         % (step + 1, t, generator_loss.item(), l1_loss.item(), vgg_loss.item(), tv_loss.item(), cross_entropy_loss.item(), gan_loss.item(), discriminator_loss.item(), loss_real.item(), loss_fake.item()), flush=True)
 
-            if (step + 1) % 100 == 0:
+            if (step + 1) % 100 == 0 or step == 0:
                 writer.add_scalar('loss_G', generator_loss.item(), step)
                 writer.add_scalar('loss_D', discriminator_loss.item(), step)
+                writer.add_scalar('loss_l1', l1_loss.item(), step)
+                writer.add_scalar('loss_vgg', vgg_loss.item(), step)
+                writer.add_scalar('loss_tv', tv_loss.item(), step)
+                writer.add_scalar('loss_ce', cross_entropy_loss.item(), step)
+                writer.add_scalar('loss_gan', gan_loss.item(), step)
+                writer.add_scalar('loss_real', loss_real.item(), step)
+                writer.add_scalar('loss_fake', loss_fake.item(), step)
 
+
+                # crate two csv files one for the generator and one for the discriminator 
+                # the csv files will contain the losses and the time for each step 
+                # only write generator loss and discriminator loss along with step 
+                with open('image_generator_loss.csv', 'a') as f:
+                    f.write(str(step + 1) + ',' + str(generator_loss.item()) + '\n')
+                with open('image_discriminator_loss.csv', 'a') as f:
+                    f.write(str(step + 1) + ',' + str(discriminator_loss.item()) + ',' + '\n')
+                
+                        
             if (step + 1) % 1000 == 0:
                 # save the model
                 print("saving the model")
-                torch.save(condition_generator.state_dict(),'condition_generator.pth')
-                torch.save(discriminator.state_dict(), 'discriminator.pth')
+                torch.save(condition_generator.state_dict(),'condition_generator_test.pth')
+                torch.save(discriminator.state_dict(), 'discriminator_test.pth')
                 
         
                    
@@ -278,10 +295,10 @@ def main():
         # Tensorboard writer
         writer = SummaryWriter(log_dir="logs")
         # read the model if it exists
-        if os.path.exists('condition_generator.pth'):
-            print('loading the model')
-            condition_generator.load_state_dict(torch.load('condition_generator.pth'))
-            discriminator.load_state_dict(torch.load('discriminator.pth'))
+        # if os.path.exists('condition_generator.pth'):
+        #     print('loading the model')
+        #     condition_generator.load_state_dict(torch.load('condition_generator.pth'))
+        #     discriminator.load_state_dict(torch.load('discriminator.pth'))
         
 
         train_condition(data_loader_train, condition_generator, discriminator, opt.epochs, data_loader_val, writer, opt.batch_size)
