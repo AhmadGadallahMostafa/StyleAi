@@ -10,6 +10,9 @@ code/datasets/mnist/train-labels-idx1-ubyte
 Classification/DeepFashion2
 Classification/DatasetPrep/fashion-dataset
 Classification/DatasetPrep/DeepFashion
+Classification/classical/dataset
+data
+*.sav
 Segmentation/dataset
 .ipynb_checkpoints
 .DS_Store
