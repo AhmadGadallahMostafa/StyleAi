@@ -17,7 +17,7 @@ device = torch.device("cuda")
 
 # Load model code
 model = MultiHeadResNet_Bottoms(pre_trained=False, requires_grad=False).to(device)
-checkpoint = torch.load('Classification\outputs\models\model_resnet_bottom_14.pth')
+checkpoint = torch.load('Classification\outputs\models\model_resnet_best_bottom.pth')
 model.load_state_dict(checkpoint['model_state_dict'])
 model.to(device)
 

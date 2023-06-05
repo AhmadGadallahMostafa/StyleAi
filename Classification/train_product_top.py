@@ -4,7 +4,7 @@ import torch.optim as optim
 
 from utils.dataset import train_valid_split, FashionDataset_Product
 from torch.utils.data import DataLoader
-from models.resnet_mod_product_top import MultiHeadResNet
+from models.resnet_mod_product_top import MultiHeadResNet_Tops
 from tqdm import tqdm
 from utils.loss_function import loss_fn
 from utils.utils import save_loss_plot, save_model
@@ -16,8 +16,8 @@ device = torch.device("cuda")
 # model.to(device)
 
 # Load model code
-model = MultiHeadResNet(pre_trained=False, requires_grad=True).to(device)
-checkpoint = torch.load('Classification\outputs\models\model_resnet_top_2.pth')
+model = MultiHeadResNet_Tops(pre_trained=False, requires_grad=True).to(device)
+checkpoint = torch.load('Classification\outputs\models\model_resnet_best_top.pth')
 model.load_state_dict(checkpoint['model_state_dict'])
 model.to(device)
 
@@ -75,7 +75,10 @@ def validate(model, dataloader, loss_fn, dataset, device):
     model.eval()
     counter = 0
     val_running_loss = 0.0
-    correct_1 = 0
+    correct_1_article = 0
+    correct_1_color = 0
+    correct_1_gender = 0
+    correct_1_usage = 0
     for i, data in tqdm(enumerate(dataloader), total=int(len(dataset)/dataloader.batch_size)):
         counter += 1
         
@@ -91,21 +94,29 @@ def validate(model, dataloader, loss_fn, dataset, device):
         loss = loss_fn(outputs, targets)
         val_running_loss += loss.item()
 
-        # get accuracy of predicting article type
-        _, pred = torch.max(outputs[0].data, 1)
-        _, top5_pred = torch.topk(outputs[0].data, 5, dim=1)
-        correct_1 += (pred == article).sum().item()
-        correct_5 = 0
-        for i in range(len(article)):
-            if article[i] in top5_pred[i]:
-                correct_5 += 1
+        # get accuracy of predicting article type, colour, gender and usage each
+        _, pred_article = torch.max(outputs[0].data, 1)
+        _, pred_color = torch.max(outputs[1].data, 1)
+        _, pred_gender = torch.max(outputs[2].data, 1)
+        _, pred_usage = torch.max(outputs[3].data, 1)
+        correct_1_article += (pred_article == article).sum().item()
+        correct_1_color += (pred_color == color).sum().item()
+        correct_1_gender += (pred_gender == gender).sum().item()
+        correct_1_usage += (pred_usage == usage).sum().item()
+
     # calculate loss
     val_loss = val_running_loss / counter
     # calculate accuracy
-    val_accuracy_1 = correct_1 / len(dataset)
-    val_accuracy_5 = correct_5 / len(dataset)
+    val_top_1_article = correct_1_article / len(dataset)
+    val_top_1_color = correct_1_color / len(dataset)
+    val_top_1_gender = correct_1_gender / len(dataset)
+    val_top_1_usage = correct_1_usage / len(dataset)
+    print(f"Validation Accuracy Top-1 Article: {val_top_1_article:.4f}")
+    print(f"Validation Accuracy Top-1 Color: {val_top_1_color:.4f}")
+    print(f"Validation Accuracy Top-1 Gender: {val_top_1_gender:.4f}")
+    print(f"Validation Accuracy Top-1 Usage: {val_top_1_usage:.4f}")
 
-    return val_loss, val_accuracy_1, val_accuracy_5
+    return val_loss
 
 # start the training
 train_loss, val_loss = [], []
@@ -115,15 +126,13 @@ for epoch in range(epochs):
     train_epoch_loss = train(
         model, train_loader, optimizer, loss_fn, train_dataset, device
     )
-    val_epoch_loss, val_top_1, val_top_5 = validate(
+    val_epoch_loss = validate(
         model, valid_loader, loss_fn, valid_dataset, device
     )
     train_loss.append(train_epoch_loss)
     val_loss.append(val_epoch_loss)
     print(f"Train Loss: {train_epoch_loss:.4f}")
     print(f"Validation Loss: {val_epoch_loss:.4f}")
-    print(f"Validation Accuracy Top-1: {val_top_1:.4f}")
-    print(f"Validation Accuracy Top-5: {val_top_5:.4f}")
 
     save_model(epochs, model, optimizer, criteria, name = 'model_resnet_top_' + str(curr_save) + '.pth')
     curr_save += 1
