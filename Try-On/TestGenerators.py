@@ -15,6 +15,9 @@ import torchgeometry as tgm
 from matplotlib import pyplot as plt
 from PIL import Image
 from ImageGeneratorNetworkOG import ImageGeneratorNetwork
+from torchmetrics.image.lpip import LearnedPerceptualImagePatchSimilarity
+from torchmetrics.image.fid import FrechetInceptionDistance
+from torchmetrics.functional import structural_similarity_index_measure
 
 def get_options():
     parser = argparse.ArgumentParser(
@@ -81,6 +84,15 @@ def main():
 
     gauss = tgm.image.GaussianBlur((15, 15), (3, 3)).cuda()
     j = 0
+    
+    lpips = LearnedPerceptualImagePatchSimilarity(net_type='vgg')
+    lpips.cuda()
+    
+    lpips_loss_image = 0
+    lpips_loss_parse = 0
+    ssim_loss_image = 0
+    ssim_loss_parse = 0
+
     for j in range(0, 2000):
         with torch.no_grad():
             # Clothes Input for condition generator
@@ -89,7 +101,7 @@ def main():
             cloth_mask = batch['cloth_mask']
             cloth_mask = torch.FloatTensor((cloth_mask.numpy() > 0.5).astype(np.float32)).cuda()
             
-            batch = dt.next_batch()
+            #batch = dt.next_batch()
             # Pose Input for condition generator
             dense_pose = batch['dense_pose'].cuda()
             parse_agnostic = batch['parse_agnostic'].cuda()
@@ -196,7 +208,24 @@ def main():
             #plt.show()
             real_image = F.interpolate(real_image, size=(512, 384), mode='bilinear', align_corners=True)
             cloth_temp = F.interpolate(cloth, size=(512, 384), mode='bilinear', align_corners=True)
+            lpips_loss_image += lpips(fake_image, real_image)
+            fake_map_visualize = visualize_segmap(fake_map_gaussian).cuda()
+            original_parse_visualize = visualize_segmap(original_parse).cuda()
+            lpips_loss_parse += lpips(fake_map_visualize.unsqueeze(0), original_parse_visualize.unsqueeze(0))
+            print("LPIPS Loss Image: ", lpips_loss_image)
+            print("LPIPS Loss Parse: ", lpips_loss_parse)
             
+            # fid_loss_image = fid(fake_image, real_image)
+            # print("FID Loss Image: ", fid_loss_image)
+            # fid_loss_parse = fid(fake_map_visualize.unsqueeze(0), original_parse_visualize.unsqueeze(0))
+            # print("FID Loss Parse: ", fid_loss_parse)
+
+            ssim_loss_image += structural_similarity_index_measure(fake_image, real_image)
+            print("SSIM Loss Image: ", ssim_loss_image)
+            ssim_loss_parse += structural_similarity_index_measure(fake_map_visualize.unsqueeze(0), original_parse_visualize.unsqueeze(0))
+            print("SSIM Loss Parse: ", ssim_loss_parse)
+
+
             grid = make_image_grid([real_image[0].cpu() / 2 + 0.5, cloth_temp[0].cpu() / 2 + 0.5, fake_image[0].cpu() / 2 + 0.5], nrow=3)
             save_image(grid, os.path.join('output_image_generator/', str(j) + '.png'))
 
@@ -204,7 +233,18 @@ def main():
             save_image(grid, os.path.join('output_condition_generator/', str(j) + '.png'))
             j += 1
             print("Finished iteration: ", j)
-
+    
+    print("Final LPIPS Loss Image: ", lpips_loss_image / 2000)
+    print("Final LPIPS Loss Parse: ", lpips_loss_parse / 2000)
+    print("Final SSIM Loss Image: ", ssim_loss_image / 2000)
+    print("Final SSIM Loss Parse: ", ssim_loss_parse / 2000)
+    # save the losses
+    f = open("losses tryon/losses.txt", "a")
+    f.write("Final LPIPS Loss Image: " + str(lpips_loss_image / 2000) + "\n")
+    f.write("Final LPIPS Loss Parse: " + str(lpips_loss_parse / 2000) + "\n")
+    f.write("Final SSIM Loss Image: " + str(ssim_loss_image / 2000) + "\n")
+    f.write("Final SSIM Loss Parse: " + str(ssim_loss_parse / 2000) + "\n")
+    f.close()
 
 
 
