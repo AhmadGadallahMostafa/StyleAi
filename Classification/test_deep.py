@@ -62,10 +62,13 @@ print('Top 5 predictions: ')
 for i in category_top5:
     print(category_keys[i])
 
+# resize the image to fit the screen
+orig_image = cv2.resize(orig_image, (1024, 1024))
+
 # write the label texts on the image
 cv2.putText(
-    orig_image, final_labels[0], (10, 25), cv2.FONT_HERSHEY_SIMPLEX, 
-    0.8, (0, 255, 0), 2, cv2.LINE_AA 
+    orig_image, final_labels[0], (10, 75), cv2.FONT_HERSHEY_SIMPLEX, 
+    2, (0, 255, 0), 2, cv2.LINE_AA 
 )
 
 # visualize and save the image

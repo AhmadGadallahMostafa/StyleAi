@@ -7,7 +7,7 @@ from Dataset import TryOnDataset, DataLoader
 from ImageGeneratorNetworkOG import ImageGeneratorNetwork, EncapsulatedDiscriminator
 from PIL import Image
 from ConditionGeneratorNetwork import ConditionGenerator
-from LossesConditionGenerator import GANLoss, LossVGG, SPADEGenLoss, SPADEDiscLoss
+from LossesConditionGenerator import GANLoss, LossVGG
 # imprt tensorboard
 # from torch.utils.tensorboard import SummaryWriter
 import time
@@ -104,8 +104,6 @@ def train_generator(data_loader_train, condition_generator, image_generator, dis
     #scheduler_image_generator = torch.optim.lr_scheduler.StepLR(optimizer_image_generator, step_size=1000, gamma=0.1)
     #scheduler_discriminator = torch.optim.lr_scheduler.StepLR(optimizer_discriminator, step_size=1000, gamma=0.1)
     # we define the loss functions
-    criterion_GAN_Disc = SPADEDiscLoss()
-    criterion_GAN_Gen = SPADEGenLoss()
     criterion_VGG = LossVGG()
     criterion_L1 = nn.L1Loss()
     
