@@ -8,7 +8,7 @@
     <x>0</x>
     <y>0</y>
     <width>1631</width>
-    <height>900</height>
+    <height>967</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -798,7 +798,7 @@ QSlider::handle:vertical:pressed {
           </size>
          </property>
          <property name="styleSheet">
-          <string notr="true">background-color: yellow;</string>
+          <string notr="true">background-color: rgb(27, 29, 35);</string>
          </property>
          <property name="frameShape">
           <enum>QFrame::NoFrame</enum>
@@ -976,29 +976,6 @@ QPushButton:pressed {
                    <property name="bottomMargin">
                     <number>0</number>
                    </property>
-                   <item>
-                    <widget class="QFrame" name="frame_icon_top_bar">
-                     <property name="maximumSize">
-                      <size>
-                       <width>30</width>
-                       <height>30</height>
-                      </size>
-                     </property>
-                     <property name="styleSheet">
-                      <string notr="true">background: transparent;
-background-image: url(:/16x16/icons/16x16/cil-terminal.png);
-background-position: center;
-background-repeat: no-repeat;
-</string>
-                     </property>
-                     <property name="frameShape">
-                      <enum>QFrame::StyledPanel</enum>
-                     </property>
-                     <property name="frameShadow">
-                      <enum>QFrame::Raised</enum>
-                     </property>
-                    </widget>
-                   </item>
                    <item>
                     <widget class="QLabel" name="label_title_bar_top">
                      <property name="font">
@@ -1371,7 +1348,7 @@ QPushButton:pressed {
              <property name="bottomMargin">
               <number>0</number>
              </property>
-             <item alignment="Qt::AlignTop">
+             <item>
               <widget class="QFrame" name="frame_menus">
                <property name="frameShape">
                 <enum>QFrame::NoFrame</enum>
@@ -1398,7 +1375,7 @@ QPushButton:pressed {
                </layout>
               </widget>
              </item>
-             <item alignment="Qt::AlignBottom">
+             <item>
               <widget class="QFrame" name="frame_extra_menus">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -1412,66 +1389,57 @@ QPushButton:pressed {
                <property name="frameShadow">
                 <enum>QFrame::Raised</enum>
                </property>
-               <layout class="QVBoxLayout" name="layout_menu_bottom">
-                <property name="spacing">
-                 <number>10</number>
+               <widget class="QLabel" name="app_logo">
+                <property name="geometry">
+                 <rect>
+                  <x>0</x>
+                  <y>320</y>
+                  <width>60</width>
+                  <height>60</height>
+                 </rect>
                 </property>
-                <property name="leftMargin">
-                 <number>0</number>
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
                 </property>
-                <property name="topMargin">
-                 <number>0</number>
+                <property name="minimumSize">
+                 <size>
+                  <width>60</width>
+                  <height>60</height>
+                 </size>
                 </property>
-                <property name="rightMargin">
-                 <number>0</number>
+                <property name="maximumSize">
+                 <size>
+                  <width>60</width>
+                  <height>60</height>
+                 </size>
                 </property>
-                <property name="bottomMargin">
-                 <number>25</number>
+                <property name="font">
+                 <font>
+                  <family>Segoe UI</family>
+                  <pointsize>12</pointsize>
+                 </font>
                 </property>
-                <item alignment="Qt::AlignHCenter">
-                 <widget class="QLabel" name="label_user_icon">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="minimumSize">
-                   <size>
-                    <width>60</width>
-                    <height>60</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>60</width>
-                    <height>60</height>
-                   </size>
-                  </property>
-                  <property name="font">
-                   <font>
-                    <family>Segoe UI</family>
-                    <pointsize>12</pointsize>
-                   </font>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">QLabel {
+                <property name="layoutDirection">
+                 <enum>Qt::LeftToRight</enum>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">QLabel {
 	border-radius: 30px;
-	background-color: rgb(44, 49, 60);
-	border: 5px solid rgb(39, 44, 54);
+	background-color: rgba(44, 49, 60, 0);
 	background-position: center;
 	background-repeat: no-repeat;
 }</string>
-                  </property>
-                  <property name="text">
-                   <string>WM</string>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignCenter</set>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
+                </property>
+                <property name="text">
+                 <string>WM</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
               </widget>
              </item>
             </layout>
@@ -1534,9 +1502,23 @@ QPushButton:pressed {
                    <string notr="true">background: transparent;</string>
                   </property>
                   <property name="currentIndex">
-                   <number>1</number>
+                   <number>0</number>
                   </property>
-                  <widget class="QWidget" name="page_home"/>
+                  <widget class="QWidget" name="page_home">
+                   <widget class="QLabel" name="home_logo">
+                    <property name="geometry">
+                     <rect>
+                      <x>580</x>
+                      <y>180</y>
+                      <width>421</width>
+                      <height>411</height>
+                     </rect>
+                    </property>
+                    <property name="text">
+                     <string/>
+                    </property>
+                   </widget>
+                  </widget>
                   <widget class="QWidget" name="page_recommender_get_outfit">
                    <widget class="QPushButton" name="top_recommender_get_outfit_btn">
                     <property name="geometry">
@@ -2360,7 +2342,7 @@ QScrollBar:horizontal {
                              <rect>
                               <x>0</x>
                               <y>0</y>
-                              <width>218</width>
+                              <width>532</width>
                               <height>218</height>
                              </rect>
                             </property>
@@ -4143,7 +4125,7 @@ QPushButton:pressed {
                       <string notr="true">color: rgb(98, 103, 111);</string>
                      </property>
                      <property name="text">
-                      <string>Registered by: Wanderson M. Pimenta</string>
+                      <string/>
                      </property>
                     </widget>
                    </item>

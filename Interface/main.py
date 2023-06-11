@@ -211,10 +211,14 @@ class MainWindow(QMainWindow):
         ## ==> END ##
 
         ## SET ==> WINDOW TITLE
-        self.setWindowTitle('Main Window - Python Base')
-        UIFunctions.labelTitle(self, 'Main Window - Python Base')
-        UIFunctions.labelDescription(self, 'Set text')
+        self.setWindowTitle('StylAIst')
+        UIFunctions.labelTitle(self, 'StylAIst')
+        UIFunctions.labelDescription(self, '')
         ## ==> END ##
+
+        self.ui.app_logo.setPixmap(QtGui.QPixmap('Interface\icons\Home1.png'))
+        # resize image to 30x30
+        self.ui.app_logo.setPixmap(self.ui.app_logo.pixmap().scaled(60, 60, QtCore.Qt.KeepAspectRatio))
 
         ## WINDOW SIZE ==> DEFAULT SIZE
         startSize = QSize(1000, 720)
@@ -232,14 +236,14 @@ class MainWindow(QMainWindow):
 
         ## ==> ADD CUSTOM MENUS
         self.ui.stackedWidget.setMinimumWidth(20)
-        UIFunctions.addNewMenu(self, "HOME", "btn_home", "url(:/16x16/icons/16x16/cil-home.png)", True)
-        UIFunctions.addNewMenu(self, "Wardrobe", "btn_wardrobe", "url(:/16x16/icons/16x16/cil-user-follow.png)", True)
-        UIFunctions.addNewMenu(self, "Add", "btn_add", "url(:/16x16/icons/16x16/cil-user-follow.png)", True)
-        UIFunctions.addNewMenu(self, "Get Outfit", "btn_get_outfit", "url(:/16x16/icons/16x16/cil-user-follow.png)", True)
+        # UIFunctions.addNewMenu(self, "HOME", "btn_home", "url(:/16x16/icons/16x16/cil-home.png)", True)
+        UIFunctions.addNewMenu(self, "Wardrobe", "btn_wardrobe", "Interface\icons/16x16\wardrobe.png", True, True)
+        UIFunctions.addNewMenu(self, "Add", "btn_add", "Interface/icons/16x16/plus.png", True, True)
+        UIFunctions.addNewMenu(self, "Get Outfit", "btn_get_outfit", "Interface\icons/16x16\qmark.png", True, True)
         # add new button for Try On Module 
         UIFunctions.addNewMenu(self, "Try On", "btn_try_on", "Interface/icons/16x16/try_on.png", True, True)
 
-        UIFunctions.addNewMenu(self, "Custom Widgets", "btn_widgets", "url(:/16x16/icons/16x16/cil-3d.png)", False)
+
         ## ==> END ##
 
         # START MENU => SELECTION
@@ -250,8 +254,6 @@ class MainWindow(QMainWindow):
         self.ui.stackedWidget.setCurrentWidget(self.ui.page_home)
         ## ==> END ##
 
-        ## USER ICON ==> SHOW HIDE
-        UIFunctions.userIcon(self, "WM", "", True)
         ## ==> END ##
 
         ## ==> MOVE WINDOW / MAXIMIZE / RESTORE
@@ -405,13 +407,6 @@ class MainWindow(QMainWindow):
             self.ui.stackedWidget.setCurrentWidget(self.ui.page_add)
             UIFunctions.resetStyle(self, "btn_add")
             UIFunctions.labelPage(self, "Add")
-            btnWidget.setStyleSheet(UIFunctions.selectMenu(btnWidget.styleSheet()))
-
-        # PAGE WIDGETS
-        if btnWidget.objectName() == "btn_widgets":
-            self.ui.stackedWidget.setCurrentWidget(self.ui.page_widgets)
-            UIFunctions.resetStyle(self, "btn_widgets")
-            UIFunctions.labelPage(self, "Custom Widgets")
             btnWidget.setStyleSheet(UIFunctions.selectMenu(btnWidget.styleSheet()))
 
         # PAGE TRY ON

@@ -18,7 +18,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1631, 900)
+        MainWindow.resize(1631, 967)
         MainWindow.setMinimumSize(QSize(1600, 900))
         palette = QPalette()
         brush = QBrush(QColor(255, 255, 255, 255))
@@ -341,7 +341,7 @@ class Ui_MainWindow(object):
         self.frame_top.setObjectName(u"frame_top")
         self.frame_top.setMinimumSize(QSize(0, 65))
         self.frame_top.setMaximumSize(QSize(16777215, 65))
-        self.frame_top.setStyleSheet(u"background-color: yellow;")
+        self.frame_top.setStyleSheet(u"background-color: rgb(27, 29, 35);")
         self.frame_top.setFrameShape(QFrame.NoFrame)
         self.frame_top.setFrameShadow(QFrame.Raised)
         self.horizontalLayout_3 = QHBoxLayout(self.frame_top)
@@ -416,19 +416,6 @@ class Ui_MainWindow(object):
         self.horizontalLayout_10.setSpacing(0)
         self.horizontalLayout_10.setObjectName(u"horizontalLayout_10")
         self.horizontalLayout_10.setContentsMargins(5, 0, 10, 0)
-        self.frame_icon_top_bar = QFrame(self.frame_label_top_btns)
-        self.frame_icon_top_bar.setObjectName(u"frame_icon_top_bar")
-        self.frame_icon_top_bar.setMaximumSize(QSize(30, 30))
-        self.frame_icon_top_bar.setStyleSheet(u"background: transparent;\n"
-"background-image: url(:/16x16/icons/16x16/cil-terminal.png);\n"
-"background-position: center;\n"
-"background-repeat: no-repeat;\n"
-"")
-        self.frame_icon_top_bar.setFrameShape(QFrame.StyledPanel)
-        self.frame_icon_top_bar.setFrameShadow(QFrame.Raised)
-
-        self.horizontalLayout_10.addWidget(self.frame_icon_top_bar)
-
         self.label_title_bar_top = QLabel(self.frame_label_top_btns)
         self.label_title_bar_top.setObjectName(u"label_title_bar_top")
         font1 = QFont()
@@ -611,7 +598,7 @@ class Ui_MainWindow(object):
         self.layout_menus.setObjectName(u"layout_menus")
         self.layout_menus.setContentsMargins(0, 0, 0, 0)
 
-        self.verticalLayout_5.addWidget(self.frame_menus, 0, Qt.AlignTop)
+        self.verticalLayout_5.addWidget(self.frame_menus)
 
         self.frame_extra_menus = QFrame(self.frame_left_menu)
         self.frame_extra_menus.setObjectName(u"frame_extra_menus")
@@ -619,36 +606,30 @@ class Ui_MainWindow(object):
         self.frame_extra_menus.setSizePolicy(sizePolicy3)
         self.frame_extra_menus.setFrameShape(QFrame.NoFrame)
         self.frame_extra_menus.setFrameShadow(QFrame.Raised)
-        self.layout_menu_bottom = QVBoxLayout(self.frame_extra_menus)
-        self.layout_menu_bottom.setSpacing(10)
-        self.layout_menu_bottom.setObjectName(u"layout_menu_bottom")
-        self.layout_menu_bottom.setContentsMargins(0, 0, 0, 25)
-        self.label_user_icon = QLabel(self.frame_extra_menus)
-        self.label_user_icon.setObjectName(u"label_user_icon")
+        self.app_logo = QLabel(self.frame_extra_menus)
+        self.app_logo.setObjectName(u"app_logo")
+        self.app_logo.setGeometry(QRect(0, 320, 60, 60))
         sizePolicy4 = QSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
         sizePolicy4.setHorizontalStretch(0)
         sizePolicy4.setVerticalStretch(0)
-        sizePolicy4.setHeightForWidth(self.label_user_icon.sizePolicy().hasHeightForWidth())
-        self.label_user_icon.setSizePolicy(sizePolicy4)
-        self.label_user_icon.setMinimumSize(QSize(60, 60))
-        self.label_user_icon.setMaximumSize(QSize(60, 60))
+        sizePolicy4.setHeightForWidth(self.app_logo.sizePolicy().hasHeightForWidth())
+        self.app_logo.setSizePolicy(sizePolicy4)
+        self.app_logo.setMinimumSize(QSize(60, 60))
+        self.app_logo.setMaximumSize(QSize(60, 60))
         font4 = QFont()
         font4.setFamily(u"Segoe UI")
         font4.setPointSize(12)
-        self.label_user_icon.setFont(font4)
-        self.label_user_icon.setStyleSheet(u"QLabel {\n"
+        self.app_logo.setFont(font4)
+        self.app_logo.setLayoutDirection(Qt.LeftToRight)
+        self.app_logo.setStyleSheet(u"QLabel {\n"
 "	border-radius: 30px;\n"
-"	background-color: rgb(44, 49, 60);\n"
-"	border: 5px solid rgb(39, 44, 54);\n"
+"	background-color: rgba(44, 49, 60, 0);\n"
 "	background-position: center;\n"
 "	background-repeat: no-repeat;\n"
 "}")
-        self.label_user_icon.setAlignment(Qt.AlignCenter)
+        self.app_logo.setAlignment(Qt.AlignCenter)
 
-        self.layout_menu_bottom.addWidget(self.label_user_icon, 0, Qt.AlignHCenter)
-
-
-        self.verticalLayout_5.addWidget(self.frame_extra_menus, 0, Qt.AlignBottom)
+        self.verticalLayout_5.addWidget(self.frame_extra_menus)
 
 
         self.horizontalLayout_2.addWidget(self.frame_left_menu)
@@ -675,6 +656,9 @@ class Ui_MainWindow(object):
         self.stackedWidget.setStyleSheet(u"background: transparent;")
         self.page_home = QWidget()
         self.page_home.setObjectName(u"page_home")
+        self.home_logo = QLabel(self.page_home)
+        self.home_logo.setObjectName(u"home_logo")
+        self.home_logo.setGeometry(QRect(580, 180, 421, 411))
         self.stackedWidget.addWidget(self.page_home)
         self.page_recommender_get_outfit = QWidget()
         self.page_recommender_get_outfit.setObjectName(u"page_recommender_get_outfit")
@@ -1087,7 +1071,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 218, 218))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 532, 218))
         self.horizontalLayout_11 = QHBoxLayout(self.scrollAreaWidgetContents)
         self.horizontalLayout_11.setObjectName(u"horizontalLayout_11")
         self.plainTextEdit = QPlainTextEdit(self.scrollAreaWidgetContents)
@@ -2002,7 +1986,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.stackedWidget.setCurrentIndex(1)
+        self.stackedWidget.setCurrentIndex(0)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -2026,7 +2010,8 @@ class Ui_MainWindow(object):
         self.btn_close.setText("")
         self.label_top_info_1.setText(QCoreApplication.translate("MainWindow", u"C:\\Program Files\\Blender Foundation\\Blender 2.82", None))
         self.label_top_info_2.setText(QCoreApplication.translate("MainWindow", u"| HOME", None))
-        self.label_user_icon.setText(QCoreApplication.translate("MainWindow", u"WM", None))
+        self.app_logo.setText(QCoreApplication.translate("MainWindow", u"WM", None))
+        self.home_logo.setText("")
         self.top_recommender_get_outfit_btn.setText("")
         self.bottom_recommender_get_outfit_btn.setText("")
         self.shoes_recommender_get_outfit_btn.setText("")
@@ -2143,7 +2128,7 @@ class Ui_MainWindow(object):
         self.gender_classifier_shoes_lbl.setText("")
         self.usage_classifier_shoes_lbl.setText("")
         self.classify_save_shoes_btn.setText(QCoreApplication.translate("MainWindow", u"Save", None))
-        self.label_credits.setText(QCoreApplication.translate("MainWindow", u"Registered by: Wanderson M. Pimenta", None))
+        self.label_credits.setText("")
         self.label_version.setText(QCoreApplication.translate("MainWindow", u"v1.0.0", None))
     # retranslateUi
 
